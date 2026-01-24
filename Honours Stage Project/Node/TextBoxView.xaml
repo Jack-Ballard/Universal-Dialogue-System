@@ -1,0 +1,15 @@
+﻿<UserControl x:Class="Honours_Stage_Project.Node.TextBoxView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Width="281" Height="200"
+             MouseLeftButtonDown="UserControl_MouseLeftButtonDown"
+             MouseMove="UserControl_MouseMove"
+             MouseLeftButtonUp="UserControl_MouseLeftButtonUp">
+    <Border BorderBrush="Black" BorderThickness="2" Background="LightCyan">
+        <StackPanel>
+            <TextBlock Text="Complex Window" FontSize="16" HorizontalAlignment="Center" Margin="10"/>
+            <TextBox Name="InputTextBox" Width="242" Height="91" Margin="10" HorizontalAlignment="Center"/>
+            <Button Content="Click Me" HorizontalAlignment="Center" VerticalAlignment="Center" Click="Button_Click" />
+        </StackPanel>
+    </Border>
+</UserControl>
