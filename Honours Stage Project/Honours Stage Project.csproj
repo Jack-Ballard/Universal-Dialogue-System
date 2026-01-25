@@ -74,6 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="NodeConnections.cs" />
+    <Compile Include="Node\ComponentConnection.cs" />
     <Compile Include="Node\TextBoxModel.cs" />
     <Compile Include="Node\TextBoxView.xaml.cs">
       <DependentUpon>TextBoxView.xaml</DependentUpon>

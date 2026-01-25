@@ -37,5 +37,9 @@ namespace Honours_Stage_Project.Node
         {
             _window.ConnectNodes(this);
         }
+        public void AddConectionComponent()
+        {
+            _textBoxView.AddConnectionComponent(_textBoxModel.AddConnectionComponent());
+        }
     }
 }
