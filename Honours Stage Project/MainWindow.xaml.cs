@@ -45,11 +45,17 @@ namespace Honours_Stage_Project
             foreach (var connection in NodeConnections.GetConnections())
             {
                 var node1 = connection.Item1.GetTextBoxView();
-                var node2 = connection.Item3.GetTextBoxView();
+                int outID = connection.Item2;
+                Button button = connection.Item3;
+                var node2 = connection.Item4.GetTextBoxView();
+
+                Point test = button.PointToScreen(new Point(-140, -200));
 
                 // Get positions
-                double x1 = Canvas.GetLeft(node1) + node1.ActualWidth;
-                double y1 = Canvas.GetTop(node1) + node1.ActualHeight / 2;
+                //double x1 = Canvas.GetLeft(node1) + node1.ActualWidth;
+                //double y1 = Canvas.GetTop(node1) + node1.ActualHeight / 2 + 100 * outID;
+                double x1 = test.X;
+                double y1 = test.Y;
                 double x2 = Canvas.GetLeft(node2);
                 double y2 = Canvas.GetTop(node2) + node2.ActualHeight / 2;
 

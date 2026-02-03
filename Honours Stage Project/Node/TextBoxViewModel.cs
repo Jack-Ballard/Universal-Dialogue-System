@@ -47,7 +47,7 @@ namespace Honours_Stage_Project.Node
             // Now you can access the ID (assuming you have a public property)
             int id = connection.ID; // Make sure Id is public in ComponentConnection
 
-            NodeConnections.AddOutgoingConnection(this, id);
+            NodeConnections.AddOutgoingConnection(this, id, button);
         }
         public void AddIncommingConnections()
         {

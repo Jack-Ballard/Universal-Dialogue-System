@@ -19,5 +19,10 @@ namespace Honours_Stage_Project.Node
             _connectionComponents.Add(componentConnection);
             return componentConnection;
         }
+
+        public ComponentConnection GetComponentConnection(int  index)
+        {
+            return _connectionComponents[index];
+        }
     }
 }

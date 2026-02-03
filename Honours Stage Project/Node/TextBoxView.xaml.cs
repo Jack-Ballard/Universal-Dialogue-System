@@ -35,7 +35,6 @@ namespace Honours_Stage_Project.Node
         private ResizeDirection _resizeDirection;
         private Size _initialSize;
         private Point _initialPosition;
-        //public ObservableCollection<object> TextBoxConnectionComponent { get; set; } = new ObservableCollection<object>();
         public ObservableCollection<ComponentConnection> TextBoxConnectionComponent { get; set; } = new ObservableCollection<ComponentConnection>();
 
         private Canvas _parentCanvas;
@@ -175,12 +174,6 @@ namespace Honours_Stage_Project.Node
             Canvas.SetLeft(this, _initialPosition.X + deltaX);
             Canvas.SetTop(this, _initialPosition.Y + deltaY);
         }
-
-        // Old button click to update connections function -J
-        //private void Button_Click(object sender, RoutedEventArgs e)
-        //{
-        //    _textBoxViewModel.UpdateConnections();
-        //}
 
         private void AddConnection_Click(object sender, RoutedEventArgs e)
         {
