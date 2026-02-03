@@ -176,10 +176,12 @@ namespace Honours_Stage_Project.Node
             Canvas.SetTop(this, _initialPosition.Y + deltaY);
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            _textBoxViewModel.UpdateConnections();
-        }
+        // Old button click to update connections function -J
+        //private void Button_Click(object sender, RoutedEventArgs e)
+        //{
+        //    _textBoxViewModel.UpdateConnections();
+        //}
+
         private void AddConnection_Click(object sender, RoutedEventArgs e)
         {
             _textBoxViewModel.AddConectionComponent();
@@ -188,6 +190,15 @@ namespace Honours_Stage_Project.Node
         public void AddConnectionComponent(ComponentConnection componentConnection)
         {
             TextBoxConnectionComponent.Add(componentConnection);
+        }
+        private void OutgoingButton_Click(object sender, RoutedEventArgs e)
+        {
+            _textBoxViewModel.AddOutgoingConnections(sender);
+        }
+
+        private void IncommingButton_Click(object sender, RoutedEventArgs e)
+        {
+            _textBoxViewModel.AddIncommingConnections();
         }
     }
 }

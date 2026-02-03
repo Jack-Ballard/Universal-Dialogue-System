@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Honours_Stage_Project.Node
@@ -33,9 +34,24 @@ namespace Honours_Stage_Project.Node
         {
             return _textBoxView;
         }
-        public void UpdateConnections()
+        public void AddOutgoingConnections(object sender)
         {
-            _window.ConnectNodes(this);
+            // sender is the Button
+            var button = sender as Button;
+            if (button == null) return;
+
+            // DataContext is the ComponentConnection for this item
+            var connection = button.DataContext as ComponentConnection;
+            if (connection == null) return;
+
+            // Now you can access the ID (assuming you have a public property)
+            int id = connection.ID; // Make sure Id is public in ComponentConnection
+
+            NodeConnections.AddOutgoingConnection(this, id);
+        }
+        public void AddIncommingConnections()
+        {
+            NodeConnections.AddIncommingConnection(this);
         }
         public void AddConectionComponent()
         {

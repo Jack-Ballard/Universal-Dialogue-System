@@ -12,7 +12,6 @@ namespace Honours_Stage_Project
 {
     public partial class MainWindow : Window
     {
-        TextBoxViewModel bufferNode;
         List<Line> myLine = new List<Line>();
 
         public MainWindow()
@@ -34,19 +33,6 @@ namespace Honours_Stage_Project
             //MessageBox.Show("Button was clicked!");
         }
 
-        public void ConnectNodes(TextBoxViewModel node)
-        {
-            if (bufferNode == null)
-            {
-                bufferNode = node;
-            }
-            else
-            {
-                NodeConnections.connections.Add((bufferNode, node));
-                UpdateConnections();
-                bufferNode = null;
-            }
-        }
         public void UpdateConnections()
         {
             // Remove all existing lines from the canvas
@@ -56,10 +42,10 @@ namespace Honours_Stage_Project
             }
             myLine.Clear();
 
-            foreach (var connection in NodeConnections.connections)
+            foreach (var connection in NodeConnections.GetConnections())
             {
                 var node1 = connection.Item1.GetTextBoxView();
-                var node2 = connection.Item2.GetTextBoxView();
+                var node2 = connection.Item3.GetTextBoxView();
 
                 // Get positions
                 double x1 = Canvas.GetLeft(node1) + node1.ActualWidth;

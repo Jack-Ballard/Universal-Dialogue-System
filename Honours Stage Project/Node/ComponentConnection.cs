@@ -8,10 +8,10 @@ namespace Honours_Stage_Project.Node
 {
     public class ComponentConnection
     {
-        private int _id { get; set; }
+        public int ID { get; private set; }
         public ComponentConnection(int id)
         {
-            _id = id;
+            ID = id;
         }
     }
 }
