@@ -11,6 +11,7 @@ namespace Honours_Stage_Project.Node
     {
         public TextBoxModel() { }
         public string TextContent;
+        public int ID;
         private List<ComponentConnection> _connectionComponents = new List<ComponentConnection>();
 
         public ComponentConnection AddConnectionComponent()

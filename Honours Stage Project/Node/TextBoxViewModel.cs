@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Honours_Stage_Project.Helpers;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Honours_Stage_Project.Node
 {
@@ -13,11 +16,15 @@ namespace Honours_Stage_Project.Node
         protected TextBoxModel _textBoxModel;
         protected TextBoxView _textBoxView;
         protected MainWindow _window;
+        public ICommand AddOutwardConnectionCommand { get; }
+
         public TextBoxViewModel(MainWindow window)
         {
             _textBoxModel = new TextBoxModel();
             _textBoxView = new TextBoxView(this);
             _window = window;
+
+            AddOutwardConnectionCommand = new RelayCommand(param => AddOutgoingConnections(param as ComponentConnection));
 
             InitaliseTextBox();
         }
@@ -34,20 +41,9 @@ namespace Honours_Stage_Project.Node
         {
             return _textBoxView;
         }
-        public void AddOutgoingConnections(object sender)
+        public void AddOutgoingConnections(ComponentConnection connection)
         {
-            // sender is the Button
-            var button = sender as Button;
-            if (button == null) return;
-
-            // DataContext is the ComponentConnection for this item
-            var connection = button.DataContext as ComponentConnection;
-            if (connection == null) return;
-
-            // Now you can access the ID (assuming you have a public property)
-            int id = connection.ID; // Make sure Id is public in ComponentConnection
-
-            NodeConnections.AddOutgoingConnection(this, id, button);
+            NodeConnections.AddOutgoingConnection(this, connection);
         }
         public void AddIncommingConnections()
         {

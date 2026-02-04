@@ -10,34 +10,34 @@ namespace Honours_Stage_Project
 {
     public static class NodeConnections
     {
-        private static List<(TextBoxViewModel, int, Button, TextBoxViewModel)> connections = new List<(TextBoxViewModel, int, Button, TextBoxViewModel)>();
-        private static (TextBoxViewModel, int, Button) incommingConnection;
-        private static TextBoxViewModel outgoingConnection;
+        private static List<(TextBoxViewModel, ComponentConnection, TextBoxViewModel)> connections = new List<(TextBoxViewModel, ComponentConnection, TextBoxViewModel)>();
+        private static (TextBoxViewModel, ComponentConnection) outgoingConnection;
+        private static TextBoxViewModel incommingConnection; 
 
-        public static void AddOutgoingConnection(TextBoxViewModel textBoxViewModel, int componentConnection, Button button)
+        public static void AddOutgoingConnection(TextBoxViewModel textBoxViewModel, ComponentConnection componentConnection)
         {
-            incommingConnection = (textBoxViewModel, componentConnection, button);
-            if(outgoingConnection != null)
+            outgoingConnection = (textBoxViewModel, componentConnection);
+            if(incommingConnection != null)
             {
                 CommitConnection();
             }
         }
         public static void AddIncommingConnection(TextBoxViewModel textBoxViewModel)
         {
-            outgoingConnection = textBoxViewModel;
-            if (incommingConnection.Item1 != null)
+            incommingConnection = textBoxViewModel;
+            if (outgoingConnection.Item1 != null)
             {
                 CommitConnection();
             }
         }
         private static void CommitConnection()
         {
-            connections.Add((incommingConnection.Item1, incommingConnection.Item2, incommingConnection.Item3, outgoingConnection));
-            incommingConnection = (null, -1, null);
-            outgoingConnection = null;
+            connections.Add((outgoingConnection.Item1, outgoingConnection.Item2, incommingConnection));
+            outgoingConnection = (null, null);
+            incommingConnection = null;
         }
 
-        public static List<(TextBoxViewModel, int, Button, TextBoxViewModel)> GetConnections()
+        public static List<(TextBoxViewModel, ComponentConnection, TextBoxViewModel)> GetConnections()
         {
             return connections;
         }

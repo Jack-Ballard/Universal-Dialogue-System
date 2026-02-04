@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Honours_Stage_Project.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -35,6 +36,7 @@ namespace Honours_Stage_Project.Node
         private ResizeDirection _resizeDirection;
         private Size _initialSize;
         private Point _initialPosition;
+
         public ObservableCollection<ComponentConnection> TextBoxConnectionComponent { get; set; } = new ObservableCollection<ComponentConnection>();
 
         private Canvas _parentCanvas;
@@ -44,6 +46,7 @@ namespace Honours_Stage_Project.Node
         {
             InitializeComponent();
             _textBoxViewModel = TextBoxViewModel;
+            DataContext = _textBoxViewModel;
             ConnectionComponent.ItemsSource = TextBoxConnectionComponent;
         }
 
@@ -175,23 +178,15 @@ namespace Honours_Stage_Project.Node
             Canvas.SetTop(this, _initialPosition.Y + deltaY);
         }
 
-        private void AddConnection_Click(object sender, RoutedEventArgs e)
-        {
-            _textBoxViewModel.AddConectionComponent();
+        public void AddConnectionComponent(ComponentConnection componentConnection) 
+        { 
+            TextBoxConnectionComponent.Add(componentConnection); 
         }
 
-        public void AddConnectionComponent(ComponentConnection componentConnection)
-        {
-            TextBoxConnectionComponent.Add(componentConnection);
-        }
-        private void OutgoingButton_Click(object sender, RoutedEventArgs e)
-        {
-            _textBoxViewModel.AddOutgoingConnections(sender);
-        }
 
-        private void IncommingButton_Click(object sender, RoutedEventArgs e)
-        {
-            _textBoxViewModel.AddIncommingConnections();
-        }
+        // Button click handlers
+        private void AddConnection_Click(object sender, RoutedEventArgs e) { _textBoxViewModel.AddConectionComponent(); }
+        //private void OutgoingButton_Click(object sender, RoutedEventArgs e) { _textBoxViewModel.AddOutgoingConnections(sender); }
+        private void IncommingButton_Click(object sender, RoutedEventArgs e) { _textBoxViewModel.AddIncommingConnections(); }
     }
 }
