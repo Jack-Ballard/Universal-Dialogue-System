@@ -13,6 +13,7 @@ namespace Honours_Stage_Project
     public partial class MainWindow : Window
     {
         List<Line> myLine = new List<Line>();
+        private List<TextBoxViewModel> _textBoxViewModels = new List<TextBoxViewModel>();
 
         public MainWindow()
         {
@@ -23,14 +24,32 @@ namespace Honours_Stage_Project
         private void OnRendering(object sender, EventArgs e)
         {
             UpdateConnections();
+            foreach(TextBoxViewModel textBoxViewModel in _textBoxViewModels)
+            {
+                textBoxViewModel.Update();
+            }
         }
 
         // This method creates a new TextBoxNode and adds it to the Canvas at runtime
         
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void AddNode_Click(object sender, RoutedEventArgs e)
         {
-            TextBoxViewModel dynamicControl = new TextBoxViewModel(this);
+            TextBoxViewModel dynamicControl = new TextBoxViewModel(this, _textBoxViewModels.Count);
+            _textBoxViewModels.Add(dynamicControl);
             //MessageBox.Show("Button was clicked!");
+        }
+        private void Export_Click(object sender, RoutedEventArgs e)
+        {
+            List<TextBoxModel> textBoxData = new List<TextBoxModel>();
+            foreach (TextBoxViewModel textBoxViewModel in _textBoxViewModels)
+            {
+                textBoxData.Add(textBoxViewModel.GetTextBoxModel());
+            }
+            List<(int, int, int)> connectionIDs = NodeConnections.GetConnectionIDs();
+            (List<TextBoxModel>, List<(int, int, int)>) dataPackage = (textBoxData, connectionIDs);
+            string jsonData = Newtonsoft.Json.JsonConvert.SerializeObject(dataPackage, Newtonsoft.Json.Formatting.Indented);
+            System.IO.File.WriteAllText("exported_data.json", jsonData);
+
         }
 
         public void UpdateConnections()

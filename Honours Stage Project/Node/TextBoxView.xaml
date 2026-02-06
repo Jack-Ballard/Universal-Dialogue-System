@@ -17,7 +17,7 @@
 
     <Border BorderBrush="Black" BorderThickness="2" Background="LightCyan" Margin="0,0,0,-11">
         <StackPanel Margin="0,8,0,-8">
-            <Button Content="Incomming" Width="71" HorizontalAlignment="Left" Click="IncommingButton_Click"/>
+            <Button Content="Incoming" Width="71" HorizontalAlignment="Left" Click="IncomingButton_Click"/>
             <TextBox x:Name="InputTextBox" Width="242" Height="91" Margin="10" HorizontalAlignment="Center"/>
             <ItemsControl x:Name="ConnectionComponent" ItemsSource ="{Binding TextBoxConnectionComponent}" ItemTemplate="{StaticResource DictionaryComponentConnection}" />
             <Button Content="Add Connection" Width="92" Height="20" Click="AddConnection_Click"/>

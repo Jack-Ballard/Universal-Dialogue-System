@@ -5,6 +5,8 @@
         Title="MainWindow" Height="450" Width="800">
     <Canvas Name="MyCanvas" Background="LightGray">
         <!-- We'll add complex UI elements here dynamically -->
-        <Button Content="Click Me" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_Click" Canvas.Left="10" Canvas.Top="10"/>
+        <Button Content="Add Node" HorizontalAlignment="Left" VerticalAlignment="Top" Click="AddNode_Click" Canvas.Left="10" Canvas.Top="10"/>
+        <Button Content="Export" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Export_Click" Canvas.Left="70" Canvas.Top="10"/>
+
     </Canvas>
 </Window>

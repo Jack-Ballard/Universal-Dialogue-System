@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Security.RightsManagement;
 using System.Text;
@@ -9,21 +10,21 @@ namespace Honours_Stage_Project.Node
 {
     public class TextBoxModel
     {
-        public TextBoxModel() { }
         public string TextContent;
         public int ID;
-        private List<ComponentConnection> _connectionComponents = new List<ComponentConnection>();
+        //private List<ComponentConnection> _connectionComponents = new List<ComponentConnection>();
+        public TextBoxModel(int id) 
+        {
+            ID = id;
+        }
+
+        public ObservableCollection<ComponentConnection> ConnectionComponents { get; } = new ObservableCollection<ComponentConnection>();
 
         public ComponentConnection AddConnectionComponent()
         {
-            ComponentConnection componentConnection = new ComponentConnection(_connectionComponents.Count());
-            _connectionComponents.Add(componentConnection);
+            ComponentConnection componentConnection = new ComponentConnection(ConnectionComponents.Count());
+            ConnectionComponents.Add(componentConnection);
             return componentConnection;
-        }
-
-        public ComponentConnection GetComponentConnection(int  index)
-        {
-            return _connectionComponents[index];
         }
     }
 }

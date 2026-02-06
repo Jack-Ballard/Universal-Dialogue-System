@@ -1,6 +1,7 @@
 ﻿using Honours_Stage_Project.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Newtonsoft.Json;
 
 namespace Honours_Stage_Project.Node
 {
@@ -17,10 +19,12 @@ namespace Honours_Stage_Project.Node
         protected TextBoxView _textBoxView;
         protected MainWindow _window;
         public ICommand AddOutwardConnectionCommand { get; }
+        public ObservableCollection<ComponentConnection> ConnectionComponents => _textBoxModel.ConnectionComponents;
 
-        public TextBoxViewModel(MainWindow window)
+
+        public TextBoxViewModel(MainWindow window, int ID)
         {
-            _textBoxModel = new TextBoxModel();
+            _textBoxModel = new TextBoxModel(ID);
             _textBoxView = new TextBoxView(this);
             _window = window;
 
@@ -37,6 +41,15 @@ namespace Honours_Stage_Project.Node
             // Add the new control to the Canvas
             _window.MyCanvas.Children.Add(_textBoxView);
         }
+
+        public void Update()
+        {
+            _textBoxModel.TextContent = _textBoxView.InputTextBox.Text;
+        }
+        public TextBoxModel GetTextBoxModel()
+        {
+            return _textBoxModel;
+        }
         public TextBoxView GetTextBoxView()
         {
             return _textBoxView;
@@ -45,13 +58,13 @@ namespace Honours_Stage_Project.Node
         {
             NodeConnections.AddOutgoingConnection(this, connection);
         }
-        public void AddIncommingConnections()
+        public void AddIncomingConnections()
         {
-            NodeConnections.AddIncommingConnection(this);
+            NodeConnections.AddIncomingConnection(this);
         }
         public void AddConectionComponent()
         {
-            _textBoxView.AddConnectionComponent(_textBoxModel.AddConnectionComponent());
+            _textBoxModel.AddConnectionComponent();
         }
     }
 }

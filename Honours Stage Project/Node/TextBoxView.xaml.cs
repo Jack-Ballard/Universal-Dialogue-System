@@ -37,8 +37,6 @@ namespace Honours_Stage_Project.Node
         private Size _initialSize;
         private Point _initialPosition;
 
-        public ObservableCollection<ComponentConnection> TextBoxConnectionComponent { get; set; } = new ObservableCollection<ComponentConnection>();
-
         private Canvas _parentCanvas;
         private TextBoxViewModel _textBoxViewModel;
 
@@ -47,7 +45,7 @@ namespace Honours_Stage_Project.Node
             InitializeComponent();
             _textBoxViewModel = TextBoxViewModel;
             DataContext = _textBoxViewModel;
-            ConnectionComponent.ItemsSource = TextBoxConnectionComponent;
+            ConnectionComponent.ItemsSource = _textBoxViewModel.ConnectionComponents;
         }
 
         // Mouse down event: Start move or resize
@@ -178,15 +176,14 @@ namespace Honours_Stage_Project.Node
             Canvas.SetTop(this, _initialPosition.Y + deltaY);
         }
 
-        public void AddConnectionComponent(ComponentConnection componentConnection) 
-        { 
-            TextBoxConnectionComponent.Add(componentConnection); 
+        public string GetTextBoxContent()
+        {
+            return InputTextBox.Text;
         }
-
 
         // Button click handlers
         private void AddConnection_Click(object sender, RoutedEventArgs e) { _textBoxViewModel.AddConectionComponent(); }
         //private void OutgoingButton_Click(object sender, RoutedEventArgs e) { _textBoxViewModel.AddOutgoingConnections(sender); }
-        private void IncommingButton_Click(object sender, RoutedEventArgs e) { _textBoxViewModel.AddIncommingConnections(); }
+        private void IncomingButton_Click(object sender, RoutedEventArgs e) { _textBoxViewModel.AddIncomingConnections(); }
     }
 }
