@@ -45,7 +45,7 @@ namespace Honours_Stage_Project.Node
             InitializeComponent();
             _textBoxViewModel = TextBoxViewModel;
             DataContext = _textBoxViewModel;
-            ConnectionComponent.ItemsSource = _textBoxViewModel.ConnectionComponents;
+            ConnectionComponent.ItemsSource = _textBoxViewModel.GetTextBoxModel().ConnectionComponents;
         }
 
         // Mouse down event: Start move or resize

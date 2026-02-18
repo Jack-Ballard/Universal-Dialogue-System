@@ -12,19 +12,22 @@ namespace Honours_Stage_Project.Node
     {
         public string TextContent;
         public int ID;
-        //private List<ComponentConnection> _connectionComponents = new List<ComponentConnection>();
+        public ObservableCollection<ComponentConnection> ConnectionComponents { get; } = new ObservableCollection<ComponentConnection>();
         public TextBoxModel(int id) 
         {
             ID = id;
         }
-
-        public ObservableCollection<ComponentConnection> ConnectionComponents { get; } = new ObservableCollection<ComponentConnection>();
 
         public ComponentConnection AddConnectionComponent()
         {
             ComponentConnection componentConnection = new ComponentConnection(ConnectionComponents.Count());
             ConnectionComponents.Add(componentConnection);
             return componentConnection;
+        }
+
+        public ComponentConnection GetComponentConnection(int id)
+        {
+            return ConnectionComponents.FirstOrDefault(c => c.ID == id);
         }
     }
 }

@@ -15,7 +15,7 @@
             <Button Content="Attributes" HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding AddAttributeCommand}"/>
             
             <Button Content="Conditions" HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding AddConditionCommand}"/>
-            <Button Content="Outgoing" HorizontalAlignment="Right" Command="{Binding DataContext.AddOutwardConnectionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
+            <Button x:Name="OutgoingButton" Content="Outgoing" HorizontalAlignment="Right" Command="{Binding DataContext.AddOutwardConnectionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
         </StackPanel>
         </DataTemplate>
 </ResourceDictionary>

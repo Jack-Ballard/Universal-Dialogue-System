@@ -5,22 +5,22 @@ namespace Honours_Stage_Project
 {
     public static class NodeConnections
     {
-        private static List<(TextBoxViewModel, ComponentConnection, TextBoxViewModel)> connections = new List<(TextBoxViewModel, ComponentConnection, TextBoxViewModel)>();
-        private static (TextBoxViewModel, ComponentConnection) outgoingConnection;
-        private static TextBoxViewModel incomingConnection; 
+        private static List<(int, int, int)> connections = new List<(int, int, int)>();
+        private static (int, int) outgoingConnection = (-1,-1);
+        private static int incomingConnection = -1; 
 
-        public static void AddOutgoingConnection(TextBoxViewModel textBoxViewModel, ComponentConnection componentConnection)
+        public static void AddOutgoingConnection(int textBoxViewModel, int componentConnection)
         {
             outgoingConnection = (textBoxViewModel, componentConnection);
-            if(incomingConnection != null)
+            if(incomingConnection != -1)
             {
                 CommitConnection();
             }
         }
-        public static void AddIncomingConnection(TextBoxViewModel textBoxViewModel)
+        public static void AddIncomingConnection(int textBoxViewModel)
         {
             incomingConnection = textBoxViewModel;
-            if (outgoingConnection.Item1 != null)
+            if (outgoingConnection != (-1, -1))
             {
                 CommitConnection();
             }
@@ -28,26 +28,13 @@ namespace Honours_Stage_Project
         private static void CommitConnection()
         {
             connections.Add((outgoingConnection.Item1, outgoingConnection.Item2, incomingConnection));
-            outgoingConnection = (null, null);
-            incomingConnection = null;
+            outgoingConnection = (-1, -1);
+            incomingConnection = -1;
         }
 
-        public static List<(TextBoxViewModel, ComponentConnection, TextBoxViewModel)> GetConnections()
+        public static List<(int, int, int)> GetConnections()
         {
             return connections;
-        }
-
-        public static List<(int, int, int)> GetConnectionIDs()
-        {
-            List<(int, int, int)> connectionIDs = new List<(int, int, int)>();
-            foreach (var connection in connections)
-            {
-                int fromNodeID = connection.Item1.GetTextBoxModel().ID;
-                int componentConnectionID = connection.Item2.ID;
-                int toNodeID = connection.Item3.GetTextBoxModel().ID;
-                connectionIDs.Add((fromNodeID, componentConnectionID, toNodeID));
-            }
-            return connectionIDs;
         }
     }
 }

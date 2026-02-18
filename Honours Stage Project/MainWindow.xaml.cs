@@ -45,7 +45,7 @@ namespace Honours_Stage_Project
             {
                 textBoxData.Add(textBoxViewModel.GetTextBoxModel());
             }
-            List<(int, int, int)> connectionIDs = NodeConnections.GetConnectionIDs();
+            List<(int, int, int)> connectionIDs = NodeConnections.GetConnections();
             (List<TextBoxModel>, List<(int, int, int)>) dataPackage = (textBoxData, connectionIDs);
             string jsonData = Newtonsoft.Json.JsonConvert.SerializeObject(dataPackage, Newtonsoft.Json.Formatting.Indented);
             System.IO.File.WriteAllText("exported_data.json", jsonData);
@@ -63,15 +63,20 @@ namespace Honours_Stage_Project
 
             foreach (var connection in NodeConnections.GetConnections())
             {
-                var node1 = connection.Item1.GetTextBoxView();
-                int outID = connection.Item2.ID;
-                var node2 = connection.Item3.GetTextBoxView();
+                var node1 = _textBoxViewModels[connection.Item1];
+                //var outID = node1.GetTextBoxModel().GetComponentConnection(connection.Item2);
+                var node2 = _textBoxViewModels[connection.Item3];
 
                 // Get positions
-                double x1 = Canvas.GetLeft(node1) + node1.ActualWidth;
-                double y1 = Canvas.GetTop(node1) + node1.ActualHeight / 2 + 100 * outID;
-                double x2 = Canvas.GetLeft(node2);
-                double y2 = Canvas.GetTop(node2) + node2.ActualHeight / 2;
+                Point position1 = node1.GetTextboxPosition();
+                Point position2 = node2.GetTextboxPosition();
+                //double x1 = Canvas.GetLeft(node1) + node1.ActualWidth;
+                //double y1 = Canvas.GetTop(node1) + node1.ActualHeight / 2 + 100 * outID;
+                
+                double x1 = position1.X + node1.GetConnectionComponentButtonPosition(connection.Item2).X + node1.GetTextBoxView().ActualWidth / 2;
+                double y1 = position1.Y + node1.GetConnectionComponentButtonPosition(connection.Item2).Y; // + node2.ActualHeight / 2;
+                double x2 = position2.X;
+                double y2 = position2.Y;
 
                 Line newLine = new Line
                 {
