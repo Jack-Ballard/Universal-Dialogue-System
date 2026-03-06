@@ -52,5 +52,19 @@ namespace Honours_Stage_Project.Node
             //var value = firstAttribute["YourKey"];
         }
 
+        public Object Export()
+        {
+            List<Object> exportedAttributes = new List<Object>();
+            foreach (AttributeItem attribute in Attributes)
+            {
+                exportedAttributes.Add(attribute.Export());
+            }
+            return new
+            {
+                ID = ID,
+                Attributes = exportedAttributes,
+                Conditions = _conditions
+            };
+        }
     }
 }

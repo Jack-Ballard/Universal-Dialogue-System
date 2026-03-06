@@ -1,4 +1,5 @@
 ﻿using Honours_Stage_Project.Node;
+using System;
 using System.Collections.Generic;
 
 namespace Honours_Stage_Project
@@ -35,6 +36,21 @@ namespace Honours_Stage_Project
         public static List<(int, int, int)> GetConnections()
         {
             return connections;
+        }
+        public static List<Object> GetConnectionsObject()
+        {
+            List<Object> connectionsPackage = new List<Object>();
+            foreach ((int, int, int) connection in connections)
+            {
+                object connectionObject = new
+                {
+                    FromTextBoxID = connection.Item1,
+                    FromComponentID = connection.Item2,
+                    ToTextBoxID = connection.Item3
+                };
+                connectionsPackage.Add(connectionObject);
+            }
+            return connectionsPackage;
         }
     }
 }

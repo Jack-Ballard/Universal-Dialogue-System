@@ -40,13 +40,17 @@ namespace Honours_Stage_Project
         }
         private void Export_Click(object sender, RoutedEventArgs e)
         {
-            List<TextBoxModel> textBoxData = new List<TextBoxModel>();
+            List<Object> textBoxData = new List<Object>();
             foreach (TextBoxViewModel textBoxViewModel in _textBoxViewModels)
             {
-                textBoxData.Add(textBoxViewModel.GetTextBoxModel());
+                textBoxData.Add(textBoxViewModel.GetTextBoxModel().Export());
             }
-            List<(int, int, int)> connectionIDs = NodeConnections.GetConnections();
-            (List<TextBoxModel>, List<(int, int, int)>) dataPackage = (textBoxData, connectionIDs);
+            List<Object> connectionIDs = NodeConnections.GetConnectionsObject();
+            Object dataPackage = new
+            {
+                TextBoxes = textBoxData,
+                Connections = connectionIDs
+            };
             string jsonData = Newtonsoft.Json.JsonConvert.SerializeObject(dataPackage, Newtonsoft.Json.Formatting.Indented);
             System.IO.File.WriteAllText("exported_data.json", jsonData);
 

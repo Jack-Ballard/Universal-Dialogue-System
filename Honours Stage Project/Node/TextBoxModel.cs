@@ -29,5 +29,20 @@ namespace Honours_Stage_Project.Node
         {
             return ConnectionComponents.FirstOrDefault(c => c.ID == id);
         }
+        
+        public Object Export()
+        {
+            List<Object> exportedConnections = new List<Object>();
+            foreach (ComponentConnection connection in ConnectionComponents)
+            {
+                exportedConnections.Add(connection.Export());
+            }
+            return new
+            {
+                ID = ID,
+                TextContent = TextContent,
+                Connections = exportedConnections
+            };
+        }
     }
 }
