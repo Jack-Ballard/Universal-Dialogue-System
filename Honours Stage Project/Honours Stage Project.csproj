@@ -69,30 +69,41 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AttributeItem.cs" />
     <Compile Include="Helpers\FindVisualChildren.cs" />
     <Compile Include="Helpers\RelayCommand.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Node\DictionaryComponentConnection.xaml">
+    <!-- Models -->
+    <Compile Include="Models\AttributeModel.cs" />
+    <Compile Include="Models\ConnectionModel.cs" />
+    <Compile Include="Models\NodeModel.cs" />
+    <!-- ViewModels -->
+    <Compile Include="ViewModels\ConnectionViewModel.cs" />
+    <Compile Include="ViewModels\NodeViewModel.cs" />
+    <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <!-- Services -->
+    <Compile Include="Services\IFileService.cs" />
+    <Compile Include="Services\FileService.cs" />
+    <Compile Include="Services\INodeConnectionService.cs" />
+    <Compile Include="Services\NodeConnectionService.cs" />
+    <Compile Include="Services\IExportService.cs" />
+    <Compile Include="Services\JsonExportService.cs" />
+    <!-- Views -->
+    <Page Include="Node\ComponentConnectionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Node\TextBoxView.xaml">
+    <Page Include="Node\NodeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Compile Include="Node\NodeView.xaml.cs">
+      <DependentUpon>NodeView.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NodeConnections.cs" />
-    <Compile Include="Node\ComponentConnection.cs" />
-    <Compile Include="Node\TextBoxModel.cs" />
-    <Compile Include="Node\TextBoxView.xaml.cs">
-      <DependentUpon>TextBoxView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Node\TextBoxViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
