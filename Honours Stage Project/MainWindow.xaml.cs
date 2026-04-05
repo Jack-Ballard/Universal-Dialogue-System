@@ -17,6 +17,7 @@ namespace Honours_Stage_Project
             InitializeComponent();
             DataContext = viewModel;
             viewModel.RequestLinesRefresh += RefreshLines;
+            Closed += (_, __) => viewModel.RequestLinesRefresh -= RefreshLines;
         }
 
         // ── Line drawing ─────────────────────────────────────────────────────

@@ -18,7 +18,7 @@ namespace Honours_Stage_Project.Services
 
         public void Export(IEnumerable<NodeViewModel> nodes, IEnumerable<(int, int, int)> connections)
         {
-            var textBoxData = nodes.Select(n => n.Model.Export()).Cast<object>().ToList();
+            var textBoxData = nodes.Select(n => n.Model.Export()).ToList();
 
             var connectionObjects = connections.Select(c => (object)new
             {

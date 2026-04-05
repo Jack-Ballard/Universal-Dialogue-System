@@ -40,6 +40,8 @@ namespace Honours_Stage_Project.Models
 
         public NodeModel(int id)
         {
+            // Assign the backing field directly during construction so that
+            // observers (which don't exist yet) are not notified unnecessarily.
             _id = id;
         }
 
