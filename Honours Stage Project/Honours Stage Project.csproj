@@ -77,8 +77,11 @@
     </Compile>
     <!-- Models -->
     <Compile Include="Models\AttributeModel.cs" />
+    <Compile Include="Models\ConditionModel.cs" />
     <Compile Include="Models\ConnectionModel.cs" />
     <Compile Include="Models\NodeModel.cs" />
+    <Compile Include="Services\IImportService.cs" />
+    <Compile Include="Services\JsonImportService.cs" />
     <!-- ViewModels -->
     <Compile Include="ViewModels\ConnectionViewModel.cs" />
     <Compile Include="ViewModels\NodeViewModel.cs" />

@@ -15,6 +15,7 @@ namespace Honours_Stage_Project.ViewModels
         public int ID => Model.ID;
 
         public ObservableCollection<AttributeModel> Attributes => Model.Attributes;
+        public ObservableCollection<ConditionModel> Conditions => Model.Conditions;
 
         public ICommand AddAttributeCommand { get; }
         public ICommand AddConditionCommand { get; }
@@ -29,7 +30,7 @@ namespace Honours_Stage_Project.ViewModels
                 Model.Attributes.Add(new AttributeModel { Id = Model.Attributes.Count }));
 
             AddConditionCommand = new RelayCommand(_ =>
-                Model.Conditions.Add(string.Empty));
+                 Model.Conditions.Add(new ConditionModel { Id = Model.Conditions.Count }));
 
             AddOutgoingConnectionCommand = new RelayCommand(_ =>
                 _connectionService.AddOutgoing(nodeId, Model.ID));

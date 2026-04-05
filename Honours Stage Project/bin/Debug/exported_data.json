@@ -2,143 +2,93 @@
   "TextBoxes": [
     {
       "ID": 0,
-      "TextContent": "you have $health health,\r\nthat means you are $GetFormattedHealth",
+      "TextContent": "This is the first node, I'm testing a couple of things here",
       "Connections": [
-        {
-          "ID": 0,
-          "Attributes": [
-            {
-              "ID": 0,
-              "Value": "Take Damage",
-              "Name": "ChoiceName"
-            }
-          ],
-          "Conditions": []
-        },
         {
           "ID": 1,
           "Attributes": [
             {
               "ID": 0,
-              "Value": "Evaluate Health",
-              "Name": "ChoiceName"
+              "Value": "At1",
+              "Name": "AtName"
+            },
+            {
+              "ID": 1,
+              "Value": "At2",
+              "Name": "AtName"
             }
           ],
-          "Conditions": []
+          "exportedConditions": [
+            {
+              "ID": 0,
+              "Value": "If this"
+            },
+            {
+              "ID": 1,
+              "Value": "Then thus"
+            }
+          ]
         },
         {
           "ID": 2,
           "Attributes": [
             {
               "ID": 0,
-              "Value": "Restore Health",
-              "Name": "ChoiceName"
+              "Value": "Attribute",
+              "Name": "Another"
             }
           ],
-          "Conditions": []
+          "exportedConditions": []
         }
-      ]
+      ],
+      "position": "16,83"
     },
     {
       "ID": 1,
-      "TextContent": "You've taken {\r\nlocal randomNumber = math.random(1, 30)\r\nTakeDamage(randomNumber)\r\nreturn randomNumber \r\n} damage!",
-      "Connections": [
-        {
-          "ID": 0,
-          "Attributes": [
-            {
-              "ID": 0,
-              "Value": "return to start",
-              "Name": "ChoiceName"
-            }
-          ],
-          "Conditions": []
-        }
-      ]
+      "TextContent": "This will be a straight line",
+      "Connections": [],
+      "position": "410,76"
     },
     {
       "ID": 2,
-      "TextContent": "{if health > 70 then\r\n    return (\"Youre very healthy\")\r\nelseif health > 40 then\r\n    return (\"Youre in rough shape\")\r\nelse\r\n    return (\"Youre badly injured\")\r\nend}",
+      "TextContent": "To this node",
+      "Connections": [],
+      "position": "800,309"
+    },
+    {
+      "ID": 3,
+      "TextContent": "This just has an attribute associated",
       "Connections": [
-        {
-          "ID": 0,
-          "Attributes": [
-            {
-              "ID": 0,
-              "Value": "return to start",
-              "Name": "ChoiceName"
-            }
-          ],
-          "Conditions": []
-        },
         {
           "ID": 1,
           "Attributes": [
             {
               "ID": 0,
-              "Value": "Gamble with health",
-              "Name": "ChoiceName"
-            }
-          ],
-          "Conditions": []
-        }
-      ]
-    },
-    {
-      "ID": 3,
-      "TextContent": "You've healed {\r\nlocal randomNumber = math.random(1, 30)\r\nRestoreHealth(randomNumber)\r\nreturn randomNumber\r\n} health!",
-      "Connections": [
-        {
-          "ID": 0,
-          "Attributes": [
+              "Value": "has an attribute",
+              "Name": "This"
+            },
             {
-              "ID": 0,
-              "Value": "return to start",
-              "Name": "ChoiceName"
+              "ID": 1,
+              "Value": "still only one connection",
+              "Name": "But"
             }
           ],
-          "Conditions": []
+          "exportedConditions": []
         }
-      ]
-    },
-    {
-      "ID": 4,
-      "TextContent": "You've {\r\nlocal randomNumber = math.random(0, 1)\r\nif randomNumber == 0 then\r\n    randomNumber = math.random(1, 50)\r\n    RestoreHealth(randomNumber)\r\n    return (\"healed \" .. randomNumber .. \" health!\")\r\nelse\r\n    randomNumber = math.random(1, 50)\r\n    TakeDamage(randomNumber)\r\n    return (\"taken \" .. randomNumber .. \" damage!\")\r\nend\r\n}",
-      "Connections": [
-        {
-          "ID": 0,
-          "Attributes": [
-            {
-              "ID": 0,
-              "Value": "return to start",
-              "Name": "ChoiceName"
-            }
-          ],
-          "Conditions": []
-        }
-      ]
+      ],
+      "position": "419,414"
     }
   ],
   "Connections": [
     {
       "FromTextBoxID": 0,
-      "FromComponentID": 0,
+      "FromComponentID": 1,
       "ToTextBoxID": 1
     },
     {
       "FromTextBoxID": 1,
       "FromComponentID": 0,
-      "ToTextBoxID": 0
-    },
-    {
-      "FromTextBoxID": 0,
-      "FromComponentID": 1,
       "ToTextBoxID": 2
-    },
-    {
-      "FromTextBoxID": 2,
-      "FromComponentID": 0,
-      "ToTextBoxID": 0
     },
     {
       "FromTextBoxID": 0,
@@ -147,18 +97,8 @@
     },
     {
       "FromTextBoxID": 3,
-      "FromComponentID": 0,
-      "ToTextBoxID": 0
-    },
-    {
-      "FromTextBoxID": 2,
       "FromComponentID": 1,
-      "ToTextBoxID": 4
-    },
-    {
-      "FromTextBoxID": 4,
-      "FromComponentID": 0,
-      "ToTextBoxID": 0
+      "ToTextBoxID": 2
     }
   ]
 }

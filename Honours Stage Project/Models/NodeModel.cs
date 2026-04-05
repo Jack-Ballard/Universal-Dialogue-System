@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows;
 
 namespace Honours_Stage_Project.Models
 {
@@ -60,7 +61,21 @@ namespace Honours_Stage_Project.Models
             var exportedConnections = new List<object>();
             foreach (var connection in ConnectionComponents)
                 exportedConnections.Add(connection.Export());
-            return new { ID, TextContent, Connections = exportedConnections };
+            Point position = new Point(X, Y);
+            return new { ID, TextContent, Connections = exportedConnections, position };
+        }
+
+        public void Import(dynamic data)
+        {
+            TextContent = data.TextContent;
+            X = (double)data.position.X;
+            Y = (double)data.position.Y;
+            ConnectionComponents.Clear();
+            foreach (var connData in data.Connections)
+            {
+                var component = AddConnectionComponent();
+                component.Import(connData);
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

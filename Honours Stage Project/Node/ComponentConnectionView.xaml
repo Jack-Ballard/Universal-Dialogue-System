@@ -19,6 +19,32 @@
 
                 <Button Content="Attributes" HorizontalAlignment="Center" VerticalAlignment="Center"
                         Command="{Binding AddAttributeCommand}"/>
+
+                <ItemsControl ItemsSource="{Binding Conditions}" AlternationCount="1000">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <TextBlock FontWeight="Bold" HorizontalAlignment="Center">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Text" Value="Else If"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ContentPresenter}, Path=(ItemsControl.AlternationIndex)}"
+                                             Value="0">
+                                                    <Setter Property="Text" Value="If"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+
+                                <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Width="180" Margin="2" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
                 <Button Content="Conditions" HorizontalAlignment="Center" VerticalAlignment="Center"
                         Command="{Binding AddConditionCommand}"/>
                 <Button x:Name="OutgoingButton" Content="Outgoing" HorizontalAlignment="Right"

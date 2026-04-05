@@ -73,13 +73,19 @@ namespace Honours_Stage_Project.ViewModels
             AddConnectionComponentCommand = new RelayCommand(_ => AddConnectionComponent());
             AddIncomingConnectionCommand = new RelayCommand(_ => _connectionService.AddIncoming(Model.ID));
             AddDefaultConnectionCommand = new RelayCommand(_ => _connectionService.AddOutgoing(Model.ID, 0));
+
+            foreach (var component in Model.ConnectionComponents)
+                ConnectionComponents.Add(new ConnectionViewModel(component, Model.ID, _connectionService));
+
+            if (ConnectionComponents.Count > 0)
+                IsDefaultOutgoingVisible = false;
         }
 
         private void AddConnectionComponent()
         {
             var componentModel = Model.AddConnectionComponent();
             ConnectionComponents.Add(new ConnectionViewModel(componentModel, Model.ID, _connectionService));
-            
+
             RemoveDefaultConnection();
         }
 
@@ -88,16 +94,6 @@ namespace Honours_Stage_Project.ViewModels
             _connectionService.RemoveOutgoing(Model.ID, 0);
             IsDefaultOutgoingVisible = false;
         }
-
-        //private void RemoveConnectionComponent(ConnectionViewModel component)
-        //{
-        //    Model.RemoveConnectionComponent(component.ID);
-        //    ConnectionComponents.Remove(component);
-
-        //    // Show the default outgoing button again if no components remain
-        //    if (ConnectionComponents.Count == 0)
-        //        IsDefaultOutgoingVisible = true;
-        //}
 
         public event PropertyChangedEventHandler PropertyChanged;
 

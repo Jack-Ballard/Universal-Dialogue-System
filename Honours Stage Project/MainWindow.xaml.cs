@@ -57,6 +57,12 @@ namespace Honours_Stage_Project
                     outgoingButton = FindVisualChild<Button>(sourceContainer, btn =>
                         btn.DataContext == componentViewModel && (btn.Content as string) == "Outgoing");
                 }
+                else
+                {
+                                       // If no specific component button is found, try to find the default outgoing button
+                    outgoingButton = FindVisualChild<Button>(sourceContainer, btn =>
+                        btn.DataContext == sourceNode && (btn.Content as string) == "Outgoing");
+                }
 
                 if (outgoingButton != null)
                 {
@@ -77,7 +83,7 @@ namespace Honours_Stage_Project
 
                 var backLine = new Line
                 {
-                    Stroke = Brushes.Blue,
+                    Stroke = Brushes.Orange,
                     StrokeThickness = 5,
                     X1 = x1,
                     Y1 = y1,
@@ -87,8 +93,8 @@ namespace Honours_Stage_Project
 
                 var frontLine = new Line
                 {
-                    Stroke = Brushes.LightBlue,
-                    StrokeThickness = 3,
+                    Stroke = Brushes.LightYellow,
+                    StrokeThickness = 2,
                     X1 = x1,
                     Y1 = y1,
                     X2 = x2,

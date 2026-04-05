@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Input;
 using Honours_Stage_Project.Helpers;
 using Honours_Stage_Project.Models;
@@ -18,6 +19,7 @@ namespace Honours_Stage_Project.ViewModels
 
         private readonly INodeConnectionService _connectionService;
         private readonly IExportService _exportService;
+        private readonly IImportService _importService;
 
         public ObservableCollection<NodeViewModel> Nodes { get; } = new ObservableCollection<NodeViewModel>();
 
@@ -25,19 +27,22 @@ namespace Honours_Stage_Project.ViewModels
 
         public ICommand AddNodeCommand { get; }
         public ICommand ExportCommand { get; }
+        public ICommand ImportCommand { get; }
 
         /// <summary>Raised whenever connection lines should be redrawn.</summary>
         public event Action RequestLinesRefresh;
 
-        public MainWindowViewModel(INodeConnectionService connectionService, IExportService exportService)
+        public MainWindowViewModel(INodeConnectionService connectionService, IExportService exportService, IImportService importService)
         {
             _connectionService = connectionService;
             _exportService = exportService;
+            _importService = importService;
 
             _connectionService.ConnectionsChanged += () => RequestLinesRefresh?.Invoke();
 
             AddNodeCommand = new RelayCommand(_ => AddNode());
             ExportCommand = new RelayCommand(_ => _exportService.Export(Nodes, _connectionService.Connections));
+            ImportCommand = new RelayCommand(_ => Import());
         }
 
         private void AddNode()
@@ -53,6 +58,15 @@ namespace Honours_Stage_Project.ViewModels
             };
 
             Nodes.Add(viewModel);
+        }
+
+        private void Import()
+        {
+            var (importedNodes, importedConnections) = _importService.Import(_connectionService, "exported_data");
+            Nodes.Clear();
+            foreach (var node in importedNodes)
+                Nodes.Add(node);
+            _connectionService.SetConnections(importedConnections);
         }
     }
 }

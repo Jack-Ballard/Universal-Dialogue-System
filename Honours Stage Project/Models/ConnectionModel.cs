@@ -11,8 +11,7 @@ namespace Honours_Stage_Project.Models
         public List<Point> ButtonPositions { get; set; }
 
         public ObservableCollection<AttributeModel> Attributes { get; } = new ObservableCollection<AttributeModel>();
-
-        public List<string> Conditions { get; } = new List<string>();
+        public ObservableCollection<ConditionModel> Conditions { get; } = new ObservableCollection<ConditionModel>();
 
         public ConnectionModel(int id)
         {
@@ -25,7 +24,33 @@ namespace Honours_Stage_Project.Models
             var exportedAttributes = new List<object>();
             foreach (var attribute in Attributes)
                 exportedAttributes.Add(attribute.Export());
-            return new { ID, Attributes = exportedAttributes, Conditions };
+
+            var exportedConditions = new List<object>();
+            foreach (var condition in Conditions)
+                exportedConditions.Add(condition.Export());
+
+            return new { ID, Attributes = exportedAttributes, exportedConditions };
+        }
+
+        public void Import(object data)
+        {
+            var connectionData = (Newtonsoft.Json.Linq.JObject)data;
+            ID = (int)connectionData["ID"];
+            Attributes.Clear();
+            foreach (var attribute in connectionData["Attributes"])
+            {
+                var attributeModel = new AttributeModel(); // ID will be set in Import
+                attributeModel.Import(attribute);
+                Attributes.Add(attributeModel);
+            }
+            Conditions.Clear();
+            foreach (var condition in connectionData["Conditions"])
+            {
+                var conditionModel = new ConditionModel(); // ID will be set in Import
+                conditionModel.Import(condition);
+                Conditions.Add(conditionModel);
+            }
+
         }
     }
 }

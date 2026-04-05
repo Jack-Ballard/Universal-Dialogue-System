@@ -1,14 +1,13 @@
-using System.Collections.Generic;
-using System.Linq;
 using Honours_Stage_Project.ViewModels;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Honours_Stage_Project.Services
 {
     public class JsonExportService : IExportService
     {
-        private const string OutputPath = "exported_data.json";
-
         private readonly IFileService _fileService;
 
         public JsonExportService(IFileService fileService)
@@ -16,7 +15,7 @@ namespace Honours_Stage_Project.Services
             _fileService = fileService;
         }
 
-        public void Export(IEnumerable<NodeViewModel> nodes, IEnumerable<(int, int, int)> connections)
+        public void Export(IEnumerable<NodeViewModel> nodes, IEnumerable<(int, int, int)> connections, string fileName = "exported_data")
         {
             var textBoxData = nodes.Select(n => n.Model.Export()).ToList();
 
@@ -29,7 +28,7 @@ namespace Honours_Stage_Project.Services
 
             var dataPackage = new { TextBoxes = textBoxData, Connections = connectionObjects };
             string json = JsonConvert.SerializeObject(dataPackage, Formatting.Indented);
-            _fileService.WriteAllText(OutputPath, json);
+            _fileService.WriteAllText(fileName+".json", json);
         }
     }
 }

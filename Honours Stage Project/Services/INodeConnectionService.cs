@@ -14,5 +14,7 @@ namespace Honours_Stage_Project.Services
         void AddIncoming(int nodeId);
 
         void RemoveOutgoing(int nodeId, int componentId);
+
+        void SetConnections(IEnumerable<(int, int, int)> connections);
     }
 }

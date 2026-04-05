@@ -10,8 +10,9 @@ namespace Honours_Stage_Project
         {
             var fileService       = new FileService();
             var exportService     = new JsonExportService(fileService);
+            var importService     = new JsonImportService(fileService);
             var connectionService = new NodeConnectionService();
-            var viewModel         = new MainWindowViewModel(connectionService, exportService);
+            var viewModel         = new MainWindowViewModel(connectionService, exportService, importService);
 
             new MainWindow(viewModel).Show();
         }

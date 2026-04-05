@@ -7,6 +7,7 @@
 
     <!-- Root grid layers: lines (bottom) → nodes → toolbar (top) -->
     <Grid>
+
         <!-- Background + lines drawn imperatively by code-behind -->
         <Canvas Name="LinesCanvas" Background="LightGray" IsHitTestVisible="False"/>
 
@@ -31,12 +32,16 @@
         </ItemsControl>
 
         <!-- Toolbar -->
+        <Rectangle Fill="DimGray" Height="32" VerticalAlignment="Top"/>
+
         <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top"
                     Orientation="Horizontal" Margin="5">
             <Button Content="Add Node" Command="{Binding AddNodeCommand}"
                     Width="75" Margin="0,0,5,0"/>
             <Button Content="Export"   Command="{Binding ExportCommand}"
-                    Width="60"/>
+                    Width="60" Margin="0,0,5,0"/>
+            <Button Content="Import"   Command="{Binding ImportCommand}"
+                    Width="60" Margin="0,0,5,0"/>
         </StackPanel>
     </Grid>
 </Window>

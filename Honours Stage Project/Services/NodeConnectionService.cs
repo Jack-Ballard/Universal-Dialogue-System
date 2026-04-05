@@ -15,6 +15,12 @@ namespace Honours_Stage_Project.Services
 
         public void AddOutgoing(int nodeId, int componentId)
         {
+            if(_connections.Exists(c => c.Item1 == nodeId && c.Item2 == componentId))
+            {
+                RemoveOutgoing(nodeId, componentId);
+                return;
+            }
+
             _pendingOutgoing = (nodeId, componentId);
             if (_pendingIncoming != -1)
                 CommitConnection();
@@ -38,6 +44,13 @@ namespace Honours_Stage_Project.Services
         public void RemoveOutgoing(int nodeId, int componentId)
         {
             _connections.RemoveAll(c => c.Item1 == nodeId && c.Item2 == componentId);
+            ConnectionsChanged?.Invoke();
+        }
+
+        public void SetConnections(IEnumerable<(int, int, int)> connections)
+        {
+            _connections.Clear();
+            _connections.AddRange(connections);
             ConnectionsChanged?.Invoke();
         }
 
