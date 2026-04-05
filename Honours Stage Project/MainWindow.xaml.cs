@@ -1,102 +1,71 @@
-﻿using System.Windows;
-using System.Windows.Controls;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using System.Windows.Media;
-using System.Collections.Generic;
-using System;
-using Honours_Stage_Project;
 using Honours_Stage_Project.Node;
+using Honours_Stage_Project.ViewModels;
 
 namespace Honours_Stage_Project
 {
     public partial class MainWindow : Window
     {
-        List<Line> myLine = new List<Line>();
-        private List<TextBoxViewModel> _textBoxViewModels = new List<TextBoxViewModel>();
+        private readonly List<Line> _lines = new List<Line>();
 
-        public MainWindow()
+        public MainWindow(MainWindowViewModel viewModel)
         {
             InitializeComponent();
-            CompositionTarget.Rendering += OnRendering;
+            DataContext = viewModel;
+            viewModel.RequestLinesRefresh += RefreshLines;
         }
 
-        private void OnRendering(object sender, EventArgs e)
+        // ── Line drawing ─────────────────────────────────────────────────────
+        // Line coordinates are calculated from NodeViewModel.X/Y and fixed layout
+        // constants defined in MainWindowViewModel.  This is intentionally kept in
+        // the code-behind because it is purely presentational (creating WPF shapes).
+
+        private void RefreshLines()
         {
-            UpdateConnections();
-            foreach(TextBoxViewModel textBoxViewModel in _textBoxViewModels)
+            var vm = (MainWindowViewModel)DataContext;
+
+            foreach (var line in _lines)
+                LinesCanvas.Children.Remove(line);
+            _lines.Clear();
+
+            foreach (var (fromNodeId, fromComponentId, toNodeId) in vm.Connections)
             {
-                textBoxViewModel.Update();
-            }
-        }
+                var sourceNode = vm.Nodes.FirstOrDefault(n => n.Model.ID == fromNodeId);
+                var targetNode = vm.Nodes.FirstOrDefault(n => n.Model.ID == toNodeId);
+                if (sourceNode == null || targetNode == null) continue;
 
-        // This method creates a new TextBoxNode and adds it to the Canvas at runtime
-        
-        private void AddNode_Click(object sender, RoutedEventArgs e)
-        {
-            TextBoxViewModel dynamicControl = new TextBoxViewModel(this, _textBoxViewModels.Count);
-            _textBoxViewModels.Add(dynamicControl);
-            //MessageBox.Show("Button was clicked!");
-        }
-        private void Export_Click(object sender, RoutedEventArgs e)
-        {
-            List<Object> textBoxData = new List<Object>();
-            foreach (TextBoxViewModel textBoxViewModel in _textBoxViewModels)
-            {
-                textBoxData.Add(textBoxViewModel.GetTextBoxModel().Export());
-            }
-            List<Object> connectionIDs = NodeConnections.GetConnectionsObject();
-            Object dataPackage = new
-            {
-                TextBoxes = textBoxData,
-                Connections = connectionIDs
-            };
-            string jsonData = Newtonsoft.Json.JsonConvert.SerializeObject(dataPackage, Newtonsoft.Json.Formatting.Indented);
-            System.IO.File.WriteAllText("exported_data.json", jsonData);
-
-        }
-
-        public void UpdateConnections()
-        {
-            // Remove all existing lines from the canvas
-            foreach (var line in myLine)
-            {
-                MyCanvas.Children.Remove(line);
-            }
-            myLine.Clear();
-
-            foreach (var connection in NodeConnections.GetConnections())
-            {
-                var node1 = _textBoxViewModels[connection.Item1];
-                //var outID = node1.GetTextBoxModel().GetComponentConnection(connection.Item2);
-                var node2 = _textBoxViewModels[connection.Item3];
-
-                // Get positions
-                Point position1 = node1.GetTextboxPosition();
-                Point position2 = node2.GetTextboxPosition();
-                //double x1 = Canvas.GetLeft(node1) + node1.ActualWidth;
-                //double y1 = Canvas.GetTop(node1) + node1.ActualHeight / 2 + 100 * outID;
-                
-                double x1 = position1.X + node1.GetConnectionComponentButtonPosition(connection.Item2).X + node1.GetTextBoxView().ActualWidth / 2;
-                double y1 = position1.Y + node1.GetConnectionComponentButtonPosition(connection.Item2).Y; // + node2.ActualHeight / 2;
-                double x2 = position2.X;
-                double y2 = position2.Y;
-
-                Line newLine = new Line
+                int componentIndex = -1;
+                for (int i = 0; i < sourceNode.ConnectionComponents.Count; i++)
                 {
-                    Stroke = Brushes.LightSteelBlue,
-                    X1 = x1,
-                    Y1 = y1,
-                    X2 = x2,
-                    Y2 = y2,
+                    if (sourceNode.ConnectionComponents[i].ID == fromComponentId)
+                    {
+                        componentIndex = i;
+                        break;
+                    }
+                }
+
+                double y1Offset = componentIndex >= 0
+                    ? componentIndex * MainWindowViewModel.ComponentSpacing
+                    : 0;
+
+                var newLine = new Line
+                {
+                    Stroke          = Brushes.LightSteelBlue,
                     StrokeThickness = 2,
-                    HorizontalAlignment = HorizontalAlignment.Left,
-                    VerticalAlignment = VerticalAlignment.Center
+                    X1 = sourceNode.X + MainWindowViewModel.NodeWidth,
+                    Y1 = sourceNode.Y + MainWindowViewModel.HeaderHeight + y1Offset,
+                    X2 = targetNode.X,
+                    Y2 = targetNode.Y + MainWindowViewModel.HeaderHeight / 2,
                 };
 
-                myLine.Add(newLine);
-                MyCanvas.Children.Add(newLine);
+                _lines.Add(newLine);
+                LinesCanvas.Children.Add(newLine);
             }
         }
     }
 }
+

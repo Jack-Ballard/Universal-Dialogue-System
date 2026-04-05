@@ -2,11 +2,41 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:Honours_Stage_Project"
+        xmlns:nodeViews="clr-namespace:Honours_Stage_Project.Node"
         Title="MainWindow" Height="450" Width="800">
-    <Canvas Name="MyCanvas" Background="LightGray">
-        <!-- We'll add complex UI elements here dynamically -->
-        <Button Content="Add Node" HorizontalAlignment="Left" VerticalAlignment="Top" Click="AddNode_Click" Canvas.Left="10" Canvas.Top="10"/>
-        <Button Content="Export" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Export_Click" Canvas.Left="70" Canvas.Top="10"/>
 
-    </Canvas>
+    <!-- Root grid layers: lines (bottom) → nodes → toolbar (top) -->
+    <Grid>
+        <!-- Background + lines drawn imperatively by code-behind -->
+        <Canvas Name="LinesCanvas" Background="LightGray" IsHitTestVisible="False"/>
+
+        <!-- Nodes positioned via Canvas.Left/Top bound to NodeViewModel.X/Y -->
+        <ItemsControl Name="NodesControl" ItemsSource="{Binding Nodes}" Background="Transparent">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas Background="Transparent"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemContainerStyle>
+                <Style TargetType="ContentPresenter">
+                    <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                    <Setter Property="Canvas.Top"  Value="{Binding Y}"/>
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <nodeViews:NodeView/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- Toolbar -->
+        <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top"
+                    Orientation="Horizontal" Margin="5">
+            <Button Content="Add Node" Command="{Binding AddNodeCommand}"
+                    Width="75" Margin="0,0,5,0"/>
+            <Button Content="Export"   Command="{Binding ExportCommand}"
+                    Width="60"/>
+        </StackPanel>
+    </Grid>
 </Window>

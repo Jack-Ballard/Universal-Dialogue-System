@@ -1,28 +1,17 @@
-﻿using Honours_Stage_Project.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Honours_Stage_Project.ViewModels;
 
 namespace Honours_Stage_Project.Node
 {
-    /// <summary>  
-    /// Interaction logic for TextBoxView.xaml  
-    /// </summary>  
-    public partial class TextBoxView : UserControl
+    /// <summary>
+    /// View for a single dialogue node. All interaction logic lives here; domain
+    /// state is read from / written to the NodeViewModel via DataContext.
+    /// </summary>
+    public partial class NodeView : UserControl
     {
-        // Enum for resizing direction (edges & corners)
         private enum ResizeDirection
         {
             None,
@@ -37,134 +26,140 @@ namespace Honours_Stage_Project.Node
         private Size _initialSize;
         private Point _initialPosition;
 
-        private Canvas _parentCanvas;
-        private TextBoxViewModel _textBoxViewModel;
+        private NodeViewModel ViewModel => DataContext as NodeViewModel;
 
-        public TextBoxView(TextBoxViewModel TextBoxViewModel)
+        public NodeView()
         {
             InitializeComponent();
-            _textBoxViewModel = TextBoxViewModel;
-            DataContext = _textBoxViewModel;
-            ConnectionComponent.ItemsSource = _textBoxViewModel.GetTextBoxModel().ConnectionComponents;
         }
 
-        // Mouse down event: Start move or resize
+        // ── Drag / resize ────────────────────────────────────────────────────
+
+        private Canvas FindParentCanvas()
+        {
+            DependencyObject parent = VisualTreeHelper.GetParent(this);
+            while (parent != null)
+            {
+                if (parent is Canvas canvas)
+                    return canvas;
+                parent = VisualTreeHelper.GetParent(parent);
+            }
+            return null;
+        }
+
         private void UserControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            _parentCanvas = this.Parent as Canvas;
-            if (_parentCanvas == null) return;
+            var parentCanvas = FindParentCanvas();
+            if (parentCanvas == null) return;
 
-            var mousePos = e.GetPosition(_parentCanvas);
+            var mousePos = e.GetPosition(parentCanvas);
             _mouseStartPoint = mousePos;
             _resizeDirection = GetResizeDirection(e.GetPosition(this));
 
             if (_resizeDirection != ResizeDirection.None)
             {
                 _initialSize = new Size(Width, Height);
-                _initialPosition = new Point(Canvas.GetLeft(this), Canvas.GetTop(this));
+                _initialPosition = new Point(ViewModel?.X ?? 0, ViewModel?.Y ?? 0);
                 _isResizing = true;
                 CaptureMouse();
             }
             else
             {
-                _initialPosition = new Point(Canvas.GetLeft(this), Canvas.GetTop(this));
+                _initialPosition = new Point(ViewModel?.X ?? 0, ViewModel?.Y ?? 0);
                 _isMoving = true;
                 CaptureMouse();
             }
         }
 
-        // Mouse move event: Handle resizing or moving
         private void UserControl_MouseMove(object sender, MouseEventArgs e)
         {
-            if (_parentCanvas == null) return;
+            var parentCanvas = FindParentCanvas();
+            if (parentCanvas == null) return;
 
-            var mousePos = e.GetPosition(_parentCanvas);
+            var mousePos = e.GetPosition(parentCanvas);
             if (_isResizing)
                 ResizeControl(mousePos);
             else if (_isMoving)
                 MoveControl(mousePos);
         }
 
-        // Mouse up event: End move or resize
         private void UserControl_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             _isResizing = _isMoving = false;
             ReleaseMouseCapture();
         }
 
-        // Determine resizing direction based on mouse position
         private ResizeDirection GetResizeDirection(Point mousePos)
         {
-            const double tolerance = 10; // Distance from edges to trigger resizing
-            if (mousePos.X <= tolerance && mousePos.Y <= tolerance) return ResizeDirection.TopLeft;
+            const double tolerance = 10;
+            if (mousePos.X <= tolerance && mousePos.Y <= tolerance)               return ResizeDirection.TopLeft;
             if (mousePos.X >= ActualWidth - tolerance && mousePos.Y <= tolerance) return ResizeDirection.TopRight;
             if (mousePos.X <= tolerance && mousePos.Y >= ActualHeight - tolerance) return ResizeDirection.BottomLeft;
             if (mousePos.X >= ActualWidth - tolerance && mousePos.Y >= ActualHeight - tolerance) return ResizeDirection.BottomRight;
-            if (mousePos.X <= tolerance) return ResizeDirection.Left;
+            if (mousePos.X <= tolerance)               return ResizeDirection.Left;
             if (mousePos.X >= ActualWidth - tolerance) return ResizeDirection.Right;
-            if (mousePos.Y <= tolerance) return ResizeDirection.Top;
+            if (mousePos.Y <= tolerance)               return ResizeDirection.Top;
             if (mousePos.Y >= ActualHeight - tolerance) return ResizeDirection.Bottom;
             return ResizeDirection.None;
         }
 
-        // Handle resizing based on the resize direction
         private void ResizeControl(Point mousePos)
         {
             double deltaX = mousePos.X - _mouseStartPoint.X;
             double deltaY = mousePos.Y - _mouseStartPoint.Y;
 
-            double newWidth = _initialSize.Width;
+            double newWidth  = _initialSize.Width;
             double newHeight = _initialSize.Height;
-            double newLeft = _initialPosition.X;
-            double newTop = _initialPosition.Y;
+            double newLeft   = _initialPosition.X;
+            double newTop    = _initialPosition.Y;
 
             switch (_resizeDirection)
             {
                 case ResizeDirection.Top:
                     newHeight = _initialSize.Height - deltaY;
-                    newTop = _initialPosition.Y + deltaY;
+                    newTop    = _initialPosition.Y  + deltaY;
                     break;
                 case ResizeDirection.Bottom:
                     newHeight = _initialSize.Height + deltaY;
                     break;
                 case ResizeDirection.Left:
                     newWidth = _initialSize.Width - deltaX;
-                    newLeft = _initialPosition.X + deltaX;
+                    newLeft  = _initialPosition.X + deltaX;
                     break;
                 case ResizeDirection.Right:
                     newWidth = _initialSize.Width + deltaX;
                     break;
                 case ResizeDirection.TopLeft:
-                    newWidth = _initialSize.Width - deltaX;
+                    newWidth  = _initialSize.Width  - deltaX;
                     newHeight = _initialSize.Height - deltaY;
-                    newLeft = _initialPosition.X + deltaX;
-                    newTop = _initialPosition.Y + deltaY;
+                    newLeft   = _initialPosition.X  + deltaX;
+                    newTop    = _initialPosition.Y  + deltaY;
                     break;
                 case ResizeDirection.TopRight:
-                    newWidth = _initialSize.Width + deltaX;
+                    newWidth  = _initialSize.Width  + deltaX;
                     newHeight = _initialSize.Height - deltaY;
-                    newTop = _initialPosition.Y + deltaY;
+                    newTop    = _initialPosition.Y  + deltaY;
                     break;
                 case ResizeDirection.BottomLeft:
-                    newWidth = _initialSize.Width - deltaX;
+                    newWidth  = _initialSize.Width  - deltaX;
                     newHeight = _initialSize.Height + deltaY;
-                    newLeft = _initialPosition.X + deltaX;
+                    newLeft   = _initialPosition.X  + deltaX;
                     break;
                 case ResizeDirection.BottomRight:
-                    newWidth = _initialSize.Width + deltaX;
+                    newWidth  = _initialSize.Width  + deltaX;
                     newHeight = _initialSize.Height + deltaY;
                     break;
             }
 
             if (newWidth > 20)
             {
-                Width = Math.Round(newWidth, 2);
-                Canvas.SetLeft(this, newLeft);
+                Width = System.Math.Round(newWidth, 2);
+                if (ViewModel != null) ViewModel.X = newLeft;
             }
             if (newHeight > 20)
             {
-                Height = Math.Round(newHeight, 2);
-                Canvas.SetTop(this, newTop);
+                Height = System.Math.Round(newHeight, 2);
+                if (ViewModel != null) ViewModel.Y = newTop;
             }
         }
 
@@ -172,18 +167,11 @@ namespace Honours_Stage_Project.Node
         {
             double deltaX = mousePos.X - _mouseStartPoint.X;
             double deltaY = mousePos.Y - _mouseStartPoint.Y;
-            Canvas.SetLeft(this, _initialPosition.X + deltaX);
-            Canvas.SetTop(this, _initialPosition.Y + deltaY);
+            if (ViewModel != null)
+            {
+                ViewModel.X = _initialPosition.X + deltaX;
+                ViewModel.Y = _initialPosition.Y + deltaY;
+            }
         }
-
-        public string GetTextBoxContent()
-        {
-            return InputTextBox.Text;
-        }
-
-        // Button click handlers
-        private void AddConnection_Click(object sender, RoutedEventArgs e) { _textBoxViewModel.AddConectionComponent(); }
-        //private void OutgoingButton_Click(object sender, RoutedEventArgs e) { _textBoxViewModel.AddOutgoingConnections(sender); }
-        private void IncomingButton_Click(object sender, RoutedEventArgs e) { _textBoxViewModel.AddIncomingConnections(); }
     }
 }
