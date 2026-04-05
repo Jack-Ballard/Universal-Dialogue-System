@@ -34,5 +34,12 @@ namespace Honours_Stage_Project.Services
             _pendingIncoming = -1;
             ConnectionsChanged?.Invoke();
         }
+
+        public void RemoveOutgoing(int nodeId, int componentId)
+        {
+            _connections.RemoveAll(c => c.Item1 == nodeId && c.Item2 == componentId);
+            ConnectionsChanged?.Invoke();
+        }
+
     }
 }

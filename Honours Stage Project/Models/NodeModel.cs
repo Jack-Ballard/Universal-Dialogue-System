@@ -47,7 +47,7 @@ namespace Honours_Stage_Project.Models
 
         public ConnectionModel AddConnectionComponent()
         {
-            var component = new ConnectionModel(ConnectionComponents.Count);
+            var component = new ConnectionModel(ConnectionComponents.Count+1);
             ConnectionComponents.Add(component);
             return component;
         }

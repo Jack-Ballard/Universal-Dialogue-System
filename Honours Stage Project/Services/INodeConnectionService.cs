@@ -12,5 +12,7 @@ namespace Honours_Stage_Project.Services
         void AddOutgoing(int nodeId, int componentId);
 
         void AddIncoming(int nodeId);
+
+        void RemoveOutgoing(int nodeId, int componentId);
     }
 }

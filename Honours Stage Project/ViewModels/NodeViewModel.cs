@@ -10,6 +10,7 @@ namespace Honours_Stage_Project.ViewModels
     public class NodeViewModel : INotifyPropertyChanged
     {
         private readonly INodeConnectionService _connectionService;
+        private bool _isDefaultOutgoingVisible = true;
 
         public NodeModel Model { get; }
 
@@ -46,11 +47,23 @@ namespace Honours_Stage_Project.ViewModels
             }
         }
 
+        public bool IsDefaultOutgoingVisible
+        {
+            get => _isDefaultOutgoingVisible;
+            private set
+            {
+                if (_isDefaultOutgoingVisible == value) return;
+                _isDefaultOutgoingVisible = value;
+                OnPropertyChanged(nameof(IsDefaultOutgoingVisible));
+            }
+        }
+
         public ObservableCollection<ConnectionViewModel> ConnectionComponents { get; }
             = new ObservableCollection<ConnectionViewModel>();
 
         public ICommand AddConnectionComponentCommand { get; }
         public ICommand AddIncomingConnectionCommand { get; }
+        public ICommand AddDefaultConnectionCommand { get; }
 
         public NodeViewModel(NodeModel model, INodeConnectionService connectionService)
         {
@@ -59,13 +72,32 @@ namespace Honours_Stage_Project.ViewModels
 
             AddConnectionComponentCommand = new RelayCommand(_ => AddConnectionComponent());
             AddIncomingConnectionCommand = new RelayCommand(_ => _connectionService.AddIncoming(Model.ID));
+            AddDefaultConnectionCommand = new RelayCommand(_ => _connectionService.AddOutgoing(Model.ID, 0));
         }
 
         private void AddConnectionComponent()
         {
             var componentModel = Model.AddConnectionComponent();
             ConnectionComponents.Add(new ConnectionViewModel(componentModel, Model.ID, _connectionService));
+            
+            RemoveDefaultConnection();
         }
+
+        private void RemoveDefaultConnection()
+        {
+            _connectionService.RemoveOutgoing(Model.ID, 0);
+            IsDefaultOutgoingVisible = false;
+        }
+
+        //private void RemoveConnectionComponent(ConnectionViewModel component)
+        //{
+        //    Model.RemoveConnectionComponent(component.ID);
+        //    ConnectionComponents.Remove(component);
+
+        //    // Show the default outgoing button again if no components remain
+        //    if (ConnectionComponents.Count == 0)
+        //        IsDefaultOutgoingVisible = true;
+        //}
 
         public event PropertyChangedEventHandler PropertyChanged;
 
