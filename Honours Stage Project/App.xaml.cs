@@ -1,17 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
+using Honours_Stage_Project.Services;
+using Honours_Stage_Project.ViewModels;
 
 namespace Honours_Stage_Project
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
+        private void Application_Startup(object sender, StartupEventArgs e)
+        {
+            var fileService       = new FileService();
+            var exportService     = new JsonExportService(fileService);
+            var connectionService = new NodeConnectionService();
+            var viewModel         = new MainWindowViewModel(connectionService, exportService);
+
+            new MainWindow(viewModel).Show();
+        }
     }
 }

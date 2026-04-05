@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Honours_Stage_Project
+namespace Honours_Stage_Project.Models
 {
-    public class AttributeItem : INotifyPropertyChanged
+    public class AttributeModel : INotifyPropertyChanged
     {
         private int _id;
-        private string _value;
-        private string _name;
+        private string _value = string.Empty;
+        private string _name = string.Empty;
 
         public int Id
         {
@@ -32,18 +28,10 @@ namespace Honours_Stage_Project
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
 
-        public Object Export()
-        {
-            return new { 
-                ID = Id,
-                Value = Value,
-                Name = Name
-            };
-        }
+        protected void OnPropertyChanged(string propertyName)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        public object Export() => new { ID = Id, Value, Name };
     }
 }
