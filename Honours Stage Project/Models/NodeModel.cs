@@ -13,6 +13,7 @@ namespace Honours_Stage_Project.Models
         private double _x = 50;
         private double _y = 50;
 
+
         public int ID
         {
             get => _id;
@@ -36,6 +37,8 @@ namespace Honours_Stage_Project.Models
             get => _y;
             set { _y = value; OnPropertyChanged(nameof(Y)); }
         }
+
+        public ObservableCollection<AttributeModel> Attributes = new ObservableCollection<AttributeModel>();
 
         public ObservableCollection<ConnectionModel> ConnectionComponents { get; } = new ObservableCollection<ConnectionModel>();
 

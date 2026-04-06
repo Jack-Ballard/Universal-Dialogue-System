@@ -28,8 +28,10 @@
 
     <Border BorderBrush="Black" BorderThickness="2" Background="LightCyan" Margin="0,0,0,-11">
         <StackPanel Margin="0,8,0,-8">
+            
             <Button Content="Incoming" Width="71" HorizontalAlignment="Left"
                     Command="{Binding AddIncomingConnectionCommand}"/>
+            
             <TextBox AcceptsReturn="True"
                      AcceptsTab="True"
                      TextWrapping="Wrap"
@@ -39,12 +41,29 @@
                      Text="{Binding TextContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      Width="240" Height="90" Margin="10"
                      HorizontalAlignment="Center"/>
+            
+            <ItemsControl x:Name="NodeAttributes" ItemsSource="{Binding Attributes}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="70" Margin="2" />
+                            <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="150" Margin="2" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Button Content="Attributes" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Command="{Binding AddAttributeCommand}"/>
+            
             <Button Content="Outgoing" Height="20" HorizontalAlignment="Right"
                     Command="{Binding AddDefaultConnectionCommand}"
                     Style="{StaticResource DefaultOutgoingButtonStyle}"/>
+            
             <ItemsControl x:Name="ConnectionComponent"
                           ItemsSource="{Binding ConnectionComponents}"
                           ItemTemplate="{StaticResource ComponentConnectionView}"/>
+            
             <Button Content="Add Connection" Width="92" Height="20" Margin="10"
                     Command="{Binding AddConnectionComponentCommand}"/>
         </StackPanel>

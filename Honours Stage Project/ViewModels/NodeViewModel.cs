@@ -11,6 +11,7 @@ namespace Honours_Stage_Project.ViewModels
     {
         private readonly INodeConnectionService _connectionService;
         private bool _isDefaultOutgoingVisible = true;
+        public ObservableCollection<AttributeModel> Attributes => Model.Attributes;
 
         public NodeModel Model { get; }
 
@@ -64,6 +65,8 @@ namespace Honours_Stage_Project.ViewModels
         public ICommand AddConnectionComponentCommand { get; }
         public ICommand AddIncomingConnectionCommand { get; }
         public ICommand AddDefaultConnectionCommand { get; }
+        public ICommand AddAttributeCommand { get; }
+
 
         public NodeViewModel(NodeModel model, INodeConnectionService connectionService)
         {
@@ -73,6 +76,7 @@ namespace Honours_Stage_Project.ViewModels
             AddConnectionComponentCommand = new RelayCommand(_ => AddConnectionComponent());
             AddIncomingConnectionCommand = new RelayCommand(_ => _connectionService.AddIncoming(Model.ID));
             AddDefaultConnectionCommand = new RelayCommand(_ => _connectionService.AddOutgoing(Model.ID, 0));
+            AddAttributeCommand = new RelayCommand(_ => Model.Attributes.Add(new AttributeModel { Id = Model.Attributes.Count }));
 
             foreach (var component in Model.ConnectionComponents)
                 ConnectionComponents.Add(new ConnectionViewModel(component, Model.ID, _connectionService));

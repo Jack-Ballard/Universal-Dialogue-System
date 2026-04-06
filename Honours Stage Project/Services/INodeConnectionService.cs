@@ -5,16 +5,16 @@ namespace Honours_Stage_Project.Services
 {
     public interface INodeConnectionService
     {
-        IReadOnlyList<(int, int, int)> Connections { get; }
+        IReadOnlyList<(int, int, int, int)> Connections { get; }
 
         event Action ConnectionsChanged;
 
-        void AddOutgoing(int nodeId, int componentId);
+        void AddOutgoing(int nodeId, int componentId, int connectionId);
 
         void AddIncoming(int nodeId);
 
-        void RemoveOutgoing(int nodeId, int componentId);
+        void RemoveOutgoing(int nodeId, int componentId, int connectionId);
 
-        void SetConnections(IEnumerable<(int, int, int)> connections);
+        void SetConnections(IEnumerable<(int, int, int, int)> connections);
     }
 }
