@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 using Honours_Stage_Project.ViewModels;
 
 namespace Honours_Stage_Project.Node
@@ -24,14 +27,136 @@ namespace Honours_Stage_Project.Node
         private bool _isResizing;
         private bool _isMoving;
         private ResizeDirection _resizeDirection;
-        private Size _initialSize;
-        private Point _initialPosition;
+        private Size _size;
+        private Point _position;
+
+        private double _lastConnectionComponentsHeight;
 
         private NodeViewModel ViewModel => DataContext as NodeViewModel;
 
         public NodeView()
         {
             InitializeComponent();
+
+            Loaded += NodeView_Loaded;
+            Unloaded += NodeView_Unloaded;
+            DataContextChanged += NodeView_DataContextChanged;
+        }
+
+        private void NodeView_Loaded(object sender, RoutedEventArgs e)
+        {
+            SubscribeToNode(ViewModel);
+            CaptureConnectionComponentsHeightBaseline();
+        }
+
+        private void NodeView_Unloaded(object sender, RoutedEventArgs e)
+        {
+            UnsubscribeFromNode(ViewModel);
+        }
+
+        private void NodeView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (e.OldValue is NodeViewModel oldVm)
+                UnsubscribeFromNode(oldVm);
+
+            if (e.NewValue is NodeViewModel newVm)
+            {
+                SubscribeToNode(newVm);
+
+                Dispatcher.BeginInvoke(new Action(CaptureConnectionComponentsHeightBaseline), DispatcherPriority.Loaded);
+            }
+        }
+
+        private void SubscribeToNode(NodeViewModel nodeViewModel)
+        {
+            if (nodeViewModel == null) return;
+
+            nodeViewModel.ConnectionComponents.CollectionChanged -= ConnectionComponents_CollectionChanged;
+            nodeViewModel.ConnectionComponents.CollectionChanged += ConnectionComponents_CollectionChanged;
+
+            foreach (var component in nodeViewModel.ConnectionComponents)
+                SubscribeToConnection(component);
+        }
+
+        private void UnsubscribeFromNode(NodeViewModel nodeViewModel)
+        {
+            if (nodeViewModel == null) return;
+
+            nodeViewModel.ConnectionComponents.CollectionChanged -= ConnectionComponents_CollectionChanged;
+
+            foreach (var component in nodeViewModel.ConnectionComponents)
+                UnsubscribeFromConnection(component);
+        }
+
+        private void SubscribeToConnection(ConnectionViewModel connection)
+        {
+            if (connection == null) return;
+
+            connection.Attributes.CollectionChanged -= ConnectionChildren_CollectionChanged;
+            connection.Attributes.CollectionChanged += ConnectionChildren_CollectionChanged;
+
+            connection.Conditions.CollectionChanged -= ConnectionChildren_CollectionChanged;
+            connection.Conditions.CollectionChanged += ConnectionChildren_CollectionChanged;
+        }
+
+        private void UnsubscribeFromConnection(ConnectionViewModel connection)
+        {
+            if (connection == null) return;
+
+            connection.Attributes.CollectionChanged -= ConnectionChildren_CollectionChanged;
+            connection.Conditions.CollectionChanged -= ConnectionChildren_CollectionChanged;
+        }
+
+        private void ConnectionComponents_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.OldItems != null)
+            {
+                foreach (ConnectionViewModel component in e.OldItems)
+                    UnsubscribeFromConnection(component);
+            }
+
+            if (e.NewItems != null)
+            {
+                foreach (ConnectionViewModel component in e.NewItems)
+                    SubscribeToConnection(component);
+            }
+
+            if (e.Action == NotifyCollectionChangedAction.Add)
+                QueueGrowTextBoxByConnectionDelta();
+            else
+                QueueRefreshConnectionHeightBaseline();
+        }
+
+        private void ConnectionChildren_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+                QueueGrowTextBoxByConnectionDelta();
+            else
+                QueueRefreshConnectionHeightBaseline();
+        }
+
+        private void QueueGrowTextBoxByConnectionDelta()
+        {
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                var currentHeight = GetTotalConnectionComponentsHeight();
+                var delta = currentHeight - _lastConnectionComponentsHeight;
+
+                if (delta > 0)
+                    Height = System.Math.Round(Height + delta, 2);
+
+                _lastConnectionComponentsHeight = currentHeight;
+            }), DispatcherPriority.Loaded);
+        }
+
+        private void QueueRefreshConnectionHeightBaseline()
+        {
+            Dispatcher.BeginInvoke(new Action(CaptureConnectionComponentsHeightBaseline), DispatcherPriority.Loaded);
+        }
+
+        private void CaptureConnectionComponentsHeightBaseline()
+        {
+            _lastConnectionComponentsHeight = GetTotalConnectionComponentsHeight();
         }
 
         // ── Drag / resize ────────────────────────────────────────────────────
@@ -50,23 +175,23 @@ namespace Honours_Stage_Project.Node
 
         private void UserControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var parentCanvas = FindParentCanvas();
-            if (parentCanvas == null) return;
+            IInputElement ParentCanvas = FindParentCanvas();
+            if (ParentCanvas == null) return;
 
-            var mousePos = e.GetPosition(parentCanvas);
+            var mousePos = e.GetPosition(ParentCanvas);
             _mouseStartPoint = mousePos;
             _resizeDirection = GetResizeDirection(e.GetPosition(this));
 
             if (_resizeDirection != ResizeDirection.None)
             {
-                _initialSize = new Size(Width, Height);
-                _initialPosition = new Point(ViewModel?.X ?? 0, ViewModel?.Y ?? 0);
+                _size = new Size(Width, Height);
+                _position = new Point(ViewModel?.X ?? 0, ViewModel?.Y ?? 0);
                 _isResizing = true;
                 CaptureMouse();
             }
             else
             {
-                _initialPosition = new Point(ViewModel?.X ?? 0, ViewModel?.Y ?? 0);
+                _position = new Point(ViewModel?.X ?? 0, ViewModel?.Y ?? 0);
                 _isMoving = true;
                 CaptureMouse();
             }
@@ -93,13 +218,13 @@ namespace Honours_Stage_Project.Node
         private ResizeDirection GetResizeDirection(Point mousePos)
         {
             const double tolerance = 10;
-            if (mousePos.X <= tolerance && mousePos.Y <= tolerance)               return ResizeDirection.TopLeft;
+            if (mousePos.X <= tolerance && mousePos.Y <= tolerance) return ResizeDirection.TopLeft;
             if (mousePos.X >= ActualWidth - tolerance && mousePos.Y <= tolerance) return ResizeDirection.TopRight;
             if (mousePos.X <= tolerance && mousePos.Y >= ActualHeight - tolerance) return ResizeDirection.BottomLeft;
             if (mousePos.X >= ActualWidth - tolerance && mousePos.Y >= ActualHeight - tolerance) return ResizeDirection.BottomRight;
-            if (mousePos.X <= tolerance)               return ResizeDirection.Left;
+            if (mousePos.X <= tolerance) return ResizeDirection.Left;
             if (mousePos.X >= ActualWidth - tolerance) return ResizeDirection.Right;
-            if (mousePos.Y <= tolerance)               return ResizeDirection.Top;
+            if (mousePos.Y <= tolerance) return ResizeDirection.Top;
             if (mousePos.Y >= ActualHeight - tolerance) return ResizeDirection.Bottom;
             return ResizeDirection.None;
         }
@@ -109,58 +234,60 @@ namespace Honours_Stage_Project.Node
             double deltaX = mousePos.X - _mouseStartPoint.X;
             double deltaY = mousePos.Y - _mouseStartPoint.Y;
 
-            double newWidth  = _initialSize.Width;
-            double newHeight = _initialSize.Height;
-            double newLeft   = _initialPosition.X;
-            double newTop    = _initialPosition.Y;
+            double newWidth = _size.Width;
+            double newHeight = _size.Height;
+            double newLeft = _position.X;
+            double newTop = _position.Y;
 
             switch (_resizeDirection)
             {
                 case ResizeDirection.Top:
-                    newHeight = _initialSize.Height - deltaY;
-                    newTop    = _initialPosition.Y  + deltaY;
+                    newHeight = _size.Height - deltaY;
+                    newTop = _position.Y + deltaY;
                     break;
                 case ResizeDirection.Bottom:
-                    newHeight = _initialSize.Height + deltaY;
+                    newHeight = _size.Height + deltaY;
                     break;
                 case ResizeDirection.Left:
-                    newWidth = _initialSize.Width - deltaX;
-                    newLeft  = _initialPosition.X + deltaX;
+                    newWidth = _size.Width - deltaX;
+                    newLeft = _position.X + deltaX;
                     break;
                 case ResizeDirection.Right:
-                    newWidth = _initialSize.Width + deltaX;
+                    newWidth = _size.Width + deltaX;
                     break;
                 case ResizeDirection.TopLeft:
-                    newWidth  = _initialSize.Width  - deltaX;
-                    newHeight = _initialSize.Height - deltaY;
-                    newLeft   = _initialPosition.X  + deltaX;
-                    newTop    = _initialPosition.Y  + deltaY;
+                    newWidth = _size.Width - deltaX;
+                    newHeight = _size.Height - deltaY;
+                    newLeft = _position.X + deltaX;
+                    newTop = _position.Y + deltaY;
                     break;
                 case ResizeDirection.TopRight:
-                    newWidth  = _initialSize.Width  + deltaX;
-                    newHeight = _initialSize.Height - deltaY;
-                    newTop    = _initialPosition.Y  + deltaY;
+                    newWidth = _size.Width + deltaX;
+                    newHeight = _size.Height - deltaY;
+                    newTop = _position.Y + deltaY;
                     break;
                 case ResizeDirection.BottomLeft:
-                    newWidth  = _initialSize.Width  - deltaX;
-                    newHeight = _initialSize.Height + deltaY;
-                    newLeft   = _initialPosition.X  + deltaX;
+                    newWidth = _size.Width - deltaX;
+                    newHeight = _size.Height + deltaY;
+                    newLeft = _position.X + deltaX;
                     break;
                 case ResizeDirection.BottomRight:
-                    newWidth  = _initialSize.Width  + deltaX;
-                    newHeight = _initialSize.Height + deltaY;
+                    newWidth = _size.Width + deltaX;
+                    newHeight = _size.Height + deltaY;
                     break;
             }
 
-            if (newWidth > 20)
+            if (newWidth > 240)
             {
                 Width = System.Math.Round(newWidth, 2);
                 if (ViewModel != null) ViewModel.X = newLeft;
+                if (InputTextBox != null) InputTextBox.Width = Width - 40;
             }
-            if (newHeight > 20)
+            if (newHeight > 180 + GetTotalConnectionComponentsHeight())
             {
                 Height = System.Math.Round(newHeight, 2);
                 if (ViewModel != null) ViewModel.Y = newTop;
+                if (InputTextBox != null) InputTextBox.Height = Height - 90 - GetTotalConnectionComponentsHeight();
             }
         }
 
@@ -170,9 +297,38 @@ namespace Honours_Stage_Project.Node
             double deltaY = mousePos.Y - _mouseStartPoint.Y;
             if (ViewModel != null)
             {
-                ViewModel.X = _initialPosition.X + deltaX;
-                ViewModel.Y = _initialPosition.Y + deltaY;
+                ViewModel.X = _position.X + deltaX;
+                ViewModel.Y = _position.Y + deltaY;
             }
+        }
+
+        private IReadOnlyList<Size> GetConnectionComponentSizes()
+        {
+            ConnectionComponent.UpdateLayout();
+
+            var sizes = new List<Size>();
+
+            foreach (var item in ConnectionComponent.Items)
+            {
+                var container = ConnectionComponent.ItemContainerGenerator.ContainerFromItem(item) as ContentPresenter;
+                if (container == null)
+                    continue;
+
+                sizes.Add(new Size(container.ActualWidth, container.ActualHeight));
+            }
+
+            return sizes;
+        }
+
+        private double GetTotalConnectionComponentsHeight()
+        {
+            var sizes = GetConnectionComponentSizes();
+            double total = 0;
+
+            foreach (var size in sizes)
+                total += size.Height;
+
+            return total;
         }
     }
 }

@@ -4,7 +4,7 @@
              xmlns:av="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="av"
              x:Class="Honours_Stage_Project.Node.NodeView"
-             Width="281" Height="200"
+             Width="280" Height="200"
              MouseLeftButtonDown="UserControl_MouseLeftButtonDown"
              MouseMove="UserControl_MouseMove"
              MouseLeftButtonUp="UserControl_MouseLeftButtonUp">
@@ -37,7 +37,7 @@
                      HorizontalScrollBarVisibility="Disabled"
                      x:Name="InputTextBox"
                      Text="{Binding TextContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                     Width="242" Height="91" Margin="10"
+                     Width="240" Height="90" Margin="10"
                      HorizontalAlignment="Center"/>
             <Button Content="Outgoing" Height="20" HorizontalAlignment="Right"
                     Command="{Binding AddDefaultConnectionCommand}"

@@ -29,7 +29,7 @@ namespace Honours_Stage_Project.Models
             foreach (var condition in Conditions)
                 exportedConditions.Add(condition.Export());
 
-            return new { ID, Attributes = exportedAttributes, exportedConditions };
+            return new { ID, Attributes = exportedAttributes, Conditions = exportedConditions };
         }
 
         public void Import(object data)

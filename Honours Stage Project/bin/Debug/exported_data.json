@@ -18,14 +18,14 @@
               "Name": "AtName"
             }
           ],
-          "exportedConditions": [
+          "Conditions": [
             {
               "ID": 0,
-              "Value": "If this"
+              "Value": "Thing"
             },
             {
               "ID": 1,
-              "Value": "Then thus"
+              "Value": "Other thing"
             }
           ]
         },
@@ -38,7 +38,7 @@
               "Name": "Another"
             }
           ],
-          "exportedConditions": []
+          "Conditions": []
         }
       ],
       "position": "16,83"
@@ -73,7 +73,7 @@
               "Name": "But"
             }
           ],
-          "exportedConditions": []
+          "Conditions": []
         }
       ],
       "position": "419,414"
