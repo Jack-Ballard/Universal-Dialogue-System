@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Windows;
 using System.Windows.Input;
 using Honours_Stage_Project.Helpers;
 using Honours_Stage_Project.Models;
@@ -40,17 +41,21 @@ namespace Honours_Stage_Project.ViewModels
 
             _connectionService.ConnectionsChanged += () => RequestLinesRefresh?.Invoke();
 
-            AddNodeCommand = new RelayCommand(_ => AddNode());
+            AddNodeCommand = new RelayCommand(parameter => AddNode(parameter));
             ExportCommand = new RelayCommand(_ => _exportService.Export(Nodes, _connectionService.Connections));
             ImportCommand = new RelayCommand(_ => Import());
         }
 
-        private void AddNode()
+        public void AddNodeAt(double x, double y)
         {
-            var model = new NodeModel(Nodes.Count);
+            var model = new NodeModel(Nodes.Count)
+            {
+                X = x,
+                Y = y
+            };
+
             var viewModel = new NodeViewModel(model, _connectionService);
 
-            // Raise RequestLinesRefresh whenever a node is repositioned.
             viewModel.PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == nameof(NodeViewModel.X) || e.PropertyName == nameof(NodeViewModel.Y))
@@ -58,6 +63,17 @@ namespace Honours_Stage_Project.ViewModels
             };
 
             Nodes.Add(viewModel);
+        }
+
+        private void AddNode(object parameter)
+        {
+            if (parameter is Point point)
+            {
+                AddNodeAt(point.X, point.Y);
+                return;
+            }
+
+            AddNodeAt(50, 50);
         }
 
         private void Import()

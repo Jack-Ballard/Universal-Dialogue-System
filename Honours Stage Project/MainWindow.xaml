@@ -5,43 +5,66 @@
         xmlns:nodeViews="clr-namespace:Honours_Stage_Project.Node"
         Title="MainWindow" Height="450" Width="800">
 
-    <!-- Root grid layers: lines (bottom) → nodes → toolbar (top) -->
     <Grid>
+        <!-- Camera viewport -->
+        <Grid x:Name="WorldViewport"
+              ClipToBounds="True"
+              PreviewMouseWheel="GlobalPreviewMouseWheel"
+              MouseDown="GlobalPreviewMouseDown"
+              MouseMove="GlobalPreviewMouseMove"
+              MouseUp="GlobalPreviewMouseUp"
+              Background="LightGray">
 
-        <!-- Background + lines drawn imperatively by code-behind -->
-        <Canvas Name="LinesCanvas" Background="LightGray" IsHitTestVisible="False"/>
+            <!-- Everything in world space goes here -->
+            <Grid x:Name="WorldLayer">
+                <Grid.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform x:Name="CameraScale" ScaleX="1" ScaleY="1"/>
+                        <TranslateTransform x:Name="CameraTranslate" X="0" Y="0"/>
+                    </TransformGroup>
+                </Grid.RenderTransform>
 
-        <!-- Nodes positioned via Canvas.Left/Top bound to NodeViewModel.X/Y -->
-        <ItemsControl Name="NodesControl" ItemsSource="{Binding Nodes}" Background="Transparent">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Canvas Background="Transparent"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemContainerStyle>
-                <Style TargetType="ContentPresenter">
-                    <Setter Property="Canvas.Left" Value="{Binding X}"/>
-                    <Setter Property="Canvas.Top"  Value="{Binding Y}"/>
-                </Style>
-            </ItemsControl.ItemContainerStyle>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <nodeViews:NodeView/>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+                <Canvas Name="LinesCanvas" IsHitTestVisible="False"/>
+
+                <ItemsControl Name="NodesControl" ItemsSource="{Binding Nodes}" Background="Transparent">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas Background="Transparent"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                            <Setter Property="Canvas.Top"  Value="{Binding Y}"/>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <nodeViews:NodeView/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </Grid>
 
         <!-- Toolbar -->
         <Rectangle Fill="DimGray" Height="32" VerticalAlignment="Top"/>
 
         <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top"
                     Orientation="Horizontal" Margin="5">
-            <Button Content="Add Node" Command="{Binding AddNodeCommand}"
+            <Button Content="Add Node"
+                    Command="{Binding AddNodeCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=ViewportCenterWorldPoint}"
                     Width="75" Margin="0,0,5,0"/>
-            <Button Content="Export"   Command="{Binding ExportCommand}"
+            <Button Content="Export" Command="{Binding ExportCommand}"
                     Width="60" Margin="0,0,5,0"/>
-            <Button Content="Import"   Command="{Binding ImportCommand}"
+            <Button Content="Import" Command="{Binding ImportCommand}"
                     Width="60" Margin="0,0,5,0"/>
+            <Button Content="Add Root Node"   Command="{Binding AddRootNodeCommand}"
+                    Width="100" Margin="0,0,5,0"/>
+            <Button Content="Reset Camera" Click="ResetCamera_Click"
+                    Width="95" Margin="0,0,5,0"/>
+            
         </StackPanel>
     </Grid>
 </Window>
