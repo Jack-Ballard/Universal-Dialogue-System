@@ -2,30 +2,254 @@
   "TextBoxes": [
     {
       "ID": 0,
-      "TextContent": "This is the first node, I'm testing a couple of things here",
+      "TextContent": "Second Node 1 Outgoing default\r\n\tNo Attribute/Condition\r\nNo Attribute",
+      "Attributes": [],
+      "Connections": [
+        {
+          "ID": 1,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "398,150.5"
+    },
+    {
+      "ID": 1,
+      "TextContent": "First Node default\r\nNo Attribute",
+      "Attributes": [],
+      "Connections": [],
+      "position": "63,147.5"
+    },
+    {
+      "ID": 2,
+      "TextContent": "Third Node default\r\n2 Attributes",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "Attributes 1",
+          "Name": "AttributesTxt"
+        },
+        {
+          "ID": 1,
+          "Value": "Attributes 2",
+          "Name": "AttributesTxt"
+        }
+      ],
+      "Connections": [],
+      "position": "729,150.5"
+    },
+    {
+      "ID": 3,
+      "TextContent": "Fourth Node 1 Outgoing default\r\n\t2 Attribute\r\n\t2 Condition\r\n2 Attributes",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "Attributes 1",
+          "Name": "AttributesTxt"
+        },
+        {
+          "ID": 1,
+          "Value": "Attributes 2",
+          "Name": "AttributesTxt"
+        }
+      ],
       "Connections": [
         {
           "ID": 1,
           "Attributes": [
             {
               "ID": 0,
-              "Value": "At1",
-              "Name": "AtName"
+              "Value": "Attributes 1",
+              "Name": "AttributesTxt"
             },
             {
               "ID": 1,
-              "Value": "At2",
-              "Name": "AtName"
+              "Value": "Attributes 2",
+              "Name": "AttributesTxt"
             }
           ],
           "Conditions": [
             {
               "ID": 0,
-              "Value": "Thing"
+              "Value": "Condition 1"
             },
             {
               "ID": 1,
-              "Value": "Other thing"
+              "Value": "Condition 2"
+            }
+          ],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "1068,155.5"
+    },
+    {
+      "ID": 4,
+      "TextContent": "Fith Node 2 Outgoing specific\r\n\t1st 1 Specific No Condition\r\n\t1st 1 Attribute\r\n\t1st 1 Condition\r\n\t2nd 1 Specific 2 Conditions\r\n\t2nd No Attribute\r\n\t2nd No Condition\r\nNo Attributes\r\n\t",
+      "Attributes": [],
+      "Connections": [
+        {
+          "ID": 1,
+          "Attributes": [
+            {
+              "ID": 0,
+              "Value": "",
+              "Name": "AttributesTxt"
+            }
+          ],
+          "Conditions": [
+            {
+              "ID": 0,
+              "Value": "Condition 1"
+            }
+          ],
+          "OutgoingConnections": [
+            {
+              "_id": 0,
+              "Conditions": []
+            }
+          ]
+        },
+        {
+          "ID": 2,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": [
+            {
+              "_id": 0,
+              "Conditions": [
+                {
+                  "ID": 0,
+                  "Value": "Condition 1"
+                },
+                {
+                  "ID": 1,
+                  "Value": "Condition 2"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "position": "1404,166.5"
+    },
+    {
+      "ID": 5,
+      "TextContent": "Sixth 1 Outgoing specific\r\n\t1st 2 Specific No conditions\r\n\t1st No Attribute\r\n\t1st No Conditions\r\nNo Attributes",
+      "Attributes": [],
+      "Connections": [
+        {
+          "ID": 1,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": [
+            {
+              "_id": 0,
+              "Conditions": []
+            },
+            {
+              "_id": 1,
+              "Conditions": []
+            }
+          ]
+        }
+      ],
+      "position": "1779,179.5"
+    },
+    {
+      "ID": 6,
+      "TextContent": "Seventh 1 Outgoing specifc\r\n\t1st 2 Specific 2 conditions\r\n\t1st No Attributes\r\n\t1st No Attributes\r\nNo attributes",
+      "Attributes": [],
+      "Connections": [
+        {
+          "ID": 1,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": [
+            {
+              "_id": 0,
+              "Conditions": [
+                {
+                  "ID": 0,
+                  "Value": "Condition 1"
+                },
+                {
+                  "ID": 1,
+                  "Value": "Condition 2"
+                }
+              ]
+            },
+            {
+              "_id": 1,
+              "Conditions": [
+                {
+                  "ID": 0,
+                  "Value": "Condition 1"
+                },
+                {
+                  "ID": 1,
+                  "Value": "Condition 2"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "position": "1789,555.5"
+    },
+    {
+      "ID": 7,
+      "TextContent": "8th 2 Outgoing specific\r\n\t1st 2 Specific 2 conditions\r\n\t1st 1 Attribute\r\n\t1st 1 Condition\r\n\t2nd 2 Specific 2 conditions\r\n\t2nd 1 Attribute\r\n\t2nd 1 Condition\r\n1 Attribute",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "Attributes 1",
+          "Name": "AttributesTxt"
+        }
+      ],
+      "Connections": [
+        {
+          "ID": 1,
+          "Attributes": [
+            {
+              "ID": 0,
+              "Value": "Attributes 1",
+              "Name": "AttributesTxt"
+            }
+          ],
+          "Conditions": [
+            {
+              "ID": 0,
+              "Value": "Condition 1"
+            }
+          ],
+          "OutgoingConnections": [
+            {
+              "_id": 0,
+              "Conditions": [
+                {
+                  "ID": 0,
+                  "Value": "Condition 1"
+                },
+                {
+                  "ID": 1,
+                  "Value": "Condition 2"
+                }
+              ]
+            },
+            {
+              "_id": 1,
+              "Conditions": [
+                {
+                  "ID": 0,
+                  "Value": "Condition 1"
+                },
+                {
+                  "ID": 1,
+                  "Value": "Condition 2"
+                }
+              ]
             }
           ]
         },
@@ -34,71 +258,211 @@
           "Attributes": [
             {
               "ID": 0,
-              "Value": "Attribute",
-              "Name": "Another"
+              "Value": "Attributes 1",
+              "Name": "AttributesTxt"
             }
           ],
-          "Conditions": []
+          "Conditions": [
+            {
+              "ID": 0,
+              "Value": "Condition "
+            }
+          ],
+          "OutgoingConnections": [
+            {
+              "_id": 0,
+              "Conditions": [
+                {
+                  "ID": 0,
+                  "Value": "Condition 1"
+                },
+                {
+                  "ID": 1,
+                  "Value": "Condition 2"
+                }
+              ]
+            },
+            {
+              "_id": 1,
+              "Conditions": [
+                {
+                  "ID": 0,
+                  "Value": "Condition 1"
+                },
+                {
+                  "ID": 1,
+                  "Value": "Condition 2"
+                }
+              ]
+            }
+          ]
         }
       ],
-      "position": "16,83"
+      "position": "2139,191.5"
     },
     {
-      "ID": 1,
-      "TextContent": "This will be a straight line",
-      "Connections": [],
-      "position": "410,76"
-    },
-    {
-      "ID": 2,
-      "TextContent": "To this node",
-      "Connections": [],
-      "position": "800,309"
-    },
-    {
-      "ID": 3,
-      "TextContent": "This just has an attribute associated",
+      "ID": 8,
+      "TextContent": "8th 2 Outgoing specific - No Text\r\n\t1st 2 Specific 2 conditions\r\n\t1st 1 Attribute\r\n\t1st 1 Condition\r\n\t2nd 2 Specific 2 conditions\r\n\t2nd 1 Attribute\r\n\t2nd 1 Condition\r\n1 Attribute",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "",
+          "Name": ""
+        }
+      ],
       "Connections": [
         {
           "ID": 1,
           "Attributes": [
             {
               "ID": 0,
-              "Value": "has an attribute",
-              "Name": "This"
-            },
-            {
-              "ID": 1,
-              "Value": "still only one connection",
-              "Name": "But"
+              "Value": "",
+              "Name": ""
             }
           ],
-          "Conditions": []
+          "Conditions": [
+            {
+              "ID": 0,
+              "Value": ""
+            }
+          ],
+          "OutgoingConnections": [
+            {
+              "_id": 0,
+              "Conditions": [
+                {
+                  "ID": 0,
+                  "Value": ""
+                },
+                {
+                  "ID": 1,
+                  "Value": ""
+                }
+              ]
+            },
+            {
+              "_id": 1,
+              "Conditions": [
+                {
+                  "ID": 0,
+                  "Value": ""
+                },
+                {
+                  "ID": 1,
+                  "Value": ""
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ID": 2,
+          "Attributes": [
+            {
+              "ID": 0,
+              "Value": "",
+              "Name": ""
+            }
+          ],
+          "Conditions": [
+            {
+              "ID": 0,
+              "Value": ""
+            }
+          ],
+          "OutgoingConnections": [
+            {
+              "_id": 0,
+              "Conditions": [
+                {
+                  "ID": 0,
+                  "Value": ""
+                },
+                {
+                  "ID": 1,
+                  "Value": ""
+                }
+              ]
+            },
+            {
+              "_id": 1,
+              "Conditions": [
+                {
+                  "ID": 0,
+                  "Value": ""
+                },
+                {
+                  "ID": 1,
+                  "Value": ""
+                }
+              ]
+            }
+          ]
         }
       ],
-      "position": "419,414"
+      "position": "2496,196.5"
     }
   ],
   "Connections": [
     {
-      "FromTextBoxID": 0,
-      "FromComponentID": 1,
-      "ToTextBoxID": 1
-    },
-    {
       "FromTextBoxID": 1,
       "FromComponentID": 0,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 0
+    },
+    {
+      "FromTextBoxID": 0,
+      "FromComponentID": 1,
+      "FromConnectionID": 0,
       "ToTextBoxID": 2
     },
     {
-      "FromTextBoxID": 0,
-      "FromComponentID": 2,
+      "FromTextBoxID": 2,
+      "FromComponentID": 0,
+      "FromConnectionID": 0,
       "ToTextBoxID": 3
     },
     {
       "FromTextBoxID": 3,
       "FromComponentID": 1,
-      "ToTextBoxID": 2
+      "FromConnectionID": 0,
+      "ToTextBoxID": 4
+    },
+    {
+      "FromTextBoxID": 4,
+      "FromComponentID": 1,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 5
+    },
+    {
+      "FromTextBoxID": 4,
+      "FromComponentID": 2,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 6
+    },
+    {
+      "FromTextBoxID": 6,
+      "FromComponentID": 1,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 7
+    },
+    {
+      "FromTextBoxID": 5,
+      "FromComponentID": 1,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 7
+    },
+    {
+      "FromTextBoxID": 6,
+      "FromComponentID": 1,
+      "FromConnectionID": 1,
+      "ToTextBoxID": 8
+    },
+    {
+      "FromTextBoxID": 5,
+      "FromComponentID": 1,
+      "FromConnectionID": 1,
+      "ToTextBoxID": 8
     }
   ]
 }

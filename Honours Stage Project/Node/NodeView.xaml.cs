@@ -101,6 +101,12 @@ namespace Honours_Stage_Project.Node
 
             connection.Conditions.CollectionChanged -= ConnectionChildren_CollectionChanged;
             connection.Conditions.CollectionChanged += ConnectionChildren_CollectionChanged;
+
+            connection.OutgoingConnections.CollectionChanged -= ConnectionChildren_CollectionChanged;
+            connection.OutgoingConnections.CollectionChanged += ConnectionChildren_CollectionChanged;
+
+            foreach (var outgoing in connection.OutgoingConnections)
+                SubscribeToOutgoingConnection(outgoing);
         }
 
         private void UnsubscribeFromConnection(ConnectionViewModel connection)
@@ -109,6 +115,26 @@ namespace Honours_Stage_Project.Node
 
             connection.Attributes.CollectionChanged -= ConnectionChildren_CollectionChanged;
             connection.Conditions.CollectionChanged -= ConnectionChildren_CollectionChanged;
+
+            connection.OutgoingConnections.CollectionChanged -= ConnectionChildren_CollectionChanged;
+
+            foreach (var outgoing in connection.OutgoingConnections)
+                UnsubscribeFromOutgoingConnection(outgoing);
+        }
+
+        private void SubscribeToOutgoingConnection(OutgoingConnectionViewModel outgoingConnection)
+        {
+            if (outgoingConnection == null) return;
+
+            outgoingConnection.Conditions.CollectionChanged -= ConnectionChildren_CollectionChanged;
+            outgoingConnection.Conditions.CollectionChanged += ConnectionChildren_CollectionChanged;
+        }
+
+        private void UnsubscribeFromOutgoingConnection(OutgoingConnectionViewModel outgoingConnection)
+        {
+            if (outgoingConnection == null) return;
+
+            outgoingConnection.Conditions.CollectionChanged -= ConnectionChildren_CollectionChanged;
         }
 
         private void ConnectionComponents_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

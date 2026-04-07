@@ -15,7 +15,7 @@ namespace Honours_Stage_Project.Services
             _fileService = fileService;
         }
 
-        public void Export(IEnumerable<NodeViewModel> nodes, IEnumerable<(int, int, int)> connections, string fileName = "exported_data")
+        public void Export(IEnumerable<NodeViewModel> nodes, IEnumerable<(int, int, int, int)> connections, string fileName = "exported_data")
         {
             var textBoxData = nodes.Select(n => n.Model.Export()).ToList();
 
@@ -23,7 +23,8 @@ namespace Honours_Stage_Project.Services
             {
                 FromTextBoxID = c.Item1,
                 FromComponentID = c.Item2,
-                ToTextBoxID = c.Item3
+                FromConnectionID = c.Item3,
+                ToTextBoxID = c.Item4           
             }).ToList();
 
             var dataPackage = new { TextBoxes = textBoxData, Connections = connectionObjects };

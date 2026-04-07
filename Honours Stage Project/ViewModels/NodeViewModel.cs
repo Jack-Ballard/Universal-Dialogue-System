@@ -1,8 +1,8 @@
+using Honours_Stage_Project.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
 using Honours_Stage_Project.Helpers;
-using Honours_Stage_Project.Models;
 using Honours_Stage_Project.Services;
 
 namespace Honours_Stage_Project.ViewModels
@@ -11,7 +11,6 @@ namespace Honours_Stage_Project.ViewModels
     {
         private readonly INodeConnectionService _connectionService;
         private bool _isDefaultOutgoingVisible = true;
-        public ObservableCollection<AttributeModel> Attributes => Model.Attributes;
 
         public NodeModel Model { get; }
 
@@ -62,6 +61,8 @@ namespace Honours_Stage_Project.ViewModels
         public ObservableCollection<ConnectionViewModel> ConnectionComponents { get; }
             = new ObservableCollection<ConnectionViewModel>();
 
+        public ObservableCollection<AttributeModel> Attributes => Model.Attributes;
+
         public ICommand AddConnectionComponentCommand { get; }
         public ICommand AddIncomingConnectionCommand { get; }
         public ICommand AddDefaultConnectionCommand { get; }
@@ -75,8 +76,8 @@ namespace Honours_Stage_Project.ViewModels
 
             AddConnectionComponentCommand = new RelayCommand(_ => AddConnectionComponent());
             AddIncomingConnectionCommand = new RelayCommand(_ => _connectionService.AddIncoming(Model.ID));
-            AddDefaultConnectionCommand = new RelayCommand(_ => _connectionService.AddOutgoing(Model.ID, 0));
-            AddAttributeCommand = new RelayCommand(_ => Model.Attributes.Add(new AttributeModel { Id = Model.Attributes.Count }));
+            AddDefaultConnectionCommand = new RelayCommand(_ => _connectionService.AddOutgoing(Model.ID, 0, 0));
+            AddAttributeCommand = new RelayCommand(_ => AddAttribute());
 
             foreach (var component in Model.ConnectionComponents)
                 ConnectionComponents.Add(new ConnectionViewModel(component, Model.ID, _connectionService));
@@ -93,9 +94,14 @@ namespace Honours_Stage_Project.ViewModels
             RemoveDefaultConnection();
         }
 
+        private void AddAttribute()
+        {
+            Attributes.Add(new AttributeModel { Id = Attributes.Count });
+        }
+
         private void RemoveDefaultConnection()
         {
-            _connectionService.RemoveOutgoing(Model.ID, 0);
+            _connectionService.RemoveOutgoing(Model.ID, 0, 0);
             IsDefaultOutgoingVisible = false;
         }
 

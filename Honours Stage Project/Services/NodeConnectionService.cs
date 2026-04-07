@@ -15,13 +15,13 @@ namespace Honours_Stage_Project.Services
 
         public void AddOutgoing(int nodeId, int componentId, int connectionId)
         {
-            if(_connections.Exists(c => c.Item1 == nodeId && c.Item2 == componentId && c.Item3 == connectionId))
+            if (_connections.Exists(c => c.Item1 == nodeId && c.Item2 == componentId && c.Item3 == connectionId))
             {
                 RemoveOutgoing(nodeId, componentId, connectionId);
                 return;
             }
 
-            _pendingOutgoing = (nodeId, componentId, componentId);
+            _pendingOutgoing = (nodeId, componentId, connectionId);
             if (_pendingIncoming != -1)
                 CommitConnection();
         }

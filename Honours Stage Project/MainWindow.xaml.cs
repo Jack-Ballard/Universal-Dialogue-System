@@ -150,32 +150,41 @@ namespace Honours_Stage_Project
                 LinesCanvas.Children.Remove(line);
             _lines.Clear();
 
-            foreach (var (fromNodeId, fromComponentId, toNodeId) in vm.Connections)
+            foreach (var item in vm.Connections)
             {
+                var fromNodeId = item.Item1;
+                var fromComponentId = item.Item2;
+                var fromConnectionId = item.Item3;
+                var toNodeId = item.Item4;
+
                 NodeViewModel sourceNode = vm.Nodes.FirstOrDefault(n => n.Model.ID == fromNodeId);
                 NodeViewModel targetNode = vm.Nodes.FirstOrDefault(n => n.Model.ID == toNodeId);
                 if (sourceNode == null || targetNode == null) continue;
 
-                // Find the visual containers for both nodes
                 var sourceContainer = NodesControl.ItemContainerGenerator.ContainerFromItem(sourceNode) as FrameworkElement;
                 var targetContainer = NodesControl.ItemContainerGenerator.ContainerFromItem(targetNode) as FrameworkElement;
-
                 if (sourceContainer == null || targetContainer == null) continue;
 
-                // Calculate X1, Y1 based on the button if found, otherwise fallback to standard offset
                 double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 
-                // Attempt to find the outgoing button on the source component
-                var componentViewModel = sourceNode.ConnectionComponents.FirstOrDefault(c => c.ID == fromComponentId);
                 Button outgoingButton = null;
+                var componentViewModel = sourceNode.ConnectionComponents.FirstOrDefault(c => c.ID == fromComponentId);
                 if (componentViewModel != null)
                 {
-                    outgoingButton = FindVisualChild<Button>(sourceContainer, btn =>
-                        btn.DataContext == componentViewModel && (btn.Content as string) == "Outgoing");
+                    var outgoingVm = componentViewModel.OutgoingConnections.FirstOrDefault(o => o.ID == fromConnectionId);
+                    if (outgoingVm != null)
+                    {
+                        outgoingButton = FindVisualChild<Button>(sourceContainer, btn =>
+                            btn.DataContext == outgoingVm && (btn.Content as string) == "Outgoing");
+                    }
+                    else if (fromConnectionId == 0)
+                    {
+                        outgoingButton = FindVisualChild<Button>(sourceContainer, btn =>
+                            btn.DataContext == componentViewModel && (btn.Content as string) == "Outgoing");
+                    }
                 }
                 else
                 {
-                                       // If no specific component button is found, try to find the default outgoing button
                     outgoingButton = FindVisualChild<Button>(sourceContainer, btn =>
                         btn.DataContext == sourceNode && (btn.Content as string) == "Outgoing");
                 }
@@ -189,11 +198,11 @@ namespace Honours_Stage_Project
                 else
                 {
                     x1 = sourceNode.X;
-                    y1 = sourceNode.Y; // fallback
+                    y1 = sourceNode.Y;
                 }
 
-                // Calculate X2, Y2 based on the target node's visual bounds
-                Point targetPos = targetContainer.TransformToVisual(LinesCanvas).Transform(new Point(0, targetContainer.ActualHeight / 2));
+                Button incomingButton = FindVisualChild<Button>(sourceContainer, btn => btn.DataContext == sourceNode && (btn.Content as string) == "Incoming");
+                Point targetPos = targetContainer.TransformToVisual(LinesCanvas).Transform(new Point(0, incomingButton.ActualHeight / 2));
                 x2 = targetPos.X;
                 y2 = targetPos.Y;
 
@@ -217,7 +226,6 @@ namespace Honours_Stage_Project
                     Y2 = y2,
                 };
                 
-
                 _lines.Add(backLine);
                 LinesCanvas.Children.Add(backLine);
 

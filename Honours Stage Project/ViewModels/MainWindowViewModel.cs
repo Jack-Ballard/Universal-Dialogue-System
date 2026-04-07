@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 using Honours_Stage_Project.Helpers;
@@ -24,7 +24,7 @@ namespace Honours_Stage_Project.ViewModels
 
         public ObservableCollection<NodeViewModel> Nodes { get; } = new ObservableCollection<NodeViewModel>();
 
-        public IReadOnlyList<(int, int, int)> Connections => _connectionService.Connections;
+        public IReadOnlyList<(int, int, int, int)> Connections => _connectionService.Connections;
 
         public ICommand AddNodeCommand { get; }
         public ICommand ExportCommand { get; }
@@ -55,12 +55,7 @@ namespace Honours_Stage_Project.ViewModels
             };
 
             var viewModel = new NodeViewModel(model, _connectionService);
-
-            viewModel.PropertyChanged += (s, e) =>
-            {
-                if (e.PropertyName == nameof(NodeViewModel.X) || e.PropertyName == nameof(NodeViewModel.Y))
-                    RequestLinesRefresh?.Invoke();
-            };
+            AttachNode(viewModel);
 
             Nodes.Add(viewModel);
         }
@@ -79,10 +74,37 @@ namespace Honours_Stage_Project.ViewModels
         private void Import()
         {
             var (importedNodes, importedConnections) = _importService.Import(_connectionService, "exported_data");
+
+            foreach (var node in Nodes)
+                DetachNode(node);
+
             Nodes.Clear();
+
             foreach (var node in importedNodes)
+            {
+                AttachNode(node);
                 Nodes.Add(node);
+            }
+
             _connectionService.SetConnections(importedConnections);
+            RequestLinesRefresh?.Invoke();
+        }
+
+        private void AttachNode(NodeViewModel node)
+        {
+            node.PropertyChanged -= Node_PropertyChanged;
+            node.PropertyChanged += Node_PropertyChanged;
+        }
+
+        private void DetachNode(NodeViewModel node)
+        {
+            node.PropertyChanged -= Node_PropertyChanged;
+        }
+
+        private void Node_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(NodeViewModel.X) || e.PropertyName == nameof(NodeViewModel.Y))
+                RequestLinesRefresh?.Invoke();
         }
     }
 }

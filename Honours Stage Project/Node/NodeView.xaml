@@ -26,7 +26,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Border BorderBrush="Black" BorderThickness="2" Background="LightCyan" Margin="0,0,0,-11">
+    <Border BorderBrush="Black" BorderThickness="1" Background="LightSteelBlue" Margin="0,0,0,-11">
         <StackPanel Margin="0,8,0,-8">
             
             <Button Content="Incoming" Width="71" HorizontalAlignment="Left"

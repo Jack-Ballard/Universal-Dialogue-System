@@ -5,6 +5,6 @@ namespace Honours_Stage_Project.Services
 {
     public interface IImportService
     {
-        (List<NodeViewModel>, List<(int, int, int)>) Import(INodeConnectionService connectionService, string fileName = "exported_data");
+        (List<NodeViewModel>, List<(int, int, int, int)>) Import(INodeConnectionService connectionService, string fileName = "exported_data");
     }
 }

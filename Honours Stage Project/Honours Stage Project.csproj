@@ -61,6 +61,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ViewModels\OutgoingConnectionViewModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -80,6 +81,7 @@
     <Compile Include="Models\ConditionModel.cs" />
     <Compile Include="Models\ConnectionModel.cs" />
     <Compile Include="Models\NodeModel.cs" />
+    <Compile Include="Models\OutgoingConnectionModel.cs" />
     <Compile Include="Services\IImportService.cs" />
     <Compile Include="Services\JsonImportService.cs" />
     <!-- ViewModels -->
