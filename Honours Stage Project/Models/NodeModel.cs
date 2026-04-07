@@ -15,6 +15,7 @@ namespace Honours_Stage_Project.Models
         private string _textContent = string.Empty;
         private double _x = 50;
         private double _y = 50;
+        private Size _size = new Size(280, 200);
 
 
         public int ID
@@ -39,6 +40,12 @@ namespace Honours_Stage_Project.Models
         {
             get => _y;
             set { _y = value; OnPropertyChanged(nameof(Y)); }
+        }
+
+        public Size Size
+        {
+            get => _size;
+            set { _size = value; OnPropertyChanged(nameof(Size)); }
         }
 
         public ObservableCollection<AttributeModel> Attributes = new ObservableCollection<AttributeModel>();
@@ -71,15 +78,18 @@ namespace Honours_Stage_Project.Models
             foreach (var attribute in Attributes)
                 exportedAttributes.Add(attribute.Export());
             Point position = new Point(X, Y);
-            return new { ID, TextContent, Attributes = exportedAttributes, Connections = exportedConnections, position };
+
+            return new { ID, TextContent, Attributes = exportedAttributes, Connections = exportedConnections, position, Size };
         }
 
         public void Import(dynamic data)
         {
             TextContent = data.TextContent;
-            ParsePosition(data.position, out double x, out double y);
+            ParseGeometry(data.position, out double x, out double y);
             X = x;
             Y = y;
+            ParseGeometry(data.Size, out double width, out double height);
+            Size = new Size(width, height);
             ConnectionComponents.Clear();
             foreach (var connData in data.Connections)
             {
@@ -94,7 +104,7 @@ namespace Honours_Stage_Project.Models
             }
         }
 
-        private static void ParsePosition(JToken positionToken, out double x, out double y)
+        private static void ParseGeometry(JToken positionToken, out double x, out double y)
         {
             x = 50;
             y = 50;

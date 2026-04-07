@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Windows.Input;
 using Honours_Stage_Project.Helpers;
 using Honours_Stage_Project.Services;
+using System.Windows;
 
 namespace Honours_Stage_Project.ViewModels
 {
@@ -55,6 +56,17 @@ namespace Honours_Stage_Project.ViewModels
                 if (_isDefaultOutgoingVisible == value) return;
                 _isDefaultOutgoingVisible = value;
                 OnPropertyChanged(nameof(IsDefaultOutgoingVisible));
+            }
+        }
+
+        public Size Size
+        {
+            get => Model.Size;
+            set
+            {
+                if (Model.Size == value) return;
+                Model.Size = value;
+                OnPropertyChanged(nameof(Size));
             }
         }
 

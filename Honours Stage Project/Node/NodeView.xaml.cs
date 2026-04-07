@@ -27,7 +27,6 @@ namespace Honours_Stage_Project.Node
         private bool _isResizing;
         private bool _isMoving;
         private ResizeDirection _resizeDirection;
-        private Size _size;
         private Point _position;
 
         private double _lastConnectionComponentsHeight;
@@ -46,6 +45,7 @@ namespace Honours_Stage_Project.Node
         private void NodeView_Loaded(object sender, RoutedEventArgs e)
         {
             SubscribeToNode(ViewModel);
+            ApplySizeFromViewModel();
             CaptureConnectionComponentsHeightBaseline();
         }
 
@@ -63,7 +63,29 @@ namespace Honours_Stage_Project.Node
             {
                 SubscribeToNode(newVm);
 
-                Dispatcher.BeginInvoke(new Action(CaptureConnectionComponentsHeightBaseline), DispatcherPriority.Loaded);
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    ApplySizeFromViewModel();
+                    CaptureConnectionComponentsHeightBaseline();
+                }), DispatcherPriority.Loaded);
+            }
+        }
+
+        private void ApplySizeFromViewModel()
+        {
+            if (ViewModel == null)
+                return;
+
+            if (ViewModel.Size.Width > 0)
+                Width = Math.Round(ViewModel.Size.Width, 2);
+
+            if (ViewModel.Size.Height > 0)
+                Height = Math.Round(ViewModel.Size.Height, 2);
+
+            if (InputTextBox != null)
+            {
+                InputTextBox.Width = Math.Max(0,Width - 40);
+                InputTextBox.Height = Math.Max(0,Height - 110 - GetTotalDynamicContentHeight());
             }
         }
 
@@ -248,7 +270,6 @@ namespace Honours_Stage_Project.Node
 
             if (_resizeDirection != ResizeDirection.None)
             {
-                _size = new Size(Width, Height);
                 _position = new Point(ViewModel?.X ?? 0, ViewModel?.Y ?? 0);
                 _isResizing = true;
                 CaptureMouse();
@@ -259,6 +280,7 @@ namespace Honours_Stage_Project.Node
                 _isMoving = true;
                 CaptureMouse();
             }
+
         }
 
         private void UserControl_MouseMove(object sender, MouseEventArgs e)
@@ -276,6 +298,9 @@ namespace Honours_Stage_Project.Node
         private void UserControl_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             _isResizing = _isMoving = false;
+            ViewModel.Size = new Size(Width, Height);
+            //ViewModel.TextContent = ("Width: " + ViewModel.Size.Width + "\nHeight: " + ViewModel.Size.Height); // Debug: show size in text content
+
             ReleaseMouseCapture();
         }
 
@@ -298,61 +323,64 @@ namespace Honours_Stage_Project.Node
             double deltaX = mousePos.X - _mouseStartPoint.X;
             double deltaY = mousePos.Y - _mouseStartPoint.Y;
 
-            double newWidth = _size.Width;
-            double newHeight = _size.Height;
+            double newWidth = ViewModel.Size.Width;
+            double newHeight = ViewModel.Size.Height;
             double newLeft = _position.X;
             double newTop = _position.Y;
 
             switch (_resizeDirection)
             {
                 case ResizeDirection.Top:
-                    newHeight = _size.Height - deltaY;
+                    newHeight = ViewModel.Size.Height - deltaY;
                     newTop = _position.Y + deltaY;
                     break;
                 case ResizeDirection.Bottom:
-                    newHeight = _size.Height + deltaY;
+                    newHeight = ViewModel.Size.Height + deltaY;
                     break;
                 case ResizeDirection.Left:
-                    newWidth = _size.Width - deltaX;
+                    newWidth = ViewModel.Size.Width - deltaX;
                     newLeft = _position.X + deltaX;
                     break;
                 case ResizeDirection.Right:
-                    newWidth = _size.Width + deltaX;
+                    newWidth = ViewModel.Size.Width + deltaX;
                     break;
                 case ResizeDirection.TopLeft:
-                    newWidth = _size.Width - deltaX;
-                    newHeight = _size.Height - deltaY;
+                    newWidth = ViewModel.Size.Width - deltaX;
+                    newHeight = ViewModel.Size.Height - deltaY;
                     newLeft = _position.X + deltaX;
                     newTop = _position.Y + deltaY;
                     break;
                 case ResizeDirection.TopRight:
-                    newWidth = _size.Width + deltaX;
-                    newHeight = _size.Height - deltaY;
+                    newWidth = ViewModel.Size.Width + deltaX;
+                    newHeight = ViewModel.Size.Height - deltaY;
                     newTop = _position.Y + deltaY;
                     break;
                 case ResizeDirection.BottomLeft:
-                    newWidth = _size.Width - deltaX;
-                    newHeight = _size.Height + deltaY;
+                    newWidth = ViewModel.Size.Width - deltaX;
+                    newHeight = ViewModel.Size.Height + deltaY;
                     newLeft = _position.X + deltaX;
                     break;
                 case ResizeDirection.BottomRight:
-                    newWidth = _size.Width + deltaX;
-                    newHeight = _size.Height + deltaY;
+                    newWidth = ViewModel.Size.Width + deltaX;
+                    newHeight = ViewModel.Size.Height + deltaY;
                     break;
             }
 
             if (newWidth > 240)
             {
-                Width = System.Math.Round(newWidth, 2);
+                Width = Math.Round(newWidth, 2);
                 if (ViewModel != null) ViewModel.X = newLeft;
                 if (InputTextBox != null) InputTextBox.Width = Width - 40;
             }
             if (newHeight > 180 + GetTotalDynamicContentHeight())
             {
-                Height = System.Math.Round(newHeight, 2);
+                Height = Math.Round(newHeight, 2);
                 if (ViewModel != null) ViewModel.Y = newTop;
                 if (InputTextBox != null) InputTextBox.Height = Height - 110 - GetTotalDynamicContentHeight();
             }
+
+            //if (ViewModel != null)
+            //    ViewModel.Size = new Size(Width, Height);
         }
 
         private void MoveControl(Point mousePos)

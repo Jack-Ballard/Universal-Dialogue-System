@@ -12,14 +12,16 @@
           "OutgoingConnections": []
         }
       ],
-      "position": "398,150.5"
+      "position": "398,150.5",
+      "Size": "280,282"
     },
     {
       "ID": 1,
       "TextContent": "First Node default\r\nNo Attribute",
       "Attributes": [],
       "Connections": [],
-      "position": "63,147.5"
+      "position": "66,160.5",
+      "Size": "245,181"
     },
     {
       "ID": 2,
@@ -37,7 +39,8 @@
         }
       ],
       "Connections": [],
-      "position": "729,150.5"
+      "position": "729,150.5",
+      "Size": "280,246"
     },
     {
       "ID": 3,
@@ -82,7 +85,8 @@
           "OutgoingConnections": []
         }
       ],
-      "position": "1068,155.5"
+      "position": "1068,155.5",
+      "Size": "280,408"
     },
     {
       "ID": 4,
@@ -132,7 +136,8 @@
           ]
         }
       ],
-      "position": "1404,166.5"
+      "position": "1404,166.5",
+      "Size": "280,552"
     },
     {
       "ID": 5,
@@ -155,7 +160,8 @@
           ]
         }
       ],
-      "position": "1779,179.5"
+      "position": "1779,179.5",
+      "Size": "280,329"
     },
     {
       "ID": 6,
@@ -196,7 +202,8 @@
           ]
         }
       ],
-      "position": "1789,555.5"
+      "position": "1789,555.5",
+      "Size": "280,423"
     },
     {
       "ID": 7,
@@ -298,7 +305,8 @@
           ]
         }
       ],
-      "position": "2139,191.5"
+      "position": "2140,184.5",
+      "Size": "280,822"
     },
     {
       "ID": 8,
@@ -400,7 +408,16 @@
           ]
         }
       ],
-      "position": "2496,196.5"
+      "position": "2496,196.5",
+      "Size": "280,820"
+    },
+    {
+      "ID": 9,
+      "TextContent": "Disconnected",
+      "Attributes": [],
+      "Connections": [],
+      "position": "298,624.5",
+      "Size": "280,200"
     }
   ],
   "Connections": [

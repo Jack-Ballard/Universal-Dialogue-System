@@ -103,7 +103,9 @@ namespace Honours_Stage_Project.ViewModels
 
         private void Node_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(NodeViewModel.X) || e.PropertyName == nameof(NodeViewModel.Y))
+            if (e.PropertyName == nameof(NodeViewModel.X)
+                || e.PropertyName == nameof(NodeViewModel.Y)
+                || e.PropertyName == nameof(NodeViewModel.Size))
                 RequestLinesRefresh?.Invoke();
         }
     }

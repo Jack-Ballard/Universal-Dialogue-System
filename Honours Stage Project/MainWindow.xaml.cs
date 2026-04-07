@@ -49,6 +49,7 @@ namespace Honours_Stage_Project
 
             viewModel.RequestLinesRefresh += () =>
             {
+                Dispatcher.InvokeAsync(RefreshLines, System.Windows.Threading.DispatcherPriority.Render);
                 Dispatcher.InvokeAsync(RefreshLines, System.Windows.Threading.DispatcherPriority.Loaded);
             };
 
@@ -145,6 +146,8 @@ namespace Honours_Stage_Project
         private void RefreshLines()
         {
             var vm = (MainWindowViewModel)DataContext;
+
+            NodesControl.UpdateLayout();
 
             foreach (var line in _lines)
                 LinesCanvas.Children.Remove(line);
