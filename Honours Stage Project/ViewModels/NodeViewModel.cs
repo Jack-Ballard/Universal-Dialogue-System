@@ -5,6 +5,7 @@ using System.Windows.Input;
 using Honours_Stage_Project.Helpers;
 using Honours_Stage_Project.Services;
 using System.Windows;
+using System.Linq;
 
 namespace Honours_Stage_Project.ViewModels
 {
@@ -88,11 +89,17 @@ namespace Honours_Stage_Project.ViewModels
 
             AddConnectionComponentCommand = new RelayCommand(_ => AddConnectionComponent());
             AddIncomingConnectionCommand = new RelayCommand(_ => _connectionService.AddIncoming(Model.ID));
-            AddDefaultConnectionCommand = new RelayCommand(_ => _connectionService.AddOutgoing(Model.ID, 0, 0));
+            AddDefaultConnectionCommand = new RelayCommand(_ => AddDefaultConnection());
             AddAttributeCommand = new RelayCommand(_ => AddAttribute());
 
             foreach (var component in Model.ConnectionComponents)
+            {
+                // ID 0 is data-only (default outgoing marker), do not render as a component view.
+                if (component.ID == 0)
+                    continue;
+
                 ConnectionComponents.Add(new ConnectionViewModel(component, Model.ID, _connectionService));
+            }
 
             if (ConnectionComponents.Count > 0)
                 IsDefaultOutgoingVisible = false;
@@ -100,10 +107,21 @@ namespace Honours_Stage_Project.ViewModels
 
         private void AddConnectionComponent()
         {
+            RemoveDefaultConnection();
+
             var componentModel = Model.AddConnectionComponent();
             ConnectionComponents.Add(new ConnectionViewModel(componentModel, Model.ID, _connectionService));
+        }
 
-            RemoveDefaultConnection();
+        private void AddDefaultConnection()
+        {
+            if (Model.GetComponentConnection(0) != null)
+                return;
+
+            _connectionService.AddOutgoing(Model.ID, 0, 0);
+
+            // Keep default connection in model only (no UI component row).
+            Model.AddDefaultConnectionComponent();
         }
 
         private void AddAttribute()
@@ -114,6 +132,8 @@ namespace Honours_Stage_Project.ViewModels
         private void RemoveDefaultConnection()
         {
             _connectionService.RemoveOutgoing(Model.ID, 0, 0);
+            ConnectionComponents.Remove(ConnectionComponents.FirstOrDefault(c => c.ID == 0));
+            Model.RemoveConnectionComponent(0);
             IsDefaultOutgoingVisible = false;
         }
 

@@ -66,6 +66,22 @@ namespace Honours_Stage_Project.Models
             return component;
         }
 
+        public ConnectionModel AddDefaultConnectionComponent()
+        {
+            if (ConnectionComponents.Count > 0)
+                return null;
+            var component = new ConnectionModel(0);
+            ConnectionComponents.Add(component);
+            return component;
+        }
+
+        public void RemoveConnectionComponent(int id)
+        {
+            var component = GetComponentConnection(id);
+            if (component != null)
+                ConnectionComponents.Remove(component);
+        }
+
         public ConnectionModel GetComponentConnection(int id)
             => ConnectionComponents.FirstOrDefault(c => c.ID == id);
 

@@ -48,7 +48,7 @@
         </Grid>
 
         <!-- Toolbar -->
-        <Rectangle Fill="DimGray" Height="32" VerticalAlignment="Top"/>
+        <Rectangle Fill="WhiteSmoke" Height="32" VerticalAlignment="Top"/>
 
         <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top"
                     Orientation="Horizontal" Margin="5">

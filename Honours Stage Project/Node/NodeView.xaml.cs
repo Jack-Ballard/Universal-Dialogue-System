@@ -28,6 +28,7 @@ namespace Honours_Stage_Project.Node
         private bool _isMoving;
         private ResizeDirection _resizeDirection;
         private Point _position;
+        private Size _resizeStartSize;
 
         private double _lastConnectionComponentsHeight;
 
@@ -271,6 +272,7 @@ namespace Honours_Stage_Project.Node
             if (_resizeDirection != ResizeDirection.None)
             {
                 _position = new Point(ViewModel?.X ?? 0, ViewModel?.Y ?? 0);
+                _resizeStartSize = new Size(Width, Height);
                 _isResizing = true;
                 CaptureMouse();
             }
@@ -323,46 +325,46 @@ namespace Honours_Stage_Project.Node
             double deltaX = mousePos.X - _mouseStartPoint.X;
             double deltaY = mousePos.Y - _mouseStartPoint.Y;
 
-            double newWidth = ViewModel.Size.Width;
-            double newHeight = ViewModel.Size.Height;
+            double newWidth = _resizeStartSize.Width;
+            double newHeight = _resizeStartSize.Height;
             double newLeft = _position.X;
             double newTop = _position.Y;
 
             switch (_resizeDirection)
             {
                 case ResizeDirection.Top:
-                    newHeight = ViewModel.Size.Height - deltaY;
+                    newHeight = _resizeStartSize.Height - deltaY;
                     newTop = _position.Y + deltaY;
                     break;
                 case ResizeDirection.Bottom:
-                    newHeight = ViewModel.Size.Height + deltaY;
+                    newHeight = _resizeStartSize.Height + deltaY;
                     break;
                 case ResizeDirection.Left:
-                    newWidth = ViewModel.Size.Width - deltaX;
+                    newWidth = _resizeStartSize.Width - deltaX;
                     newLeft = _position.X + deltaX;
                     break;
                 case ResizeDirection.Right:
-                    newWidth = ViewModel.Size.Width + deltaX;
+                    newWidth = _resizeStartSize.Width + deltaX;
                     break;
                 case ResizeDirection.TopLeft:
-                    newWidth = ViewModel.Size.Width - deltaX;
-                    newHeight = ViewModel.Size.Height - deltaY;
+                    newWidth = _resizeStartSize.Width - deltaX;
+                    newHeight = _resizeStartSize.Height - deltaY;
                     newLeft = _position.X + deltaX;
                     newTop = _position.Y + deltaY;
                     break;
                 case ResizeDirection.TopRight:
-                    newWidth = ViewModel.Size.Width + deltaX;
-                    newHeight = ViewModel.Size.Height - deltaY;
+                    newWidth = _resizeStartSize.Width + deltaX;
+                    newHeight = _resizeStartSize.Height - deltaY;
                     newTop = _position.Y + deltaY;
                     break;
                 case ResizeDirection.BottomLeft:
-                    newWidth = ViewModel.Size.Width - deltaX;
-                    newHeight = ViewModel.Size.Height + deltaY;
+                    newWidth = _resizeStartSize.Width - deltaX;
+                    newHeight = _resizeStartSize.Height + deltaY;
                     newLeft = _position.X + deltaX;
                     break;
                 case ResizeDirection.BottomRight:
-                    newWidth = ViewModel.Size.Width + deltaX;
-                    newHeight = ViewModel.Size.Height + deltaY;
+                    newWidth = _resizeStartSize.Width + deltaX;
+                    newHeight = _resizeStartSize.Height + deltaY;
                     break;
             }
 
@@ -379,8 +381,8 @@ namespace Honours_Stage_Project.Node
                 if (InputTextBox != null) InputTextBox.Height = Height - 110 - GetTotalDynamicContentHeight();
             }
 
-            //if (ViewModel != null)
-            //    ViewModel.Size = new Size(Width, Height);
+            if (ViewModel != null)
+                ViewModel.Size = new Size(Width, Height);
         }
 
         private void MoveControl(Point mousePos)
