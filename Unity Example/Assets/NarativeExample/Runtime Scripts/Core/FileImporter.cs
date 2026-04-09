@@ -16,16 +16,14 @@ public static class Importer
         //Console.WriteLine(textBoxes[0].ToString());
         foreach (System.Object textBox in textBoxes)
         {
-            Globals.textBoxes.Add(new TextBoxes(textBox));
+            Globals.textBoxes.Add(new TextBox(textBox));
         }
 
         List<System.Object> connections = ((Newtonsoft.Json.Linq.JObject)deserializedData)["Connections"].ToObject<List<System.Object>>();
         foreach (System.Object connection in connections)
         {
-            int fromTextBoxID = ((Newtonsoft.Json.Linq.JObject)connection)["FromTextBoxID"].ToObject<int>();
-            int fromComponentID = ((Newtonsoft.Json.Linq.JObject)connection)["FromComponentID"].ToObject<int>();
-            int toTextBoxID = ((Newtonsoft.Json.Linq.JObject)connection)["ToTextBoxID"].ToObject<int>();
-            Globals.connections.Add((fromTextBoxID, fromComponentID, toTextBoxID));
+            Connection newConnection = new Connection(connection);
+            Globals.connections.Add(newConnection);
         }
     }
 }

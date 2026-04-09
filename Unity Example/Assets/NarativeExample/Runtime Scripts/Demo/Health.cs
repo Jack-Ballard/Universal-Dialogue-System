@@ -13,7 +13,6 @@ public class Health : MonoBehaviour
         Globals.AddFunction(new Action<int>(RestoreHealth));
         Globals.AddFunction(new Func<string>(GetFormattedHealth));
         Globals.AddVariables("health", 100);
-
     }
     public string GetFormattedHealth()
     {

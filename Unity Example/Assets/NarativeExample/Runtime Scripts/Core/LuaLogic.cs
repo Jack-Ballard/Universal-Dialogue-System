@@ -32,6 +32,7 @@ public static class LuaLogic
         {
             if (result[i].isInside)
             {
+                //result[i] = (Regex.Replace(result[i].segment, @"[\r\n\t]", " "), result[i].isInside);
                 string luaCode = useReturn ? "return " + result[i].segment.Trim().TrimStart('$') : result[i].segment.Trim();
                 if (useReturn && Globals.functions.ContainsKey(result[i].segment) && !result[i].segment.EndsWith("()"))
                 {
@@ -48,6 +49,14 @@ public static class LuaLogic
         }
 
         return output;
+    }
+
+    public static bool EvaluateLuaCondition(string input)
+    {
+        Script luaScript = new Script(CoreModules.Preset_Default);
+        SyncVariables(luaScript);
+        var result = luaScript.DoString("return " + input).ToObject();
+        return result is bool boolResult && boolResult;
     }
 
     public static List<(string segment, bool isInside)> SplitByRegex(string input, Regex regex)
