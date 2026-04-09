@@ -13,7 +13,10 @@ namespace Honours_Stage_Project.ViewModels
     {
         private readonly INodeConnectionService _connectionService;
         private bool _isDefaultOutgoingVisible = true;
+        public ObservableCollection<ConnectionViewModel> ConnectionComponents { get; }
+            = new ObservableCollection<ConnectionViewModel>();
 
+        public ObservableCollection<AttributeModel> Attributes => Model.Attributes;
         public NodeModel Model { get; }
 
         public string TextContent
@@ -70,11 +73,6 @@ namespace Honours_Stage_Project.ViewModels
                 OnPropertyChanged(nameof(Size));
             }
         }
-
-        public ObservableCollection<ConnectionViewModel> ConnectionComponents { get; }
-            = new ObservableCollection<ConnectionViewModel>();
-
-        public ObservableCollection<AttributeModel> Attributes => Model.Attributes;
 
         public ICommand AddConnectionComponentCommand { get; }
         public ICommand AddIncomingConnectionCommand { get; }

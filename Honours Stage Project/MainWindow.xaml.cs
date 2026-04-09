@@ -154,10 +154,10 @@ namespace Honours_Stage_Project
 
             foreach (var item in vm.Connections)
             {
-                var fromNodeId = item.Item1;
-                var fromComponentId = item.Item2;
-                var fromConnectionId = item.Item3;
-                var toNodeId = item.Item4;
+                var fromNodeId = item.NodeId;
+                var fromComponentId = item.ComponentId;
+                var fromConnectionId = item.ConnectionId;
+                var toNodeId = item.TargetNodeId;
 
                 NodeViewModel sourceNode = vm.Nodes.FirstOrDefault(n => n.Model.ID == fromNodeId);
                 NodeViewModel targetNode = vm.Nodes.FirstOrDefault(n => n.Model.ID == toNodeId);

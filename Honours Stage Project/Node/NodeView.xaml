@@ -27,11 +27,16 @@
     </UserControl.Resources>
 
     <Border BorderBrush="Black" BorderThickness="1" Background="LightSteelBlue" Margin="0,0,0,-11">
-        <StackPanel Margin="0,8,0,-8">
-            
-            <Button Content="Incoming" Width="71" HorizontalAlignment="Left"
-                    Command="{Binding AddIncomingConnectionCommand}"/>
-            
+        <StackPanel Margin="0,0,0,-4">
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="Incoming" Width="71" HorizontalAlignment="Left"
+                        Command="{Binding AddIncomingConnectionCommand}"/>
+                <Rectangle x:Name="TopBar" Width="187" Fill="WhiteSmoke"/>
+                <Button Content="X" Width="20" Height="20" HorizontalAlignment="Right" Background="PaleVioletRed"
+                        Command="{Binding DataContext.DeleteNodeCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                        CommandParameter="{Binding}"/>
+            </StackPanel>
             <TextBox AcceptsReturn="True"
                      AcceptsTab="True"
                      TextWrapping="Wrap"

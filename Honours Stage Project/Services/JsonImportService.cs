@@ -18,7 +18,7 @@ namespace Honours_Stage_Project.Services
             _fileService = fileService;
         }
 
-        public (List<NodeViewModel>, List<(int, int, int, int)>) Import(INodeConnectionService connectionService, string fileName = "exported_data")
+        public (List<NodeViewModel>, List<Connection>) Import(INodeConnectionService connectionService, string fileName = "exported_data")
         {
             var path = fileName.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
                 ? fileName
@@ -28,7 +28,7 @@ namespace Honours_Stage_Project.Services
 
             var root = JsonConvert.DeserializeObject<JObject>(json);
             if (root == null)
-                return (new List<NodeViewModel>(), new List<(int, int, int, int)>());
+                return (new List<NodeViewModel>(), new List<Connection>());
 
             var nodes = new List<NodeViewModel>();
             var nodeTokens = root["TextBoxes"] as JArray ?? new JArray();
@@ -42,15 +42,17 @@ namespace Honours_Stage_Project.Services
                 nodes.Add(new NodeViewModel(model, connectionService));
             }
 
-            var connections = new List<(int, int, int, int)>();
+            var connections = new List<Connection>();
             var connectionTokens = root["Connections"] as JArray ?? new JArray();
             foreach (var connectionToken in connectionTokens.OfType<JObject>())
             {
-                connections.Add((
+                Connection connection = new Connection(
                     GetInt(connectionToken, "FromTextBoxID"),
                     GetInt(connectionToken, "FromComponentID"),
                     GetInt(connectionToken, "FromConnectionID"), // defaults to 0 if absent
-                    GetInt(connectionToken, "ToTextBoxID")));
+                    GetInt(connectionToken, "ToTextBoxID"));
+
+                connections.Add(connection);
             }
 
             return (nodes, connections);

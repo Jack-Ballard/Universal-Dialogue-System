@@ -24,11 +24,12 @@ namespace Honours_Stage_Project.ViewModels
 
         public ObservableCollection<NodeViewModel> Nodes { get; } = new ObservableCollection<NodeViewModel>();
 
-        public IReadOnlyList<(int, int, int, int)> Connections => _connectionService.Connections;
+        public IReadOnlyList<Connection> Connections => _connectionService.Connections;
 
         public ICommand AddNodeCommand { get; }
         public ICommand ExportCommand { get; }
         public ICommand ImportCommand { get; }
+        public ICommand DeleteNodeCommand { get; }
 
         /// <summary>Raised whenever connection lines should be redrawn.</summary>
         public event Action RequestLinesRefresh;
@@ -44,6 +45,7 @@ namespace Honours_Stage_Project.ViewModels
             AddNodeCommand = new RelayCommand(parameter => AddNode(parameter));
             ExportCommand = new RelayCommand(_ => _exportService.Export(Nodes, _connectionService.Connections));
             ImportCommand = new RelayCommand(_ => Import());
+            DeleteNodeCommand = new RelayCommand(node => RemoveNode(node as NodeViewModel));
         }
 
         public void AddNodeAt(double x, double y)
@@ -71,6 +73,14 @@ namespace Honours_Stage_Project.ViewModels
             AddNodeAt(50, 50);
         }
 
+        private void RemoveNode(NodeViewModel node)
+        {
+            DetachNode(node);
+            Nodes.Remove(node);
+            for(int i = 0; i < Nodes.Count; i++)
+                Nodes[i].Model.ID = i;
+            _connectionService.RemoveConnectionsForNode(node.Model.ID);
+        }
         private void Import()
         {
             var (importedNodes, importedConnections) = _importService.Import(_connectionService, "exported_data");

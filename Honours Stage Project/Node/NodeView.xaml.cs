@@ -371,8 +371,15 @@ namespace Honours_Stage_Project.Node
             if (newWidth > 240)
             {
                 Width = Math.Round(newWidth, 2);
-                if (ViewModel != null) ViewModel.X = newLeft;
-                if (InputTextBox != null) InputTextBox.Width = Width - 40;
+                if (ViewModel != null)
+                { 
+                    ViewModel.X = newLeft; 
+                    TopBar.Width = Width - 90;
+                }
+                if (InputTextBox != null) 
+                { 
+                    InputTextBox.Width = Width - 40; 
+                }
             }
             if (newHeight > 180 + GetTotalDynamicContentHeight())
             {

@@ -3,9 +3,23 @@ using System.Collections.Generic;
 
 namespace Honours_Stage_Project.Services
 {
+    public struct Connection
+    {
+        public int NodeId { get; }
+        public int ComponentId { get; }
+        public int ConnectionId { get; }
+        public int TargetNodeId { get; }
+        public Connection(int nodeId, int componentId, int connectionId, int targetNodeId)
+        {
+            NodeId = nodeId;
+            ComponentId = componentId;
+            ConnectionId = connectionId;
+            TargetNodeId = targetNodeId;
+        }
+    }
     public interface INodeConnectionService
     {
-        IReadOnlyList<(int, int, int, int)> Connections { get; }
+        IReadOnlyList<Connection> Connections { get; }
 
         event Action ConnectionsChanged;
 
@@ -15,6 +29,8 @@ namespace Honours_Stage_Project.Services
 
         void RemoveOutgoing(int nodeId, int componentId, int connectionId);
 
-        void SetConnections(IEnumerable<(int, int, int, int)> connections);
+        void RemoveConnectionsForNode(int nodeId);
+
+        void SetConnections(IEnumerable<Connection> connections);
     }
 }

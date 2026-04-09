@@ -5,6 +5,6 @@ namespace Honours_Stage_Project.Services
 {
     public interface IExportService
     {
-        void Export(IEnumerable<NodeViewModel> nodes, IEnumerable<(int, int, int, int)> connections, string fileName = "exported_data");
+        void Export(IEnumerable<NodeViewModel> nodes, IEnumerable<Connection> connections, string fileName = "exported_data");
     }
 }
