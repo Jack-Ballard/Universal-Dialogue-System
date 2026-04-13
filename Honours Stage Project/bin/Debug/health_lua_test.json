@@ -1,0 +1,98 @@
+{
+  "TextBoxes": [
+    {
+      "ID": 0,
+      "TextContent": "You have $health health, \\r\\nThat means you are $GetFormattedHealth",
+      "Attributes": [],
+      "Connections": [
+        {
+          "ID": 1,
+          "Attributes": [
+            {
+              "ID": 0,
+              "Value": "Take Damage",
+              "Name": "ChoiceName"
+            }
+          ],
+          "Conditions": [],
+          "OutgoingConnections": []
+        },
+        {
+          "ID": 2,
+          "Attributes": [
+            {
+              "ID": 0,
+              "Value": "Restore Health",
+              "Name": "ChoiceName"
+            }
+          ],
+          "Conditions": [
+            {
+              "ID": 0,
+              "Value": "health < 80"
+            }
+          ],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "238,166.5",
+      "Size": "278,458.64"
+    },
+    {
+      "ID": 1,
+      "TextContent": "You have taken { \r\nlocal randomInt = math.random(1, 10)\r\nTakeDamage(randomInt )\r\nreturn randomInt } damage.",
+      "Attributes": [],
+      "Connections": [
+        {
+          "ID": 0,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "619,155.5",
+      "Size": "280,200"
+    },
+    {
+      "ID": 2,
+      "TextContent": "You can only see this option only if health was less than 80. You have healed { \r\nlocal randomInt = math.random(1, 10)\r\nRestoreHealth(randomInt )\r\nreturn randomInt } health.",
+      "Attributes": [],
+      "Connections": [
+        {
+          "ID": 0,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "666,446.5",
+      "Size": "280,223"
+    }
+  ],
+  "Connections": [
+    {
+      "FromTextBoxID": 0,
+      "FromComponentID": 1,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 1
+    },
+    {
+      "FromTextBoxID": 0,
+      "FromComponentID": 2,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 2
+    },
+    {
+      "FromTextBoxID": 2,
+      "FromComponentID": 0,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 0
+    },
+    {
+      "FromTextBoxID": 1,
+      "FromComponentID": 0,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 0
+    }
+  ]
+}

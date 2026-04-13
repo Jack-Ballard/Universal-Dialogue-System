@@ -18,7 +18,7 @@ namespace Honours_Stage_Project.Services
             _fileService = fileService;
         }
 
-        public (List<NodeViewModel>, List<Connection>) Import(INodeConnectionService connectionService, string fileName = "exported_data")
+        public (List<NodeViewModel>, List<Connection>) ImportDialogue(INodeConnectionService connectionService, string fileName = "exported_data")
         {
             var path = fileName.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
                 ? fileName
@@ -57,6 +57,8 @@ namespace Honours_Stage_Project.Services
 
             return (nodes, connections);
         }
+
+        
 
         private static int GetInt(JObject token, string propertyName)
             => (int?)token[propertyName] ?? 0;

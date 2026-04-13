@@ -21,6 +21,7 @@ namespace Honours_Stage_Project.ViewModels
         private readonly INodeConnectionService _connectionService;
         private readonly IExportService _exportService;
         private readonly IImportService _importService;
+        private readonly ILuaStubValidationService _luaStubValidationService;
 
         public ObservableCollection<NodeViewModel> Nodes { get; } = new ObservableCollection<NodeViewModel>();
 
@@ -34,11 +35,16 @@ namespace Honours_Stage_Project.ViewModels
         /// <summary>Raised whenever connection lines should be redrawn.</summary>
         public event Action RequestLinesRefresh;
 
-        public MainWindowViewModel(INodeConnectionService connectionService, IExportService exportService, IImportService importService)
+        public MainWindowViewModel(
+            INodeConnectionService connectionService,
+            IExportService exportService,
+            IImportService importService,
+            ILuaStubValidationService luaStubValidationService)
         {
             _connectionService = connectionService;
             _exportService = exportService;
             _importService = importService;
+            _luaStubValidationService = luaStubValidationService;
 
             _connectionService.ConnectionsChanged += () => RequestLinesRefresh?.Invoke();
 
@@ -77,13 +83,14 @@ namespace Honours_Stage_Project.ViewModels
         {
             DetachNode(node);
             Nodes.Remove(node);
-            for(int i = 0; i < Nodes.Count; i++)
+            for (int i = 0; i < Nodes.Count; i++)
                 Nodes[i].Model.ID = i;
             _connectionService.RemoveConnectionsForNode(node.Model.ID);
         }
+
         private void Import()
         {
-            var (importedNodes, importedConnections) = _importService.Import(_connectionService, "exported_data");
+            var (importedNodes, importedConnections) = _importService.ImportDialogue(_connectionService, "exported_data");
 
             foreach (var node in Nodes)
                 DetachNode(node);
@@ -97,7 +104,41 @@ namespace Honours_Stage_Project.ViewModels
             }
 
             _connectionService.SetConnections(importedConnections);
+
+            // Validate imported node text as Lua against the generated stub.
+            ValidateImportedLuaScripts("lua_stub.json");
+
             RequestLinesRefresh?.Invoke();
+        }
+
+        private void ValidateImportedLuaScripts(string stubFilePath)
+        {
+            var allErrors = new List<string>();
+
+            foreach (var node in Nodes)
+            {
+                string luaScript = node?.Model?.TextContent;
+                if (string.IsNullOrWhiteSpace(luaScript))
+                    continue;
+
+
+
+                LuaValidationResult validation = _luaStubValidationService.Validate(luaScript, stubFilePath);
+                if (validation.IsValid)
+                    continue;
+
+                foreach (string error in validation.Errors)
+                    allErrors.Add("Node " + node.Model.ID + ": " + error);
+            }
+
+            if (allErrors.Count == 0)
+                return;
+
+            MessageBox.Show(
+                string.Join(Environment.NewLine, allErrors),
+                "Lua validation errors",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
         }
 
         private void AttachNode(NodeViewModel node)
