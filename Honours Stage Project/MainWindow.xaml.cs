@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using Honours_Stage_Project.Helpers;
 using Honours_Stage_Project.Node;
 using Honours_Stage_Project.ViewModels;
 
@@ -208,31 +209,16 @@ namespace Honours_Stage_Project
                 x2 = targetPos.X;
                 y2 = targetPos.Y;
 
-                var backLine = new Line
-                {
-                    Stroke = Brushes.Orange,
-                    StrokeThickness = 5,
-                    X1 = x1,
-                    Y1 = y1,
-                    X2 = x2,
-                    Y2 = y2,
-                };
-
-                var frontLine = new Line
-                {
-                    Stroke = Brushes.LightYellow,
-                    StrokeThickness = 2,
-                    X1 = x1,
-                    Y1 = y1,
-                    X2 = x2,
-                    Y2 = y2,
-                };
                 
-                _lines.Add(backLine);
-                LinesCanvas.Children.Add(backLine);
+                List<Line> lineSegments = new List<Line>();
+                lineSegments = LineHelpers.DrawAngularConnection(x1, y1, x2, y2);
 
-                _lines.Add(frontLine);
-                LinesCanvas.Children.Add(frontLine);
+                foreach(Line line in lineSegments)
+                {
+                    _lines.Add(line);
+                    LinesCanvas.Children.Add(line);
+                }
+                
             }
         }
 
