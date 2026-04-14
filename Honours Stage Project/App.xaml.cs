@@ -9,8 +9,8 @@ namespace Honours_Stage_Project
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             var fileService = new FileService();
-            var exportService = new JsonExportService(fileService);
             var importService = new JsonImportService(fileService);
+            var exportService = new JsonExportService(fileService, importService);
             var luaValidationService = new LuaStubValidationService(importService);
             var connectionService = new NodeConnectionService();
             var viewModel = new MainWindowViewModel(connectionService, exportService, importService, luaValidationService);

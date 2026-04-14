@@ -10,9 +10,49 @@ namespace Honours_Stage_Project.Services
     {
         private readonly IImportService _importService;
 
+        public bool CanValidateLua => _importService.HasLuaStub;
+
         public LuaStubValidationService(IImportService importService)
         {
             _importService = importService;
+        }
+
+        public LuaValidationResult Validate(string luaScript)
+        {
+            var result = new LuaValidationResult();
+
+            if (!CanValidateLua)
+                return result;
+
+            if (string.IsNullOrWhiteSpace(luaScript))
+            {
+                result.Errors.Add("Lua script is empty.");
+                return result;
+            }
+
+            var script = new Script(CoreModules.Preset_Default);
+            RegisterStubs(script, _importService.CurrentLuaStub);
+            GuardUnknownGlobals(script);
+
+            try
+            {
+                script.LoadString(luaScript);
+                script.DoString(luaScript);
+            }
+            catch (SyntaxErrorException e)
+            {
+                result.Errors.Add("Syntax error: " + e.DecoratedMessage);
+            }
+            catch (ScriptRuntimeException e)
+            {
+                result.Errors.Add("Runtime error: " + e.DecoratedMessage);
+            }
+            catch (Exception e)
+            {
+                result.Errors.Add("Unexpected error: " + e.Message);
+            }
+
+            return result;
         }
 
         public static List<string> FormatByLua(string input)
@@ -43,52 +83,6 @@ namespace Honours_Stage_Project.Services
             {
                  result.Add(Validate(luaSnippet));
             }
-            return result;
-        }
-
-        public LuaValidationResult Validate(string luaScript)
-        {
-            var result = new LuaValidationResult();
-
-            if (string.IsNullOrWhiteSpace(luaScript))
-            {
-                result.Errors.Add("Lua script is empty.");
-                return result;
-            }
-
-            LuaStubDefinition stub;
-            try
-            {
-                stub = _importService.ImportLuaStub();
-            }
-            catch (Exception e)
-            {
-                result.Errors.Add("Failed to import Lua stubs: " + e.Message);
-                return result;
-            }
-
-            var script = new Script(CoreModules.Preset_Default);
-            RegisterStubs(script, stub);
-            GuardUnknownGlobals(script);
-
-            try
-            {
-                script.LoadString(luaScript);
-                script.DoString(luaScript);
-            }
-            catch (SyntaxErrorException e)
-            {
-                result.Errors.Add("Syntax error: " + e.DecoratedMessage);
-            }
-            catch (ScriptRuntimeException e)
-            {
-                result.Errors.Add("Runtime error: " + e.DecoratedMessage);
-            }
-            catch (Exception e)
-            {
-                result.Errors.Add("Unexpected error: " + e.Message);
-            }
-
             return result;
         }
 

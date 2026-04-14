@@ -14,6 +14,12 @@ namespace Honours_Stage_Project.Services
     public class JsonImportService : IImportService
     {
         private readonly IFileService _fileService;
+        private string nodeFileLoaded = string.Empty;
+        private LuaStubDefinition _currentLuaStub = new LuaStubDefinition();
+        private bool _hasLuaStub;
+
+        public LuaStubDefinition CurrentLuaStub => _currentLuaStub;
+        public bool HasLuaStub => _hasLuaStub;
 
         public JsonImportService(IFileService fileService)
         {
@@ -32,6 +38,8 @@ namespace Honours_Stage_Project.Services
             var root = JsonConvert.DeserializeObject<JObject>(json);
             if (root == null)
                 return (new List<NodeViewModel>(), new List<Connection>());
+
+            LoadLuaStubFromNodeFile(root);
 
             var nodes = new List<NodeViewModel>();
             var nodeTokens = root["TextBoxes"] as JArray ?? new JArray();
@@ -58,18 +66,78 @@ namespace Honours_Stage_Project.Services
                 connections.Add(connection);
             }
 
+            nodeFileLoaded = path;
+
             return (nodes, connections);
         }
 
         public LuaStubDefinition ImportLuaStub()
         {
             string path = GetFilePath("lastStubLocation.txt");
+            if (string.IsNullOrWhiteSpace(path))
+                return _currentLuaStub;
 
             _fileService.ReadAllText(path, out string json);
 
             if (string.IsNullOrWhiteSpace(json))
-                return new LuaStubDefinition();
+            {
+                _currentLuaStub = new LuaStubDefinition();
+                _hasLuaStub = false;
+                return _currentLuaStub;
+            }
 
+            _currentLuaStub = CommitStub(json);
+            _hasLuaStub = ContainsStubData(_currentLuaStub);
+            PersistLuaStubToLoadedNodeFile();
+
+            return _currentLuaStub;
+        }
+
+        private void LoadLuaStubFromNodeFile(JObject root)
+        {
+            var stubToken = root["LuaStubs"];
+            if (stubToken == null || stubToken.Type == JTokenType.Null)
+            {
+                _currentLuaStub = new LuaStubDefinition();
+                _hasLuaStub = false;
+                return;
+            }
+
+            var stubObject = stubToken as JObject;
+            if (stubObject == null)
+            {
+                _currentLuaStub = new LuaStubDefinition();
+                _hasLuaStub = false;
+                return;
+            }
+
+            if (stubObject["variables"] != null || stubObject["functions"] != null || stubObject["attributes"] != null)
+                _currentLuaStub = CommitStub(stubObject.ToString());
+            else
+                _currentLuaStub = stubObject.ToObject<LuaStubDefinition>() ?? new LuaStubDefinition();
+
+            _hasLuaStub = ContainsStubData(_currentLuaStub);
+        }
+
+        private static bool ContainsStubData(LuaStubDefinition stub)
+        {
+            if (stub == null)
+                return false;
+
+            if (stub.Variables != null && stub.Variables.Count > 0)
+                return true;
+
+            if (stub.Functions != null && stub.Functions.Count > 0)
+                return true;
+
+            if (stub.Attributes != null && stub.Attributes.Count > 0)
+                return true;
+
+            return false;
+        }
+
+        public LuaStubDefinition CommitStub(string json)
+        {
             var root = JsonConvert.DeserializeObject<JObject>(json);
             if (root == null)
                 return new LuaStubDefinition();
@@ -97,6 +165,21 @@ namespace Honours_Stage_Project.Services
             result.Attributes = ParseMembers(root["attributes"] as JArray);
 
             return result;
+        }
+
+        private void PersistLuaStubToLoadedNodeFile()
+        {
+            if (string.IsNullOrWhiteSpace(nodeFileLoaded))
+                return;
+
+            _fileService.ReadAllText(nodeFileLoaded, out string json);
+            if (string.IsNullOrWhiteSpace(json))
+                return;
+
+            var root = JsonConvert.DeserializeObject<JObject>(json) ?? new JObject();
+            root["LuaStubs"] = JObject.FromObject(_currentLuaStub ?? new LuaStubDefinition());
+
+            _fileService.WriteAllText(nodeFileLoaded, root.ToString(Formatting.Indented));
         }
 
         private static List<LuaStubMember> ParseMembers(JArray members)

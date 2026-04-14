@@ -60,7 +60,9 @@
                     Width="60" Margin="0,0,5,0"/>
             <Button Content="Import" Command="{Binding ImportCommand}"
                     Width="60" Margin="0,0,5,0"/>
-            <Button Content="Add Root Node"   Command="{Binding AddRootNodeCommand}"
+            <Button Content="Import Stub" Command="{Binding ImportStubCommand}"
+                    Width="85" Margin="0,0,5,0"/>
+            <Button Content="Add Root Node" Command="{Binding AddRootNodeCommand}"
                     Width="100" Margin="0,0,5,0"/>
             <Button Content="Reset Camera" Click="ResetCamera_Click"
                     Width="95" Margin="0,0,5,0"/>

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -85,14 +86,17 @@ namespace Honours_Stage_Project.Node
 
             if (InputTextBox != null)
             {
-                InputTextBox.Width = Math.Max(0,Width - 40);
-                InputTextBox.Height = Math.Max(0,Height - 110 - GetTotalDynamicContentHeight());
+                InputTextBox.Width = Math.Max(0, Width - 40);
+                InputTextBox.Height = Math.Max(0, Height - 110 - GetTotalDynamicContentHeight());
             }
         }
 
         private void SubscribeToNode(NodeViewModel nodeViewModel)
         {
             if (nodeViewModel == null) return;
+
+            nodeViewModel.PropertyChanged -= NodeViewModel_PropertyChanged;
+            nodeViewModel.PropertyChanged += NodeViewModel_PropertyChanged;
 
             nodeViewModel.ConnectionComponents.CollectionChanged -= ConnectionComponents_CollectionChanged;
             nodeViewModel.ConnectionComponents.CollectionChanged += ConnectionComponents_CollectionChanged;
@@ -108,11 +112,22 @@ namespace Honours_Stage_Project.Node
         {
             if (nodeViewModel == null) return;
 
+            nodeViewModel.PropertyChanged -= NodeViewModel_PropertyChanged;
+
             nodeViewModel.ConnectionComponents.CollectionChanged -= ConnectionComponents_CollectionChanged;
             nodeViewModel.Attributes.CollectionChanged -= NodeAttributes_CollectionChanged;
 
             foreach (var component in nodeViewModel.ConnectionComponents)
                 UnsubscribeFromConnection(component);
+        }
+
+        private void NodeViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName != nameof(NodeViewModel.HasLuaValidationError)
+                && e.PropertyName != nameof(NodeViewModel.LuaValidationErrorText))
+                return;
+
+            QueueAdjustNodeHeightByDynamicDelta(allowShrink: true);
         }
 
         private void SubscribeToConnection(ConnectionViewModel connection)
@@ -175,7 +190,7 @@ namespace Honours_Stage_Project.Node
             }
 
             if (e.Action == NotifyCollectionChangedAction.Add)
-                QueueGrowTextBoxByConnectionDelta();
+                QueueAdjustNodeHeightByDynamicDelta(allowShrink: false);
             else
                 QueueRefreshConnectionHeightBaseline();
         }
@@ -183,7 +198,7 @@ namespace Honours_Stage_Project.Node
         private void ConnectionChildren_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Add)
-                QueueGrowTextBoxByConnectionDelta();
+                QueueAdjustNodeHeightByDynamicDelta(allowShrink: false);
             else
                 QueueRefreshConnectionHeightBaseline();
         }
@@ -191,22 +206,41 @@ namespace Honours_Stage_Project.Node
         // Add this method to handle the CollectionChanged event for Node Attributes
         private void NodeAttributes_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            // If attributes are added, grow the textbox by the delta
             if (e.Action == NotifyCollectionChangedAction.Add)
-                QueueGrowTextBoxByConnectionDelta();
+                QueueAdjustNodeHeightByDynamicDelta(allowShrink: false);
             else
                 QueueRefreshConnectionHeightBaseline();
         }
 
-        private void QueueGrowTextBoxByConnectionDelta()
+        private void QueueAdjustNodeHeightByDynamicDelta(bool allowShrink)
         {
             Dispatcher.BeginInvoke(new Action(() =>
             {
                 var currentHeight = GetTotalDynamicContentHeight();
                 var delta = currentHeight - _lastConnectionComponentsHeight;
 
-                if (delta > 0)
-                    Height = System.Math.Round(Height + delta, 2);
+                if (Math.Abs(delta) < 0.01)
+                {
+                    _lastConnectionComponentsHeight = currentHeight;
+                    return;
+                }
+
+                if (delta > 0 || allowShrink)
+                {
+                    var newHeight = Math.Round(Height + delta, 2);
+                    var minimumHeight = 180 + currentHeight;
+
+                    if (newHeight < minimumHeight)
+                        newHeight = Math.Round(minimumHeight, 2);
+
+                    Height = newHeight;
+
+                    if (InputTextBox != null)
+                        InputTextBox.Height = Math.Max(0, Height - 110 - currentHeight);
+
+                    if (ViewModel != null)
+                        ViewModel.Size = new Size(Width, Height);
+                }
 
                 _lastConnectionComponentsHeight = currentHeight;
             }), DispatcherPriority.Loaded);
@@ -224,7 +258,20 @@ namespace Honours_Stage_Project.Node
 
         private double GetTotalDynamicContentHeight()
         {
-            return GetTotalConnectionComponentsHeight() + GetTotalAttributeHeight();
+            return GetTotalConnectionComponentsHeight() + GetTotalAttributeHeight() + GetErrorBlockHeight();
+        }
+
+        private double GetErrorBlockHeight()
+        {
+            if (ErrorBlock == null)
+                return 0;
+
+            ErrorBlock.UpdateLayout();
+
+            if (ErrorBlock.Visibility != Visibility.Visible)
+                return 0;
+
+            return ErrorBlock.ActualHeight;
         }
 
         private double GetTotalAttributeHeight()

@@ -30,6 +30,7 @@ namespace Honours_Stage_Project.ViewModels
         public ICommand AddNodeCommand { get; }
         public ICommand ExportCommand { get; }
         public ICommand ImportCommand { get; }
+        public ICommand ImportStubCommand { get; }
         public ICommand DeleteNodeCommand { get; }
 
         /// <summary>Raised whenever connection lines should be redrawn.</summary>
@@ -51,6 +52,7 @@ namespace Honours_Stage_Project.ViewModels
             AddNodeCommand = new RelayCommand(parameter => AddNode(parameter));
             ExportCommand = new RelayCommand(_ => _exportService.Export(Nodes, _connectionService.Connections));
             ImportCommand = new RelayCommand(_ => Import());
+            ImportStubCommand = new RelayCommand(_ => ImportStub());
             DeleteNodeCommand = new RelayCommand(node => RemoveNode(node as NodeViewModel));
         }
 
@@ -115,8 +117,21 @@ namespace Honours_Stage_Project.ViewModels
             RequestLinesRefresh?.Invoke();
         }
 
+        private void ImportStub()
+        {
+            _importService.ImportLuaStub();
+
+            foreach (var node in Nodes)
+                node.ConfigureLuaValidation(_luaStubValidationService);
+
+            ValidateImportedLuaScripts();
+        }
+
         private void ValidateImportedLuaScripts()
         {
+            if (!_luaStubValidationService.CanValidateLua)
+                return;
+
             var allErrors = new List<string>();
 
             foreach (var node in Nodes)
@@ -127,7 +142,7 @@ namespace Honours_Stage_Project.ViewModels
 
                 List<LuaValidationResult> validation = _luaStubValidationService.ValidateLua(luaScript);
 
-                foreach(LuaValidationResult result in validation)
+                foreach (LuaValidationResult result in validation)
                 {
                     if (result.IsValid)
                         continue;
@@ -135,7 +150,6 @@ namespace Honours_Stage_Project.ViewModels
                     foreach (string error in result.Errors)
                         allErrors.Add("Node " + node.Model.ID + ": " + error);
                 }
-                
             }
 
             if (allErrors.Count == 0)

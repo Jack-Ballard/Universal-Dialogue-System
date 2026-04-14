@@ -8,5 +8,9 @@ namespace Honours_Stage_Project.Services
         (List<NodeViewModel>, List<Connection>) ImportDialogue(INodeConnectionService connectionService);
 
         LuaStubDefinition ImportLuaStub();
+
+        LuaStubDefinition CurrentLuaStub { get; }
+
+        bool HasLuaStub { get; }
     }
 }
