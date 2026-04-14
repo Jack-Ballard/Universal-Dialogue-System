@@ -1,0 +1,95 @@
+{
+  "variables": {
+    "health": {
+      "type": "System.Int32",
+      "value": 100
+    }
+  },
+  "functions": [
+    {
+      "name": "TakeDamage",
+      "declaringType": "Health",
+      "returnType": "System.Void",
+      "parameters": [
+        {
+          "name": "damage",
+          "type": "System.Int32"
+        }
+      ]
+    },
+    {
+      "name": "RestoreHealth",
+      "declaringType": "Health",
+      "returnType": "System.Void",
+      "parameters": [
+        {
+          "name": "amount",
+          "type": "System.Int32"
+        }
+      ]
+    },
+    {
+      "name": "GetFormattedHealth",
+      "declaringType": "Health",
+      "returnType": "System.String",
+      "parameters": []
+    }
+  ],
+  "attributes": [
+    {
+      "name": "Name",
+      "declaringType": "AttributeName",
+      "returnType": "System.Void",
+      "parameters": [
+        {
+          "name": "context",
+          "type": "NarrativeAttributeContext"
+        }
+      ]
+    },
+    {
+      "name": "SpriteTexture",
+      "declaringType": "AttributeSprite",
+      "returnType": "System.Void",
+      "parameters": [
+        {
+          "name": "context",
+          "type": "NarrativeAttributeContext"
+        }
+      ]
+    },
+    {
+      "name": "MoveSprite",
+      "declaringType": "AttributeSprite",
+      "returnType": "System.Void",
+      "parameters": [
+        {
+          "name": "context",
+          "type": "NarrativeAttributeContext"
+        }
+      ]
+    },
+    {
+      "name": "MoveSpriteBy",
+      "declaringType": "AttributeSprite",
+      "returnType": "System.Void",
+      "parameters": [
+        {
+          "name": "context",
+          "type": "NarrativeAttributeContext"
+        }
+      ]
+    },
+    {
+      "name": "ChoiceName",
+      "declaringType": "AttributeChoiceName",
+      "returnType": "System.Void",
+      "parameters": [
+        {
+          "name": "context",
+          "type": "NarrativeAttributeContext"
+        }
+      ]
+    }
+  ]
+}

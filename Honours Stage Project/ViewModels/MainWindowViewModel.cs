@@ -62,7 +62,7 @@ namespace Honours_Stage_Project.ViewModels
                 Y = y
             };
 
-            var viewModel = new NodeViewModel(model, _connectionService);
+            var viewModel = new NodeViewModel(model, _connectionService, _luaStubValidationService, "lua_api_export.json");
             AttachNode(viewModel);
 
             Nodes.Add(viewModel);
@@ -90,7 +90,10 @@ namespace Honours_Stage_Project.ViewModels
 
         private void Import()
         {
-            var (importedNodes, importedConnections) = _importService.ImportDialogue(_connectionService, "exported_data");
+            var (importedNodes, importedConnections) = _importService.ImportDialogue(_connectionService);
+
+            if(importedNodes == null || importedConnections == null)
+                return;
 
             foreach (var node in Nodes)
                 DetachNode(node);
@@ -99,6 +102,7 @@ namespace Honours_Stage_Project.ViewModels
 
             foreach (var node in importedNodes)
             {
+                node.ConfigureLuaValidation(_luaStubValidationService);
                 AttachNode(node);
                 Nodes.Add(node);
             }
@@ -106,12 +110,12 @@ namespace Honours_Stage_Project.ViewModels
             _connectionService.SetConnections(importedConnections);
 
             // Validate imported node text as Lua against the generated stub.
-            ValidateImportedLuaScripts("lua_stub.json");
+            ValidateImportedLuaScripts();
 
             RequestLinesRefresh?.Invoke();
         }
 
-        private void ValidateImportedLuaScripts(string stubFilePath)
+        private void ValidateImportedLuaScripts()
         {
             var allErrors = new List<string>();
 
@@ -121,14 +125,17 @@ namespace Honours_Stage_Project.ViewModels
                 if (string.IsNullOrWhiteSpace(luaScript))
                     continue;
 
+                List<LuaValidationResult> validation = _luaStubValidationService.ValidateLua(luaScript);
 
+                foreach(LuaValidationResult result in validation)
+                {
+                    if (result.IsValid)
+                        continue;
 
-                LuaValidationResult validation = _luaStubValidationService.Validate(luaScript, stubFilePath);
-                if (validation.IsValid)
-                    continue;
-
-                foreach (string error in validation.Errors)
-                    allErrors.Add("Node " + node.Model.ID + ": " + error);
+                    foreach (string error in result.Errors)
+                        allErrors.Add("Node " + node.Model.ID + ": " + error);
+                }
+                
             }
 
             if (allErrors.Count == 0)

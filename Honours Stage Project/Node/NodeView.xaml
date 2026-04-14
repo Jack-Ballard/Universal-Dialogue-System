@@ -46,7 +46,25 @@
                      Text="{Binding TextContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      Width="240" Height="90" Margin="10"
                      HorizontalAlignment="Center"/>
-            
+
+            <TextBlock x:Name="ErrorBlock"
+                       Text="{Binding LuaValidationErrorText}"
+                       FontWeight="Bold"
+                       Foreground="DarkRed"
+                       TextWrapping="Wrap"
+                       Margin="10,0,10,5">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding HasLuaValidationError}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
             <ItemsControl x:Name="NodeAttributes" ItemsSource="{Binding Attributes}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>

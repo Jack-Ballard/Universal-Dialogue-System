@@ -1,0 +1,62 @@
+{
+  "TextBoxes": [
+    {
+      "ID": 0,
+      "TextContent": "Hey fellas",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "Kelsior",
+          "Name": "Name"
+        },
+        {
+          "ID": 1,
+          "Value": "Kelsior1",
+          "Name": "SpriteTexture"
+        },
+        {
+          "ID": 2,
+          "Value": "6,0,0",
+          "Name": "MoveSprite"
+        }
+      ],
+      "Connections": [
+        {
+          "ID": 0,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "532,293.5",
+      "Size": "280,227"
+    },
+    {
+      "ID": 1,
+      "TextContent": "Want to watch me more to the side?",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "Kelsior",
+          "Name": "Name"
+        },
+        {
+          "ID": 1,
+          "Value": "-5,0,0",
+          "Name": "MoveSpriteBy"
+        }
+      ],
+      "Connections": [],
+      "position": "930,303.5",
+      "Size": "280,243.92"
+    }
+  ],
+  "Connections": [
+    {
+      "FromTextBoxID": 0,
+      "FromComponentID": 0,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 1
+    }
+  ]
+}

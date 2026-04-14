@@ -11,7 +11,7 @@ namespace Honours_Stage_Project
             var fileService = new FileService();
             var exportService = new JsonExportService(fileService);
             var importService = new JsonImportService(fileService);
-            var luaValidationService = new LuaStubValidationService(fileService);
+            var luaValidationService = new LuaStubValidationService(importService);
             var connectionService = new NodeConnectionService();
             var viewModel = new MainWindowViewModel(connectionService, exportService, importService, luaValidationService);
 
