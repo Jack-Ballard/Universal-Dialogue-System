@@ -15,8 +15,8 @@ namespace Honours_Stage_Project.ViewModels
     {
         private readonly INodeConnectionService _connectionService;
         private bool _isDefaultOutgoingVisible = true;
+        private bool _isRootNode = false;
         private ILuaStubValidationService _luaStubValidationService;
-        private string _luaStubFilePath = "lua_api_export.json";
         private bool _hasLuaValidationError;
         private string _luaValidationErrorText = string.Empty;
 
@@ -46,6 +46,17 @@ namespace Honours_Stage_Project.ViewModels
                 if (_hasLuaValidationError == value) return;
                 _hasLuaValidationError = value;
                 OnPropertyChanged(nameof(HasLuaValidationError));
+            }
+        }
+
+        public bool IsRootNode
+        {
+            get => _isRootNode;
+            set
+            {
+                if (_isRootNode == value) return;
+                _isRootNode = value;
+                OnPropertyChanged(nameof(IsRootNode));
             }
         }
 
@@ -112,16 +123,18 @@ namespace Honours_Stage_Project.ViewModels
         public NodeViewModel(
             NodeModel model,
             INodeConnectionService connectionService,
-            ILuaStubValidationService luaStubValidationService = null,
-            string luaStubFilePath = "lua_api_export.json")
+            ILuaStubValidationService luaStubValidationService = null)
         {
             Model = model;
             _connectionService = connectionService;
 
             AddConnectionComponentCommand = new RelayCommand(_ => AddConnectionComponent());
-            AddIncomingConnectionCommand = new RelayCommand(_ => _connectionService.AddIncoming(Model.ID));
+            AddIncomingConnectionCommand = new RelayCommand(_ => AddIncomingConnection());
             AddDefaultConnectionCommand = new RelayCommand(_ => AddDefaultConnection());
             AddAttributeCommand = new RelayCommand(_ => AddAttribute());
+
+            if(Model.ID == 0)
+                IsRootNode = true;
 
             foreach (var component in Model.ConnectionComponents)
             {
@@ -187,8 +200,19 @@ namespace Honours_Stage_Project.ViewModels
             LuaValidationErrorText = string.Join(Environment.NewLine, errors.Distinct());
         }
 
+        private void AddIncomingConnection()
+        {
+            if (IsRootNode)
+                return;
+
+            _connectionService.AddIncoming(Model.ID);
+        }
+
         private void AddConnectionComponent()
         {
+            if (IsRootNode)
+                return;
+
             RemoveDefaultConnection();
 
             var componentModel = Model.AddConnectionComponent();
@@ -206,6 +230,9 @@ namespace Honours_Stage_Project.ViewModels
 
         private void AddAttribute()
         {
+            if (IsRootNode)
+                return;
+
             Attributes.Add(new AttributeModel { Id = Attributes.Count });
         }
 

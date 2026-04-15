@@ -23,6 +23,27 @@
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
+
+            <Style x:Key="HideForRootStyle" TargetType="FrameworkElement">
+                <Setter Property="Visibility" Value="Visible"/>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsRootNode}" Value="True">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style x:Key="ErrorBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource HideForRootStyle}">
+                <Setter Property="Visibility" Value="Collapsed"/>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding HasLuaValidationError}" Value="True">
+                        <Setter Property="Visibility" Value="Visible"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding IsRootNode}" Value="True">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -31,12 +52,14 @@
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button Content="Incoming" Width="71" HorizontalAlignment="Left"
-                        Command="{Binding AddIncomingConnectionCommand}"/>
+                        Command="{Binding AddIncomingConnectionCommand}"
+                        Style="{StaticResource HideForRootStyle}"/>
                 <Rectangle x:Name="TopBar" Width="187" Fill="WhiteSmoke"/>
                 <Button Content="X" Width="20" Height="20" HorizontalAlignment="Right" Background="PaleVioletRed"
                         Command="{Binding DataContext.DeleteNodeCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                         CommandParameter="{Binding}"/>
             </StackPanel>
+
             <TextBox AcceptsReturn="True"
                      AcceptsTab="True"
                      TextWrapping="Wrap"
@@ -45,27 +68,20 @@
                      x:Name="InputTextBox"
                      Text="{Binding TextContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      Width="240" Height="90" Margin="10"
-                     HorizontalAlignment="Center"/>
+                     HorizontalAlignment="Center"
+                     Style="{StaticResource HideForRootStyle}"/>
 
             <TextBlock x:Name="ErrorBlock"
                        Text="{Binding LuaValidationErrorText}"
                        FontWeight="Bold"
                        Foreground="DarkRed"
                        TextWrapping="Wrap"
-                       Margin="10,0,10,5">
-                <TextBlock.Style>
-                    <Style TargetType="TextBlock">
-                        <Setter Property="Visibility" Value="Collapsed"/>
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding HasLuaValidationError}" Value="True">
-                                <Setter Property="Visibility" Value="Visible"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBlock.Style>
-            </TextBlock>
+                       Margin="10,0,10,5"
+                       Style="{StaticResource ErrorBlockStyle}"/>
 
-            <ItemsControl x:Name="NodeAttributes" ItemsSource="{Binding Attributes}">
+            <ItemsControl x:Name="NodeAttributes"
+                          ItemsSource="{Binding Attributes}"
+                          Style="{StaticResource HideForRootStyle}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -77,18 +93,21 @@
             </ItemsControl>
 
             <Button Content="Attributes" HorizontalAlignment="Center" VerticalAlignment="Center"
-                    Command="{Binding AddAttributeCommand}"/>
-            
+                    Command="{Binding AddAttributeCommand}"
+                    Style="{StaticResource HideForRootStyle}"/>
+
             <Button Content="Outgoing" Height="20" HorizontalAlignment="Right"
                     Command="{Binding AddDefaultConnectionCommand}"
                     Style="{StaticResource DefaultOutgoingButtonStyle}"/>
-            
+
             <ItemsControl x:Name="ConnectionComponent"
                           ItemsSource="{Binding ConnectionComponents}"
-                          ItemTemplate="{StaticResource ComponentConnectionView}"/>
-            
+                          ItemTemplate="{StaticResource ComponentConnectionView}"
+                          Style="{StaticResource HideForRootStyle}"/>
+
             <Button Content="Add Connection" Width="92" Height="20" Margin="10"
-                    Command="{Binding AddConnectionComponentCommand}"/>
+                    Command="{Binding AddConnectionComponentCommand}"
+                    Style="{StaticResource HideForRootStyle}"/>
         </StackPanel>
     </Border>
 </UserControl>

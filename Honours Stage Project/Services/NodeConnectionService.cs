@@ -56,7 +56,11 @@ namespace Honours_Stage_Project.Services
             for (int i = 0; i < _connections.Count; i++)
             {
                 Connection c = _connections[i];
-                if (c.NodeId > nodeId)
+                if(c.NodeId > nodeId && c.TargetNodeId > nodeId)
+                {
+                    _connections[i] = new Connection(c.NodeId - 1, c.ComponentId, c.ConnectionId, c.TargetNodeId - 1);
+                }
+                else if (c.NodeId > nodeId)
                 {
                     _connections[i] = new Connection(c.NodeId - 1, c.ComponentId, c.ConnectionId, c.TargetNodeId);
                 }
@@ -76,5 +80,9 @@ namespace Honours_Stage_Project.Services
             ConnectionsChanged?.Invoke();
         }
 
+        public List<Connection> GetConnectionsForNode(int nodeId)
+        {
+            return _connections.FindAll(c => c.NodeId == nodeId || c.TargetNodeId == nodeId);
+        }
     }
 }

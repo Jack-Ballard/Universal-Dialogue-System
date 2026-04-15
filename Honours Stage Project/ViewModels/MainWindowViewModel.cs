@@ -28,6 +28,7 @@ namespace Honours_Stage_Project.ViewModels
         public IReadOnlyList<Connection> Connections => _connectionService.Connections;
 
         public ICommand AddNodeCommand { get; }
+        public ICommand AddRootNodeCommand { get; }
         public ICommand ExportCommand { get; }
         public ICommand ImportCommand { get; }
         public ICommand ImportStubCommand { get; }
@@ -50,6 +51,7 @@ namespace Honours_Stage_Project.ViewModels
             _connectionService.ConnectionsChanged += () => RequestLinesRefresh?.Invoke();
 
             AddNodeCommand = new RelayCommand(parameter => AddNode(parameter));
+            AddRootNodeCommand = new RelayCommand(_ => AddRootNode());
             ExportCommand = new RelayCommand(_ => _exportService.Export(Nodes, _connectionService.Connections));
             ImportCommand = new RelayCommand(_ => Import());
             ImportStubCommand = new RelayCommand(_ => ImportStub());
@@ -58,15 +60,42 @@ namespace Honours_Stage_Project.ViewModels
 
         public void AddNodeAt(double x, double y)
         {
-            var model = new NodeModel(Nodes.Count)
+            var model = new NodeModel(GetNextNodeId())
             {
                 X = x,
                 Y = y
             };
 
-            var viewModel = new NodeViewModel(model, _connectionService, _luaStubValidationService, "lua_api_export.json");
+            var viewModel = new NodeViewModel(model, _connectionService, _luaStubValidationService);
             AttachNode(viewModel);
 
+            Nodes.Add(viewModel);
+        }
+
+        private int GetNextNodeId()
+        {
+            if (Nodes.Count == 0)
+                return 1;
+
+            return Nodes.Max(n => n.Model.ID) + 1;
+        }
+
+        private void AddRootNode()
+        {
+            if (Nodes.Any(n => n.Model.ID == 0))
+                return;
+
+            var model = new NodeModel(0)
+            {
+                X = 50,
+                Y = 50
+            };
+
+            // Root node has a single default outgoing connection component.
+            //model.AddDefaultConnectionComponent();
+
+            var viewModel = new NodeViewModel(model, _connectionService, _luaStubValidationService);
+            AttachNode(viewModel);
             Nodes.Add(viewModel);
         }
 
@@ -83,11 +112,35 @@ namespace Honours_Stage_Project.ViewModels
 
         private void RemoveNode(NodeViewModel node)
         {
+            if (node == null)
+                return;
+
             DetachNode(node);
             Nodes.Remove(node);
-            for (int i = 0; i < Nodes.Count; i++)
-                Nodes[i].Model.ID = i;
+
+            List<Connection> connectionsToRemove = _connectionService.GetConnectionsForNode(node.Model.ID);
+
+            foreach (var connection in connectionsToRemove)
+            {
+                if(connection.ComponentId == 0)
+                {
+                    var Node = Nodes.FirstOrDefault(n => n.Model.ID == connection.NodeId);
+                    Node?.Model.RemoveConnectionComponent(connection.ConnectionId);
+                }
+            }
+
             _connectionService.RemoveConnectionsForNode(node.Model.ID);
+
+            // Keep root ID fixed if it still exists; renumber only non-root nodes.
+            int nextId = 1;
+            foreach (var existing in Nodes.OrderBy(n => n.Model.ID))
+            {
+                if (existing.Model.ID == 0)
+                    continue;
+
+                existing.Model.ID = nextId;
+                nextId++;
+            }
         }
 
         private void Import()

@@ -28,25 +28,25 @@ namespace Honours_Stage_Project.Helpers
 
             if (x1 > x2)
             {
-                var (backLine, frontLine) = GetLines(x1, y1, x1 + 20, y1);
+                var (backLine, frontLine) = GetLines(x1, y1, x1 + 20, y1, true);
                 backSegments.Add(backLine);
                 frontSegments.Add(frontLine);
 
                 double highestY = Math.Min(y1, y2);
 
-                (backLine, frontLine) = GetLines(x1 + 20, y1, x1 + 20, highestY - 20);
+                (backLine, frontLine) = GetLines(x1 + 20, y1, x1 + 20, highestY - 20, true);
                 backSegments.Add(backLine);
                 frontSegments.Add(frontLine);
 
-                (backLine, frontLine) = GetLines(x1 + 20, highestY - 20, x2 - 20, highestY - 20);
+                (backLine, frontLine) = GetLines(x1 + 20, highestY - 20, x2 - 20, highestY - 20, true);
                 backSegments.Add(backLine);
                 frontSegments.Add(frontLine);
 
-                (backLine, frontLine) = GetLines(x2 - 20, highestY - 20, x2 - 20, y2);
+                (backLine, frontLine) = GetLines(x2 - 20, highestY - 20, x2 - 20, y2, true);
                 backSegments.Add(backLine);
                 frontSegments.Add(frontLine);
 
-                (backLine, frontLine) = GetLines(x2 - 20, y2, x2, y2);
+                (backLine, frontLine) = GetLines(x2 - 20, y2, x2, y2, true);
                 backSegments.Add(backLine);
                 frontSegments.Add(frontLine);
 
@@ -73,11 +73,18 @@ namespace Honours_Stage_Project.Helpers
             return allSegments;
         }
 
-        private static (Line, Line) GetLines(double x1, double y1, double x2, double y2)
+        private static (Line, Line) GetLines(double x1, double y1, double x2, double y2, bool backwards = false)
         {
+            Brush inStrokeColor = Brushes.LightYellow;
+            Brush outStrokeColor = Brushes.Orange;
+            if (backwards)
+            {
+                outStrokeColor = Brushes.LimeGreen;
+                inStrokeColor = Brushes.LightBlue;
+            }
             var backLine = new Line
             {
-                Stroke = Brushes.Orange,
+                Stroke = outStrokeColor,
                 StrokeThickness = 5,
                 X1 = x1,
                 Y1 = y1,
@@ -86,7 +93,7 @@ namespace Honours_Stage_Project.Helpers
             };
             var frontLine = new Line
             {
-                Stroke = Brushes.LightYellow,
+                Stroke = inStrokeColor,
                 StrokeThickness = 2,
                 X1 = x1,
                 Y1 = y1,

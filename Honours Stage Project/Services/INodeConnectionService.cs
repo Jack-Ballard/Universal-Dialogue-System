@@ -32,5 +32,7 @@ namespace Honours_Stage_Project.Services
         void RemoveConnectionsForNode(int nodeId);
 
         void SetConnections(IEnumerable<Connection> connections);
+
+        List<Connection> GetConnectionsForNode(int nodeId);
     }
 }
