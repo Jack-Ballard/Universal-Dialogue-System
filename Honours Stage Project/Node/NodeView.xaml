@@ -44,17 +44,37 @@
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
+
+            <Style x:Key="NodeBorderStyle" TargetType="Border">
+                <Setter Property="Background" Value="LightSteelBlue"/>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsRootNode}" Value="True">
+                        <Setter Property="Background" Value="LightGoldenrodYellow"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style x:Key="TopBarStyle" TargetType="Rectangle">
+                <Setter Property="Width" Value="187"/>
+                <Setter Property="Fill" Value="WhiteSmoke"/>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsRootNode}" Value="True">
+                        <Setter Property="Width" Value="258"/>
+                        <Setter Property="Fill" Value="LemonChiffon"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Border BorderBrush="Black" BorderThickness="1" Background="LightSteelBlue" Margin="0,0,0,-11">
+    <Border BorderBrush="Black" BorderThickness="1" Margin="0,0,0,-11" Style="{StaticResource NodeBorderStyle}">
         <StackPanel Margin="0,0,0,-4">
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button Content="Incoming" Width="71" HorizontalAlignment="Left"
                         Command="{Binding AddIncomingConnectionCommand}"
                         Style="{StaticResource HideForRootStyle}"/>
-                <Rectangle x:Name="TopBar" Width="187" Fill="WhiteSmoke"/>
+                <Rectangle x:Name="TopBar" Style="{StaticResource TopBarStyle}"/>
                 <Button Content="X" Width="20" Height="20" HorizontalAlignment="Right" Background="PaleVioletRed"
                         Command="{Binding DataContext.DeleteNodeCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                         CommandParameter="{Binding}"/>
@@ -87,6 +107,9 @@
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="70" Margin="2" />
                             <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="150" Margin="2" />
+                            <Button Content="-" Width="20" Height="20" Margin="2" Background="DarkGray"
+                                    Command="{Binding DataContext.RemoveAttributeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    CommandParameter="{Binding}"/>
                         </StackPanel>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

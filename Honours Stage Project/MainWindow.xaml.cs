@@ -1,6 +1,11 @@
-﻿using System;
+﻿using Honours_Stage_Project.Helpers;
+using Honours_Stage_Project.Node;
+using Honours_Stage_Project.ViewModels;
+using MoonSharp.Interpreter.Debugging;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO.Packaging;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -8,9 +13,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using Honours_Stage_Project.Helpers;
-using Honours_Stage_Project.Node;
-using Honours_Stage_Project.ViewModels;
 
 namespace Honours_Stage_Project
 {
@@ -112,6 +114,10 @@ namespace Honours_Stage_Project
 
         private void GlobalPreviewMouseMove(object sender, MouseEventArgs e)
         {
+            var vm = DataContext as MainWindowViewModel;
+            if (vm != null && IsPointerInsideWorldViewport(e))
+                vm.NotifyMouseMoved();
+
             if (!_isPanning) return;
 
             var now = e.GetPosition(WorldViewport);
@@ -153,6 +159,46 @@ namespace Honours_Stage_Project
                 LinesCanvas.Children.Remove(line);
             _lines.Clear();
 
+            if(vm.PendingOutgoing.NodeId != -1)
+            {
+                var item = vm.PendingOutgoing;
+                var fromNodeId = item.NodeId;
+                var fromComponentId = item.ComponentId;
+                var fromConnectionId = item.ConnectionId;
+                NodeViewModel sourceNode = vm.Nodes.FirstOrDefault(n => n.Model.ID == fromNodeId);
+                var sourceContainer = NodesControl.ItemContainerGenerator.ContainerFromItem(sourceNode) as FrameworkElement;
+
+                double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+
+                Button outgoingButton = GetOutgoingButton(sourceNode, fromComponentId, fromConnectionId, sourceContainer);
+
+                if (outgoingButton != null)
+                {
+                    Point btnPos = outgoingButton.TransformToVisual(LinesCanvas).Transform(new Point(outgoingButton.ActualWidth, outgoingButton.ActualHeight / 2));
+                    x1 = btnPos.X;
+                    y1 = btnPos.Y;
+                }
+                else
+                {
+                    x1 = sourceNode.X;
+                    y1 = sourceNode.Y;
+                }
+
+                Point mousePos = Mouse.GetPosition(LinesCanvas);
+                x2 = mousePos.X;
+                y2 = mousePos.Y;
+
+                List<Line> lineSegments = new List<Line>();
+                lineSegments = LineHelpers.DrawAngularConnection(x1, y1, x2, y2);
+
+                foreach (Line line in lineSegments)
+                {
+                    _lines.Add(line);
+                    LinesCanvas.Children.Add(line);
+                }
+
+            }
+
             foreach (var item in vm.Connections)
             {
                 var fromNodeId = item.NodeId;
@@ -170,27 +216,7 @@ namespace Honours_Stage_Project
 
                 double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 
-                Button outgoingButton = null;
-                var componentViewModel = sourceNode.ConnectionComponents.FirstOrDefault(c => c.ID == fromComponentId);
-                if (componentViewModel != null)
-                {
-                    var outgoingVm = componentViewModel.OutgoingConnections.FirstOrDefault(o => o.ID == fromConnectionId);
-                    if (outgoingVm != null)
-                    {
-                        outgoingButton = FindVisualChild<Button>(sourceContainer, btn =>
-                            btn.DataContext == outgoingVm && (btn.Content as string) == "Outgoing");
-                    }
-                    else if (fromConnectionId == 0)
-                    {
-                        outgoingButton = FindVisualChild<Button>(sourceContainer, btn =>
-                            btn.DataContext == componentViewModel && (btn.Content as string) == "Outgoing");
-                    }
-                }
-                else
-                {
-                    outgoingButton = FindVisualChild<Button>(sourceContainer, btn =>
-                        btn.DataContext == sourceNode && (btn.Content as string) == "Outgoing");
-                }
+                Button outgoingButton = GetOutgoingButton(sourceNode, fromComponentId, fromConnectionId, sourceContainer);
 
                 if (outgoingButton != null)
                 {
@@ -209,16 +235,14 @@ namespace Honours_Stage_Project
                 x2 = targetPos.X;
                 y2 = targetPos.Y;
 
-                
                 List<Line> lineSegments = new List<Line>();
                 lineSegments = LineHelpers.DrawAngularConnection(x1, y1, x2, y2);
 
-                foreach(Line line in lineSegments)
+                foreach (Line line in lineSegments)
                 {
                     _lines.Add(line);
                     LinesCanvas.Children.Add(line);
                 }
-                
             }
         }
 
@@ -239,6 +263,32 @@ namespace Honours_Stage_Project
                     return childOfChild;
             }
             return null;
+        }
+
+        private static Button GetOutgoingButton(NodeViewModel sourceNode, int fromComponentId, int fromConnectionId, FrameworkElement sourceContainer)
+        {
+            Button outgoingButton = null;
+            var componentViewModel = sourceNode.ConnectionComponents.FirstOrDefault(c => c.ID == fromComponentId);
+            if (componentViewModel != null)
+            {
+                var outgoingVm = componentViewModel.OutgoingConnections.FirstOrDefault(o => o.ID == fromConnectionId);
+                if (outgoingVm != null)
+                {
+                    outgoingButton = FindVisualChild<Button>(sourceContainer, btn =>
+                        btn.DataContext == outgoingVm && (btn.Content as string) == "Outgoing");
+                }
+                else if (fromConnectionId == 0)
+                {
+                    outgoingButton = FindVisualChild<Button>(sourceContainer, btn =>
+                        btn.DataContext == componentViewModel && (btn.Content as string) == "Outgoing");
+                }
+            }
+            else
+            {
+                outgoingButton = FindVisualChild<Button>(sourceContainer, btn =>
+                    btn.DataContext == sourceNode && (btn.Content as string) == "Outgoing");
+            }
+            return outgoingButton;
         }
     }
 }

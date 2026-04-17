@@ -13,7 +13,19 @@
         <DataTemplate x:Key="ComponentConnectionView">
         <Border Background="Transparent">
             <StackPanel>
-                <Border BorderBrush="Black" BorderThickness="1" Height="2" Margin="0,5,0,5"/>
+                <Border BorderBrush="Black" BorderThickness="1" Height="1" Margin="0,5,0,5"/>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Content="Add Attribute" HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Command="{Binding AddAttributeCommand}" Height="20" Width="80"/>
+                    <Button Content="Add Condition" HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Command="{Binding AddConditionCommand}" Height="20" Width="80"/>
+                    <Button Content="Add Outgoing" HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Command="{Binding AddOutgoingOptionCommand}" Height="20" Width="80"/>
+                    <Button Content="-" Width="20" Height="20" Margin="2" Background="DarkGray"
+                            Command="{Binding DataContext.RemoveComponentCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            CommandParameter="{Binding}"/>
+                </StackPanel>
 
                 <ItemsControl ItemsSource="{Binding Attributes}">
                     <ItemsControl.ItemTemplate>
@@ -21,13 +33,13 @@
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="70" Margin="2"/>
                                 <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="150" Margin="2"/>
+                                <Button Content="-" Width="20" Height="20" Margin="2" Background="DarkGray"
+                                        Command="{Binding DataContext.RemoveComponentAttributeCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        CommandParameter="{Binding}"/>
                             </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-
-                <Button Content="Attributes" HorizontalAlignment="Center" VerticalAlignment="Center"
-                        Command="{Binding AddAttributeCommand}"/>
 
                 <ItemsControl ItemsSource="{Binding Conditions}" AlternationCount="1000">
                     <ItemsControl.ItemTemplate>
@@ -48,14 +60,14 @@
                                 </TextBlock>
 
                                 <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         Width="180" Margin="2" />
+                                         Width="180" Margin="2" />
+                                <Button Content="-" Width="20" Height="20" Margin="2" Background="DarkGray"
+                                        Command="{Binding DataContext.RemoveComponentConditionCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        CommandParameter="{Binding}"/>
                             </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-
-                <Button Content="Conditions" HorizontalAlignment="Center" VerticalAlignment="Center"
-                        Command="{Binding AddConditionCommand}"/>
 
                 <Button Content="Outgoing" Height="20" HorizontalAlignment="Right"
                         Command="{Binding AddDefaultOutgoingCommand}"
@@ -64,7 +76,7 @@
                 <ItemsControl ItemsSource="{Binding OutgoingConnections}" Margin="0,4,0,0">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Border Background="Red">
+                            <Border Background="DarkSlateBlue">
 
                                 <StackPanel Margin="0,2,0,4">
                                     <ItemsControl ItemsSource="{Binding Conditions}" AlternationCount="1000">
@@ -93,6 +105,9 @@
                                     </ItemsControl>
 
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,2,0,0">
+                                        <Button Content="-" Width="20" Height="20" Margin="2" Background="DarkGray"
+                                                Command="{Binding DataContext.RemoveOutgoingConnectionCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding}"/>
                                         <Button Content="Conditions"
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
@@ -108,8 +123,6 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
-                <Button Content="Add Outgoing" HorizontalAlignment="Center"
-                        Command="{Binding AddOutgoingOptionCommand}"/>
             </StackPanel>
         </Border>
     </DataTemplate>

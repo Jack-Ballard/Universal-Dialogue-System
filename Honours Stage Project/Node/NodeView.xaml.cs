@@ -35,6 +35,11 @@ namespace Honours_Stage_Project.Node
 
         private NodeViewModel ViewModel => DataContext as NodeViewModel;
 
+        private const double RootNodeWidth = 80;
+        private const double RootNodeHeight = 80;
+
+        private bool IsRootNode => ViewModel != null && ViewModel.IsRootNode;
+
         public NodeView()
         {
             InitializeComponent();
@@ -77,6 +82,24 @@ namespace Honours_Stage_Project.Node
         {
             if (ViewModel == null)
                 return;
+
+            if (IsRootNode)
+            {
+                Width = RootNodeWidth;
+                Height = RootNodeHeight;
+
+                if (TopBar != null)
+                    TopBar.Width = Math.Max(0, Width - 90);
+
+                if (InputTextBox != null)
+                {
+                    InputTextBox.Width = Math.Max(0, Width - 40);
+                    InputTextBox.Height = 0;
+                }
+
+                ViewModel.Size = new Size(Width, Height);
+                return;
+            }
 
             if (ViewModel.Size.Width > 0)
                 Width = Math.Round(ViewModel.Size.Width, 2);
@@ -123,6 +146,12 @@ namespace Honours_Stage_Project.Node
 
         private void NodeViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            if (e.PropertyName == nameof(NodeViewModel.IsRootNode))
+            {
+                ApplySizeFromViewModel();
+                return;
+            }
+
             if (e.PropertyName != nameof(NodeViewModel.HasLuaValidationError)
                 && e.PropertyName != nameof(NodeViewModel.LuaValidationErrorText))
                 return;
@@ -189,33 +218,93 @@ namespace Honours_Stage_Project.Node
                     SubscribeToConnection(component);
             }
 
-            if (e.Action == NotifyCollectionChangedAction.Add)
-                QueueAdjustNodeHeightByDynamicDelta(allowShrink: false);
-            else
-                QueueRefreshConnectionHeightBaseline();
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    QueueAdjustNodeHeightByDynamicDelta(allowShrink: false);
+                    break;
+
+                case NotifyCollectionChangedAction.Remove:
+                case NotifyCollectionChangedAction.Replace:
+                case NotifyCollectionChangedAction.Reset:
+                    QueueAdjustNodeHeightByDynamicDelta(allowShrink: true);
+                    break;
+
+                case NotifyCollectionChangedAction.Move:
+                    QueueRefreshConnectionHeightBaseline();
+                    break;
+            }
         }
 
         private void ConnectionChildren_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action == NotifyCollectionChangedAction.Add)
-                QueueAdjustNodeHeightByDynamicDelta(allowShrink: false);
-            else
-                QueueRefreshConnectionHeightBaseline();
+            if (e.OldItems != null)
+            {
+                foreach (var oldItem in e.OldItems)
+                    UnsubscribeFromOutgoingConnection(oldItem as OutgoingConnectionViewModel);
+            }
+
+            if (e.NewItems != null)
+            {
+                foreach (var newItem in e.NewItems)
+                    SubscribeToOutgoingConnection(newItem as OutgoingConnectionViewModel);
+            }
+
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    QueueAdjustNodeHeightByDynamicDelta(allowShrink: false);
+                    break;
+
+                case NotifyCollectionChangedAction.Remove:
+                case NotifyCollectionChangedAction.Replace:
+                case NotifyCollectionChangedAction.Reset:
+                    QueueAdjustNodeHeightByDynamicDelta(allowShrink: true);
+                    break;
+
+                case NotifyCollectionChangedAction.Move:
+                    QueueRefreshConnectionHeightBaseline();
+                    break;
+            }
         }
 
         // Add this method to handle the CollectionChanged event for Node Attributes
         private void NodeAttributes_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action == NotifyCollectionChangedAction.Add)
-                QueueAdjustNodeHeightByDynamicDelta(allowShrink: false);
-            else
-                QueueRefreshConnectionHeightBaseline();
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    QueueAdjustNodeHeightByDynamicDelta(allowShrink: false);
+                    break;
+
+                case NotifyCollectionChangedAction.Remove:
+                case NotifyCollectionChangedAction.Replace:
+                case NotifyCollectionChangedAction.Reset:
+                    QueueAdjustNodeHeightByDynamicDelta(allowShrink: true);
+                    break;
+
+                case NotifyCollectionChangedAction.Move:
+                    QueueRefreshConnectionHeightBaseline();
+                    break;
+            }
         }
 
         private void QueueAdjustNodeHeightByDynamicDelta(bool allowShrink)
         {
             Dispatcher.BeginInvoke(new Action(() =>
             {
+                if (IsRootNode)
+                {
+                    Width = RootNodeWidth;
+                    Height = RootNodeHeight;
+                    _lastConnectionComponentsHeight = 0;
+
+                    if (ViewModel != null)
+                        ViewModel.Size = new Size(Width, Height);
+
+                    return;
+                }
+
                 var currentHeight = GetTotalDynamicContentHeight();
                 var delta = currentHeight - _lastConnectionComponentsHeight;
 
@@ -314,6 +403,17 @@ namespace Honours_Stage_Project.Node
 
             var mousePos = e.GetPosition(ParentCanvas);
             _mouseStartPoint = mousePos;
+
+            if (IsRootNode)
+            {
+                _position = new Point(ViewModel?.X ?? 0, ViewModel?.Y ?? 0);
+                _isMoving = true;
+                _isResizing = false;
+                _resizeDirection = ResizeDirection.None;
+                CaptureMouse();
+                return;
+            }
+
             _resizeDirection = GetResizeDirection(e.GetPosition(this));
 
             if (_resizeDirection != ResizeDirection.None)
@@ -329,7 +429,6 @@ namespace Honours_Stage_Project.Node
                 _isMoving = true;
                 CaptureMouse();
             }
-
         }
 
         private void UserControl_MouseMove(object sender, MouseEventArgs e)
@@ -415,7 +514,7 @@ namespace Honours_Stage_Project.Node
                     break;
             }
 
-            if (newWidth > 240)
+            if (newWidth > 260)
             {
                 Width = Math.Round(newWidth, 2);
                 if (ViewModel != null)

@@ -7,7 +7,8 @@ namespace Honours_Stage_Project.Services
     {
         private readonly List<Connection> _connections = new List<Connection>();
         private (int nodeId, int componentId, int connectionId) _pendingOutgoing = (-1, -1, -1);
-        private int _pendingIncoming = -1;
+
+        public (int NodeId, int ComponentId, int ConnectionId) PendingOutgoing => _pendingOutgoing;
 
         public IReadOnlyList<Connection> Connections => _connections;
 
@@ -18,33 +19,64 @@ namespace Honours_Stage_Project.Services
             if (_connections.Exists(c => c.NodeId == nodeId && c.ComponentId == componentId && c.ConnectionId == connectionId))
             {
                 RemoveOutgoing(nodeId, componentId, connectionId);
+                
                 return;
             }
 
             _pendingOutgoing = (nodeId, componentId, connectionId);
-            if (_pendingIncoming != -1)
-                CommitConnection();
         }
 
         public void AddIncoming(int nodeId)
         {
-            _pendingIncoming = nodeId;
             if (_pendingOutgoing != (-1, -1, -1))
-                CommitConnection();
+                CommitConnection(nodeId);
         }
 
-        private void CommitConnection()
+        public void RemoveConnectionComponent(int nodeId, int componentId)
         {
-            Connection connection = new Connection(_pendingOutgoing.nodeId, _pendingOutgoing.componentId, _pendingOutgoing.connectionId, _pendingIncoming);
+            List<Connection> connectionsToUpdate = _connections.FindAll(c => c.NodeId == nodeId && c.ComponentId > componentId);
+            _connections.RemoveAll(c => c.NodeId == nodeId && c.ComponentId > componentId);
+
+            for (int i = 0; i < connectionsToUpdate.Count; i++)
+            {
+                Connection c = connectionsToUpdate[i];
+                _connections.Add(new Connection(c.NodeId, c.ComponentId - 1, c.ConnectionId, c.TargetNodeId));
+            }
+
+            ConnectionsChanged?.Invoke();
+        }
+
+        public void DecrementConnections(int NodeId, int ComponentId, int ConnectionId)
+        {
+            List<Connection> connectionsToUpdate = _connections.FindAll(c => c.NodeId == NodeId && c.ComponentId == ComponentId && c.ConnectionId > ConnectionId);
+            _connections.RemoveAll(c => c.NodeId == NodeId && c.ComponentId == ComponentId && c.ConnectionId > ConnectionId);
+            for (int i = 0; i < connectionsToUpdate.Count; i++)
+            {
+                Connection c = connectionsToUpdate[i];
+                _connections.Add(new Connection(c.NodeId, c.ComponentId, c.ConnectionId - 1, c.TargetNodeId));
+            }
+            ConnectionsChanged?.Invoke();
+        }
+
+        private void CommitConnection(int incomingNodeId)
+        {
+            Connection connection = new Connection(_pendingOutgoing.nodeId, _pendingOutgoing.componentId, _pendingOutgoing.connectionId, incomingNodeId);
             _connections.Add(connection);
             _pendingOutgoing = (-1, -1, -1);
-            _pendingIncoming = -1;
             ConnectionsChanged?.Invoke();
         }
 
         public void RemoveOutgoing(int nodeId, int componentId, int connectionId)
         {
             _connections.RemoveAll(c => c.NodeId == nodeId && c.ComponentId == componentId && c.ConnectionId == connectionId);
+            ConnectionsChanged?.Invoke();
+        }
+
+        public void RemoveIncoming(int nodeId)
+        {
+            Connection pending = _connections.Find(c => c.TargetNodeId == nodeId);
+            _connections.RemoveAll(c => c.TargetNodeId == nodeId);
+            //_pendingOutgoing = (pending.NodeId, pending.ComponentId, pending.ConnectionId);
             ConnectionsChanged?.Invoke();
         }
 

@@ -60,17 +60,23 @@ namespace Honours_Stage_Project.Services
             Script luaScript = new Script(CoreModules.Preset_Default);
 
             var result = new List<string>();
-            var regex = new Regex(@"\{(.*?)\}", RegexOptions.Singleline);
+            var regex = new Regex(@"\{
+                                                (?>
+                                                    [^{}]+
+                                                    |
+                                                    \{(?<Depth>)
+                                                    |
+                                                    \}(?<-Depth>)
+                                                )*
+                                                (?(Depth)(?!))
+                                            \}", RegexOptions.IgnorePatternWhitespace);
 
-            int lastIndex = 0;
 
             foreach (Match match in regex.Matches(input))
             {
-
-                result.Add((match.Groups[1].Value));
-
-                lastIndex = match.Index + match.Length;
+                result.Add(match.Value.Substring(1, match.Value.Length - 2));
             }
+
 
             return result;
         }

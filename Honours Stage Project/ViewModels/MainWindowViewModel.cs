@@ -26,6 +26,7 @@ namespace Honours_Stage_Project.ViewModels
         public ObservableCollection<NodeViewModel> Nodes { get; } = new ObservableCollection<NodeViewModel>();
 
         public IReadOnlyList<Connection> Connections => _connectionService.Connections;
+        public (int NodeId, int ComponentId, int ConnectionId) PendingOutgoing => _connectionService.PendingOutgoing;
 
         public ICommand AddNodeCommand { get; }
         public ICommand AddRootNodeCommand { get; }
@@ -224,6 +225,12 @@ namespace Honours_Stage_Project.ViewModels
         private void DetachNode(NodeViewModel node)
         {
             node.PropertyChanged -= Node_PropertyChanged;
+        }
+
+        public void NotifyMouseMoved()
+        {
+            if (PendingOutgoing.NodeId != -1)
+                RequestLinesRefresh?.Invoke();
         }
 
         private void Node_PropertyChanged(object sender, PropertyChangedEventArgs e)

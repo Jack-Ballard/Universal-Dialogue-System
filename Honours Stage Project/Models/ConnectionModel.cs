@@ -23,7 +23,7 @@ namespace Honours_Stage_Project.Models
 
         public OutgoingConnectionModel AddOutgoingConnection()
         {
-            var nextId = OutgoingConnections.Count == 0 ? 0 : OutgoingConnections.Max(c => c.Id) + 1;
+            var nextId = OutgoingConnections.Count == 0 ? 1 : OutgoingConnections.Max(c => c.Id) + 1;
             var outgoing = new OutgoingConnectionModel(nextId);
             OutgoingConnections.Add(outgoing);
             return outgoing;
