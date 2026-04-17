@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
@@ -11,7 +12,8 @@ public static class Globals
     public static List<Connection> connections = new List<Connection>();
     public static Dictionary<string, object> variables = new Dictionary<string, object>();
     public static Dictionary<string, Delegate> functions = new Dictionary<string, Delegate>();
-    public static Dictionary<string, Delegate> attributes = new Dictionary<string, Delegate>();
+
+    public static Dictionary<string, Action<NarrativeAttributeContext>> attributes = new Dictionary<string, Action<NarrativeAttributeContext>>();
 
     public static void AddFunction(Delegate function)
     {
@@ -23,9 +25,40 @@ public static class Globals
         variables[variableName] = variableValue;
     }
 
-    public static void AddAttribute(Delegate attribute)
+    public static void AddAttribute(string attributeName, Action<NarrativeAttributeContext> attributeHandler)
     {
-        attributes[attribute.Method.Name] = attribute;
+        if (attributes.TryGetValue(attributeName, out Action<NarrativeAttributeContext> existing))
+        {
+            attributes[attributeName] = existing + attributeHandler;
+        }
+        else
+        {
+            attributes[attributeName] = attributeHandler;
+        }
+    }
+
+    public static void RemoveAttribute(string attributeName, Action<NarrativeAttributeContext> attributeHandler)
+    {
+        if (!attributes.TryGetValue(attributeName, out Action<NarrativeAttributeContext> existing))
+        {
+            return;
+        }
+
+        existing -= attributeHandler;
+
+        if (existing == null)
+        {
+            attributes.Remove(attributeName);
+        }
+        else
+        {
+            attributes[attributeName] = existing;
+        }
+    }
+
+    public static bool TryGetAttribute(string attributeName, out Action<NarrativeAttributeContext> attributeHandler)
+    {
+        return attributes.TryGetValue(attributeName, out attributeHandler);
     }
 
     public static void Export(string fileName = "lua_api_export.json")
@@ -36,7 +69,10 @@ public static class Globals
         {
             ["variables"] = BuildVariablesJson(),
             ["functions"] = BuildDelegateJson(functions),
-            ["attributes"] = BuildDelegateJson(attributes)
+            ["attributes"] = BuildDelegateJson(attributes.ToDictionary(
+                kvp => kvp.Key,
+                kvp => (Delegate)kvp.Value
+            ))
         };
 
         string directory = Path.GetDirectoryName(filePath);

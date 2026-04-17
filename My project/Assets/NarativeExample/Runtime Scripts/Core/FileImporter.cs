@@ -5,9 +5,9 @@ using UnityEngine;
 
 public static class Importer
 {
-    public static void ImportFile()
+    public static void ImportFile(string dialogueFileName)
     {
-        string filePath = Application.streamingAssetsPath + "/exported_data.json";
+        string filePath = Application.streamingAssetsPath + "/" + dialogueFileName;
         string input = File.ReadAllText(filePath);
         System.Object deserializedData = Newtonsoft.Json.JsonConvert.DeserializeObject(input);
         //Console.WriteLine(deserializedData);

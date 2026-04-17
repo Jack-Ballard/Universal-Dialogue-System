@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor.MemoryProfiler;
 
 public struct Connection
@@ -53,8 +54,16 @@ public struct Components
     public List<Attribute> Attributes { get; set; }
     public List<Condition> Conditions { get; set; }
     public List<OutgoingConnection> OutgoingConnections { get; set; }
-    public Components(Object serializedData)
+    public Components(Object serializedData = null)
     {
+        if (serializedData == null)
+        {
+            ID = 0;
+            Attributes = new List<Attribute>();
+            Conditions = new List<Condition>();
+            OutgoingConnections = new List<OutgoingConnection>();
+            return;
+        }
         ID = ((Newtonsoft.Json.Linq.JObject)serializedData)["ID"].ToObject<int>();
 
         List<Object> attributes = ((Newtonsoft.Json.Linq.JObject)serializedData)["Attributes"].ToObject<List<Object>>();
@@ -70,7 +79,13 @@ public struct Components
         {
             Conditions.Add(new Condition(condition));
         }
+
+        List<Object> outgoingConnections = ((Newtonsoft.Json.Linq.JObject)serializedData)["OutgoingConnections"].ToObject<List<Object>>();
         OutgoingConnections = new List<OutgoingConnection>();
+        foreach (Object outgoingConnection in outgoingConnections)
+        {
+            OutgoingConnections.Add(new OutgoingConnection(outgoingConnection));
+        }
     }
 }
 
@@ -81,7 +96,7 @@ public struct OutgoingConnection
 
     public OutgoingConnection(Object serializedData)
     {
-        ID = ((Newtonsoft.Json.Linq.JObject)serializedData)["ID"].ToObject<int>();
+        ID = ((Newtonsoft.Json.Linq.JObject)serializedData)["_id"].ToObject<int>();
 
         List<Object> conditions = ((Newtonsoft.Json.Linq.JObject)serializedData)["Conditions"].ToObject<List<Object>>();
         Conditions = new List<Condition>();

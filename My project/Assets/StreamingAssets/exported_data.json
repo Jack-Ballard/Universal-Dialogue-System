@@ -1,0 +1,432 @@
+{
+  "TextBoxes": [
+    {
+      "ID": 1,
+      "TextContent": "Want to watch me more to the side?",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "Kelsior",
+          "Name": "Name"
+        },
+        {
+          "ID": 1,
+          "Value": "3,0,0",
+          "Name": "MoveSprite"
+        },
+        {
+          "ID": 2,
+          "Value": "Kelsior1",
+          "Name": "SpriteTexture"
+        }
+      ],
+      "Connections": [
+        {
+          "ID": 1,
+          "Attributes": [
+            {
+              "ID": 0,
+              "Value": "Sure",
+              "Name": "ChoiceName"
+            }
+          ],
+          "Conditions": [],
+          "OutgoingConnections": []
+        },
+        {
+          "ID": 2,
+          "Attributes": [
+            {
+              "ID": 0,
+              "Value": "Not really",
+              "Name": "ChoiceName"
+            }
+          ],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "508,60.5",
+      "Size": "314,458.92"
+    },
+    {
+      "ID": 2,
+      "TextContent": "Sup fellas, I've got $health health.",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "Kelsior",
+          "Name": "Name"
+        },
+        {
+          "ID": 1,
+          "Value": "Kelsior1",
+          "Name": "SpriteTexture"
+        },
+        {
+          "ID": 2,
+          "Value": "0,0,0",
+          "Name": "MoveSprite"
+        }
+      ],
+      "Connections": [
+        {
+          "ID": 0,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "166,43.5",
+      "Size": "280,272"
+    },
+    {
+      "ID": 0,
+      "TextContent": "",
+      "Attributes": [],
+      "Connections": [
+        {
+          "ID": 0,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "48,161",
+      "Size": "80,80"
+    },
+    {
+      "ID": 3,
+      "TextContent": "Sweet, want to watch me do it again?",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "Kelsior",
+          "Name": "Name"
+        },
+        {
+          "ID": 1,
+          "Value": "-5,0,0",
+          "Name": "MoveSpriteBy"
+        }
+      ],
+      "Connections": [
+        {
+          "ID": 1,
+          "Attributes": [
+            {
+              "ID": 0,
+              "Value": "Yeah!",
+              "Name": "ChoiceName"
+            }
+          ],
+          "Conditions": [],
+          "OutgoingConnections": []
+        },
+        {
+          "ID": 2,
+          "Attributes": [
+            {
+              "ID": 0,
+              "Value": "Not really",
+              "Name": "ChoiceName"
+            }
+          ],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "951,79.5",
+      "Size": "280,414"
+    },
+    {
+      "ID": 4,
+      "TextContent": "Ok, how about I get shot?",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "Kelsior",
+          "Name": "Name"
+        }
+      ],
+      "Connections": [
+        {
+          "ID": 1,
+          "Attributes": [
+            {
+              "ID": 0,
+              "Value": "Ok then",
+              "Name": "ChoiceName"
+            }
+          ],
+          "Conditions": [],
+          "OutgoingConnections": [
+            {
+              "_id": 1,
+              "Conditions": [
+                {
+                  "ID": 0,
+                  "Value": "health > 90"
+                }
+              ]
+            },
+            {
+              "_id": 2,
+              "Conditions": [
+                {
+                  "ID": 0,
+                  "Value": "health <= 90"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ID": 2,
+          "Attributes": [
+            {
+              "ID": 0,
+              "Value": "Just stop",
+              "Name": "ChoiceName"
+            }
+          ],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "971,528.5",
+      "Size": "261,458.92"
+    },
+    {
+      "ID": 5,
+      "TextContent": "I've taken \r\n{local randomInt = math.random(1, 10) \r\nTakeDamage(randomInt)\r\nreturn randomInt } damage!",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "Kelsior",
+          "Name": "Name"
+        }
+      ],
+      "Connections": [
+        {
+          "ID": 0,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "1353,74.5",
+      "Size": "280,224"
+    },
+    {
+      "ID": 6,
+      "TextContent": "Ok, I'm gonna stop that, and get back \r\n{local randomInt = math.random(1, 10) \r\nRestoreHealth(randomInt)\r\nreturn randomInt } health!",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "Kelsior",
+          "Name": "Name"
+        },
+        {
+          "ID": 1,
+          "Value": "Kelsior2",
+          "Name": "SpriteTexture"
+        }
+      ],
+      "Connections": [
+        {
+          "ID": 0,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "1402,344.5",
+      "Size": "280,248"
+    },
+    {
+      "ID": 7,
+      "TextContent": "Ok, well you're boring, I'm going to pretend we're meeting for the first time",
+      "Attributes": [],
+      "Connections": [
+        {
+          "ID": 0,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "1458,716.5",
+      "Size": "280,181"
+    }
+  ],
+  "Connections": [
+    {
+      "FromTextBoxID": 2,
+      "FromComponentID": 0,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 1
+    },
+    {
+      "FromTextBoxID": 0,
+      "FromComponentID": 0,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 2
+    },
+    {
+      "FromTextBoxID": 1,
+      "FromComponentID": 1,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 3
+    },
+    {
+      "FromTextBoxID": 3,
+      "FromComponentID": 1,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 3
+    },
+    {
+      "FromTextBoxID": 3,
+      "FromComponentID": 2,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 1
+    },
+    {
+      "FromTextBoxID": 1,
+      "FromComponentID": 2,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 4
+    },
+    {
+      "FromTextBoxID": 4,
+      "FromComponentID": 1,
+      "FromConnectionID": 1,
+      "ToTextBoxID": 5
+    },
+    {
+      "FromTextBoxID": 5,
+      "FromComponentID": 0,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 1
+    },
+    {
+      "FromTextBoxID": 4,
+      "FromComponentID": 1,
+      "FromConnectionID": 2,
+      "ToTextBoxID": 6
+    },
+    {
+      "FromTextBoxID": 6,
+      "FromComponentID": 0,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 1
+    },
+    {
+      "FromTextBoxID": 4,
+      "FromComponentID": 2,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 7
+    },
+    {
+      "FromTextBoxID": 7,
+      "FromComponentID": 0,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 2
+    }
+  ],
+  "LuaStubs": {
+    "Variables": {
+      "health": {
+        "Type": "System.Int32",
+        "Value": 100
+      }
+    },
+    "Functions": [
+      {
+        "Name": "TakeDamage",
+        "DeclaringType": "Health",
+        "ReturnType": "System.Void",
+        "Parameters": [
+          {
+            "Name": "damage",
+            "Type": "System.Int32"
+          }
+        ]
+      },
+      {
+        "Name": "RestoreHealth",
+        "DeclaringType": "Health",
+        "ReturnType": "System.Void",
+        "Parameters": [
+          {
+            "Name": "amount",
+            "Type": "System.Int32"
+          }
+        ]
+      },
+      {
+        "Name": "GetFormattedHealth",
+        "DeclaringType": "Health",
+        "ReturnType": "System.String",
+        "Parameters": []
+      }
+    ],
+    "Attributes": [
+      {
+        "Name": "Name",
+        "DeclaringType": "AttributeName",
+        "ReturnType": "System.Void",
+        "Parameters": [
+          {
+            "Name": "context",
+            "Type": "NarrativeAttributeContext"
+          }
+        ]
+      },
+      {
+        "Name": "SpriteTexture",
+        "DeclaringType": "AttributeSprite",
+        "ReturnType": "System.Void",
+        "Parameters": [
+          {
+            "Name": "context",
+            "Type": "NarrativeAttributeContext"
+          }
+        ]
+      },
+      {
+        "Name": "MoveSprite",
+        "DeclaringType": "AttributeSprite",
+        "ReturnType": "System.Void",
+        "Parameters": [
+          {
+            "Name": "context",
+            "Type": "NarrativeAttributeContext"
+          }
+        ]
+      },
+      {
+        "Name": "MoveSpriteBy",
+        "DeclaringType": "AttributeSprite",
+        "ReturnType": "System.Void",
+        "Parameters": [
+          {
+            "Name": "context",
+            "Type": "NarrativeAttributeContext"
+          }
+        ]
+      },
+      {
+        "Name": "ChoiceName",
+        "DeclaringType": "AttributeChoiceName",
+        "ReturnType": "System.Void",
+        "Parameters": [
+          {
+            "Name": "context",
+            "Type": "NarrativeAttributeContext"
+          }
+        ]
+      }
+    ]
+  }
+}

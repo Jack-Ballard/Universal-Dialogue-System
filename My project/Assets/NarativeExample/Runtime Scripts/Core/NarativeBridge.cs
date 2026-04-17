@@ -12,7 +12,7 @@ using UnityEngine.InputSystem;
 public class NarativeBridge : MonoBehaviour
 {
     [SerializeField]
-    private TextMeshProUGUI textMeshProUGUI;
+    public TextMeshProUGUI textMeshProUGUI;
 
     [SerializeField]
     private GameObject objectButtonPrefab;
@@ -20,12 +20,15 @@ public class NarativeBridge : MonoBehaviour
     [SerializeField]
     private Transform parentTransform;
 
+    [SerializeField]
+    private string dialogueFileName;
+
     int currentTextBoxID = -1;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        Importer.ImportFile();
+        Importer.ImportFile(dialogueFileName);
         //OnPresentOptions();
     }
 
@@ -53,24 +56,15 @@ public class NarativeBridge : MonoBehaviour
                 validOption = true;
                 break;
             }
-
-            if(Globals.textBoxes[currentTextBoxID].Components[ID].OutgoingConnections[connections[j].FromConnectionID].ID == 0)
-            {
-                currentTextBoxID = connections[j].ToTextBoxID;
-                validOption = true;
-                break;
-            }
-            List<Condition> nodeConditions = new List<Condition>(Globals.textBoxes[currentTextBoxID].Components[ID].OutgoingConnections[connections[j].FromConnectionID].Conditions);
+            List<Condition> nodeConditions = new List<Condition>(Globals.textBoxes[currentTextBoxID].Components[ID-1].OutgoingConnections[connections[j].FromConnectionID-1].Conditions);
             for (int i = 0; i < nodeConditions.Count; i++)
             {
-                if (Globals.attributes.TryGetValue(nodeConditions[i].Value, out Delegate conditionFunction))
+                // If you need to evaluate a condition, you may need to use nodeConditions[i].Value directly
+                if (LuaLogic.EvaluateLuaCondition(nodeConditions[i].Value))
                 {
-                    if (LuaLogic.EvaluateLuaCondition(conditionFunction.ToString()))
-                    {
-                        currentTextBoxID = connections[j].ToTextBoxID;
-                        validOption = true;
-                        break;
-                    }
+                    currentTextBoxID = connections[j].ToTextBoxID;
+                    validOption = true;
+                    break;
                 }
             }
             if (validOption)
@@ -98,12 +92,18 @@ public class NarativeBridge : MonoBehaviour
         string text = LuaLogic.FormatByLua(textBox.TextContent);
         textMeshProUGUI.text = text;
 
+        foreach(Attribute attribute in textBox.Attributes)
+        {
+            if (Globals.TryGetAttribute(attribute.Name, out Action<NarrativeAttributeContext> attributeHandler))
+            {
+                attributeHandler.Invoke(new NarrativeAttributeContext(textBox, new Components(null), attribute, this));
+            }
+        }
+
         foreach (Components connectionComponent in textBox.Components)
         {
-            
-            if(connectionComponent.ID==0)
+            if (connectionComponent.ID == 0)
             {
-                //Console.Write(attribute.Value);
                 OptionButtonScript optionButtonScript = Instantiate(objectButtonPrefab, parentTransform).GetComponent<OptionButtonScript>();
                 optionButtonScript.Initalise("Continue", connectionComponent.ID, OnOptionSelected);
                 continue;
@@ -122,22 +122,11 @@ public class NarativeBridge : MonoBehaviour
 
             foreach (Attribute attribute in connectionComponent.Attributes)
             {
-                
-                if (attribute.Name == "ChoiceName")
+                if (Globals.TryGetAttribute(attribute.Name, out Action<NarrativeAttributeContext> attributeHandler))
                 {
-                    //Console.Write(attribute.Value);
-                    OptionButtonScript optionButtonScript = Instantiate(objectButtonPrefab, parentTransform).GetComponent<OptionButtonScript>();
-                    optionButtonScript.Initalise(attribute.Value, connectionComponent.ID, OnOptionSelected);
-                    break;
-                }
-                if (Globals.attributes.TryGetValue(attribute.Name, out var attributeFunction))
-                {
-                    attributeFunction = attributeFunction as Action<System.Object>;
-                    attributeFunction?.DynamicInvoke(new Tuple<Components, Attribute, NarativeBridge>(connectionComponent, attribute, this));
-                    break; // If only one attribute per connection should be handled
+                    attributeHandler.Invoke(new NarrativeAttributeContext(textBox, connectionComponent, attribute, this));
                 }
             }
-            Console.WriteLine();
         }
     }
 }
