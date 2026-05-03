@@ -14,6 +14,7 @@ namespace Honours_Stage_Project.ViewModels
     public class NodeViewModel : INotifyPropertyChanged
     {
         private readonly INodeConnectionService _connectionService;
+        private readonly NodeModel _model;
         private bool _isDefaultOutgoingVisible = true;
         private bool _isRootNode = false;
         private ILuaStubValidationService _luaStubValidationService;
@@ -23,16 +24,26 @@ namespace Honours_Stage_Project.ViewModels
         public ObservableCollection<ConnectionViewModel> ConnectionComponents { get; }
             = new ObservableCollection<ConnectionViewModel>();
 
-        public ObservableCollection<AttributeModel> Attributes => Model.Attributes;
-        public NodeModel Model { get; }
+        public ObservableCollection<AttributeModel> Attributes => _model.Attributes;
+
+        public int ID
+        {
+            get => _model.ID;
+            set
+            {
+                if (_model.ID == value) return;
+                _model.ID = value;
+                OnPropertyChanged(nameof(ID));
+            }
+        }
 
         public string TextContent
         {
-            get => Model.TextContent;
+            get => _model.TextContent;
             set
             {
-                if (Model.TextContent == value) return;
-                Model.TextContent = value;
+                if (_model.TextContent == value) return;
+                _model.TextContent = value;
                 OnPropertyChanged(nameof(TextContent));
                 ValidateLuaText();
             }
@@ -73,22 +84,22 @@ namespace Honours_Stage_Project.ViewModels
 
         public double X
         {
-            get => Model.X;
+            get => _model.X;
             set
             {
-                if (Model.X == value) return;
-                Model.X = value;
+                if (_model.X == value) return;
+                _model.X = value;
                 OnPropertyChanged(nameof(X));
             }
         }
 
         public double Y
         {
-            get => Model.Y;
+            get => _model.Y;
             set
             {
-                if (Model.Y == value) return;
-                Model.Y = value;
+                if (_model.Y == value) return;
+                _model.Y = value;
                 OnPropertyChanged(nameof(Y));
             }
         }
@@ -106,11 +117,11 @@ namespace Honours_Stage_Project.ViewModels
 
         public Size Size
         {
-            get => Model.Size;
+            get => _model.Size;
             set
             {
-                if (Model.Size == value) return;
-                Model.Size = value;
+                if (_model.Size == value) return;
+                _model.Size = value;
                 OnPropertyChanged(nameof(Size));
             }
         }
@@ -127,7 +138,9 @@ namespace Honours_Stage_Project.ViewModels
             INodeConnectionService connectionService,
             ILuaStubValidationService luaStubValidationService = null)
         {
-            Model = model;
+            if (model == null) throw new ArgumentNullException(nameof(model));
+
+            _model = model;
             _connectionService = connectionService;
 
             AddConnectionComponentCommand = new RelayCommand(_ => AddConnectionComponent());
@@ -137,15 +150,15 @@ namespace Honours_Stage_Project.ViewModels
             RemoveAttributeCommand = new RelayCommand(attr => RemoveAttribute(attr as AttributeModel));
             RemoveComponentCommand = new RelayCommand(component => RemoveComponent(component as ConnectionViewModel));
 
-            if (Model.ID == 0)
+            if (_model.ID == 0)
                 IsRootNode = true;
 
-            foreach (var component in Model.ConnectionComponents)
+            foreach (var component in _model.ConnectionComponents)
             {
                 if (component.ID == 0)
                     continue;
 
-                ConnectionComponents.Add(new ConnectionViewModel(component, Model.ID, _connectionService));
+                ConnectionComponents.Add(new ConnectionViewModel(component, _model.ID, _connectionService));
             }
 
             if (ConnectionComponents.Count > 0)
@@ -154,10 +167,20 @@ namespace Honours_Stage_Project.ViewModels
             ConfigureLuaValidation(luaStubValidationService);
         }
 
+        public object Export()
+            => _model.Export();
+
+        public void RemoveConnectionComponentById(int componentId)
+        {
+            _model.RemoveConnectionComponent(componentId);
+            var vm = ConnectionComponents.FirstOrDefault(c => c.ID == componentId);
+            if (vm != null)
+                ConnectionComponents.Remove(vm);
+        }
+
         public void ConfigureLuaValidation(ILuaStubValidationService luaStubValidationService)
         {
             _luaStubValidationService = luaStubValidationService;
-
             ValidateLuaText();
         }
 
@@ -209,13 +232,13 @@ namespace Honours_Stage_Project.ViewModels
             if (IsRootNode)
                 return;
 
-            if(_connectionService.Connections.Where(c => c.TargetNodeId == Model.ID).Any() && _connectionService.PendingOutgoing == (-1, -1, -1))
+            if (_connectionService.Connections.Any(c => c.TargetNodeId == _model.ID) && _connectionService.PendingOutgoing == (-1, -1, -1))
             {
-                _connectionService.RemoveIncoming(Model.ID);
+                _connectionService.RemoveIncoming(_model.ID);
                 return;
             }
 
-            _connectionService.AddIncoming(Model.ID);
+            _connectionService.AddIncoming(_model.ID);
         }
 
         private void AddConnectionComponent()
@@ -225,21 +248,21 @@ namespace Honours_Stage_Project.ViewModels
 
             RemoveDefaultConnection();
 
-            var componentModel = Model.AddConnectionComponent();
-            ConnectionComponents.Add(new ConnectionViewModel(componentModel, Model.ID, _connectionService));
+            var componentModel = _model.AddConnectionComponent();
+            ConnectionComponents.Add(new ConnectionViewModel(componentModel, _model.ID, _connectionService));
         }
 
         private void AddDefaultConnection()
         {
-            if (Model.GetComponentConnection(0) != null)
+            if (_model.GetComponentConnection(0) != null)
             {
-                _connectionService.RemoveOutgoing(Model.ID, 0, 0);
-                Model.RemoveConnectionComponent(0);
+                _connectionService.RemoveOutgoing(_model.ID, 0, 0);
+                _model.RemoveConnectionComponent(0);
                 return;
             }
 
-            _connectionService.AddOutgoing(Model.ID, 0, 0);
-            Model.AddDefaultConnectionComponent();
+            _connectionService.AddOutgoing(_model.ID, 0, 0);
+            _model.AddDefaultConnectionComponent();
         }
 
         private void AddAttribute()
@@ -254,14 +277,15 @@ namespace Honours_Stage_Project.ViewModels
         {
             if (IsRootNode)
                 return;
+
             Attributes.Remove(attribute);
         }
 
         private void RemoveDefaultConnection()
         {
-            _connectionService.RemoveOutgoing(Model.ID, 0, 0);
+            _connectionService.RemoveOutgoing(_model.ID, 0, 0);
             ConnectionComponents.Remove(ConnectionComponents.FirstOrDefault(c => c.ID == 0));
-            Model.RemoveConnectionComponent(0);
+            _model.RemoveConnectionComponent(0);
             IsDefaultOutgoingVisible = false;
         }
 
@@ -270,10 +294,10 @@ namespace Honours_Stage_Project.ViewModels
             if (IsRootNode || component == null)
                 return;
 
-            _connectionService.RemoveConnectionComponent(Model.ID, component.ID);
+            _connectionService.RemoveConnectionComponent(_model.ID, component.ID);
 
             ConnectionComponents.Remove(component);
-            Model.RemoveConnectionComponent(component.ID);
+            _model.RemoveConnectionComponent(component.ID);
 
             RenumberConnectionComponents();
 
@@ -284,7 +308,7 @@ namespace Honours_Stage_Project.ViewModels
         {
             int nextId = 1;
 
-            foreach (ConnectionModel connectionModel in Model.ConnectionComponents.OrderBy(c => c.ID))
+            foreach (ConnectionModel connectionModel in _model.ConnectionComponents.OrderBy(c => c.ID))
             {
                 if (connectionModel.ID == 0)
                     continue;

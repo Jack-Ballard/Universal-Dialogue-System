@@ -1,7 +1,9 @@
 using Honours_Stage_Project.ViewModels;
+using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Honours_Stage_Project.Services
@@ -17,9 +19,13 @@ namespace Honours_Stage_Project.Services
             _importService = importService;
         }
 
-        public void Export(IEnumerable<NodeViewModel> nodes, IEnumerable<Connection> connections, string fileName = "exported_data")
+        public void Export(IEnumerable<object> nodeExports, IEnumerable<Connection> connections, string fileName = "exported_data")
         {
-            var textBoxData = nodes.Select(n => n.Model.Export()).ToList();
+            string path = GetSaveFilePath("lastExportLocation.txt", fileName);
+            if (string.IsNullOrWhiteSpace(path))
+                return;
+
+            var textBoxData = nodeExports.ToList();
 
             var connectionObjects = connections.Select(c => (object)new
             {
@@ -37,7 +43,42 @@ namespace Honours_Stage_Project.Services
             };
 
             string json = JsonConvert.SerializeObject(dataPackage, Formatting.Indented);
-            _fileService.WriteAllText(fileName + ".json", json);
+            _fileService.WriteAllText(path, json);
+        }
+
+        private static string GetSaveFilePath(string savedPathLocation, string defaultFileName)
+        {
+            string initialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+            if (File.Exists(savedPathLocation))
+            {
+                string lastDirectory = File.ReadAllText(savedPathLocation);
+                if (!string.IsNullOrWhiteSpace(lastDirectory) && Directory.Exists(lastDirectory))
+                    initialDirectory = lastDirectory;
+            }
+
+            var dialog = new SaveFileDialog
+            {
+                Title = "Save dialogue export",
+                Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*",
+                DefaultExt = ".json",
+                AddExtension = true,
+                OverwritePrompt = true,
+                InitialDirectory = initialDirectory,
+                FileName = string.IsNullOrWhiteSpace(defaultFileName)
+                    ? "exported_data"
+                    : Path.GetFileNameWithoutExtension(defaultFileName)
+            };
+
+            bool? result = dialog.ShowDialog();
+            if (result != true)
+                return null;
+
+            string selectedDirectory = Path.GetDirectoryName(dialog.FileName);
+            if (!string.IsNullOrWhiteSpace(selectedDirectory))
+                File.WriteAllText(savedPathLocation, selectedDirectory);
+
+            return dialog.FileName;
         }
     }
 }

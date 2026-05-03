@@ -165,7 +165,7 @@ namespace Honours_Stage_Project
                 var fromNodeId = item.NodeId;
                 var fromComponentId = item.ComponentId;
                 var fromConnectionId = item.ConnectionId;
-                NodeViewModel sourceNode = vm.Nodes.FirstOrDefault(n => n.Model.ID == fromNodeId);
+                NodeViewModel sourceNode = vm.Nodes.FirstOrDefault(n => n.ID == fromNodeId);
                 var sourceContainer = NodesControl.ItemContainerGenerator.ContainerFromItem(sourceNode) as FrameworkElement;
 
                 double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
@@ -206,8 +206,8 @@ namespace Honours_Stage_Project
                 var fromConnectionId = item.ConnectionId;
                 var toNodeId = item.TargetNodeId;
 
-                NodeViewModel sourceNode = vm.Nodes.FirstOrDefault(n => n.Model.ID == fromNodeId);
-                NodeViewModel targetNode = vm.Nodes.FirstOrDefault(n => n.Model.ID == toNodeId);
+                NodeViewModel sourceNode = vm.Nodes.FirstOrDefault(n => n.ID == fromNodeId);
+                NodeViewModel targetNode = vm.Nodes.FirstOrDefault(n => n.ID == toNodeId);
                 if (sourceNode == null || targetNode == null) continue;
 
                 var sourceContainer = NodesControl.ItemContainerGenerator.ContainerFromItem(sourceNode) as FrameworkElement;

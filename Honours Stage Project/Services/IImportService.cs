@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using Honours_Stage_Project.ViewModels;
+using Honours_Stage_Project.Models;
 
 namespace Honours_Stage_Project.Services
 {
     public interface IImportService
     {
-        (List<NodeViewModel>, List<Connection>) ImportDialogue(INodeConnectionService connectionService);
+        (List<NodeModel>, List<Connection>) ImportDialogue();
 
         LuaStubDefinition ImportLuaStub();
 

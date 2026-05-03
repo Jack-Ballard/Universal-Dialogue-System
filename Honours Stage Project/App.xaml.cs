@@ -13,7 +13,14 @@ namespace Honours_Stage_Project
             var exportService = new JsonExportService(fileService, importService);
             var luaValidationService = new LuaStubValidationService(importService);
             var connectionService = new NodeConnectionService();
-            var viewModel = new MainWindowViewModel(connectionService, exportService, importService, luaValidationService);
+            var dialogService = new DialogService();
+
+            var viewModel = new MainWindowViewModel(
+                connectionService,
+                exportService,
+                importService,
+                luaValidationService,
+                dialogService);
 
             new MainWindow(viewModel).Show();
         }

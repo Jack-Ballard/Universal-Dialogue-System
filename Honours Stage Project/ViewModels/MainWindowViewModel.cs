@@ -22,6 +22,7 @@ namespace Honours_Stage_Project.ViewModels
         private readonly IExportService _exportService;
         private readonly IImportService _importService;
         private readonly ILuaStubValidationService _luaStubValidationService;
+        private readonly IDialogService _dialogService;
 
         public ObservableCollection<NodeViewModel> Nodes { get; } = new ObservableCollection<NodeViewModel>();
 
@@ -42,18 +43,20 @@ namespace Honours_Stage_Project.ViewModels
             INodeConnectionService connectionService,
             IExportService exportService,
             IImportService importService,
-            ILuaStubValidationService luaStubValidationService)
+            ILuaStubValidationService luaStubValidationService,
+            IDialogService dialogService)
         {
             _connectionService = connectionService;
             _exportService = exportService;
             _importService = importService;
             _luaStubValidationService = luaStubValidationService;
+            _dialogService = dialogService;
 
             _connectionService.ConnectionsChanged += () => RequestLinesRefresh?.Invoke();
 
             AddNodeCommand = new RelayCommand(parameter => AddNode(parameter));
             AddRootNodeCommand = new RelayCommand(_ => AddRootNode());
-            ExportCommand = new RelayCommand(_ => _exportService.Export(Nodes, _connectionService.Connections));
+            ExportCommand = new RelayCommand(_ => _exportService.Export(Nodes.Select(n => n.Export()), _connectionService.Connections));
             ImportCommand = new RelayCommand(_ => Import());
             ImportStubCommand = new RelayCommand(_ => ImportStub());
             DeleteNodeCommand = new RelayCommand(node => RemoveNode(node as NodeViewModel));
@@ -78,12 +81,12 @@ namespace Honours_Stage_Project.ViewModels
             if (Nodes.Count == 0)
                 return 1;
 
-            return Nodes.Max(n => n.Model.ID) + 1;
+            return Nodes.Max(n => n.ID) + 1;
         }
 
         private void AddRootNode()
         {
-            if (Nodes.Any(n => n.Model.ID == 0))
+            if (Nodes.Any(n => n.ID == 0))
                 return;
 
             var model = new NodeModel(0)
@@ -91,9 +94,6 @@ namespace Honours_Stage_Project.ViewModels
                 X = 50,
                 Y = 50
             };
-
-            // Root node has a single default outgoing connection component.
-            //model.AddDefaultConnectionComponent();
 
             var viewModel = new NodeViewModel(model, _connectionService, _luaStubValidationService);
             AttachNode(viewModel);
@@ -119,36 +119,35 @@ namespace Honours_Stage_Project.ViewModels
             DetachNode(node);
             Nodes.Remove(node);
 
-            List<Connection> connectionsToRemove = _connectionService.GetConnectionsForNode(node.Model.ID);
+            List<Connection> connectionsToRemove = _connectionService.GetConnectionsForNode(node.ID);
 
             foreach (var connection in connectionsToRemove)
             {
-                if(connection.ComponentId == 0)
+                if (connection.ComponentId == 0)
                 {
-                    var Node = Nodes.FirstOrDefault(n => n.Model.ID == connection.NodeId);
-                    Node?.Model.RemoveConnectionComponent(connection.ConnectionId);
+                    var existingNode = Nodes.FirstOrDefault(n => n.ID == connection.NodeId);
+                    existingNode?.RemoveConnectionComponentById(connection.ConnectionId);
                 }
             }
 
-            _connectionService.RemoveConnectionsForNode(node.Model.ID);
+            _connectionService.RemoveConnectionsForNode(node.ID);
 
-            // Keep root ID fixed if it still exists; renumber only non-root nodes.
             int nextId = 1;
-            foreach (var existing in Nodes.OrderBy(n => n.Model.ID))
+            foreach (var existing in Nodes.OrderBy(n => n.ID))
             {
-                if (existing.Model.ID == 0)
+                if (existing.ID == 0)
                     continue;
 
-                existing.Model.ID = nextId;
+                existing.ID = nextId;
                 nextId++;
             }
         }
 
         private void Import()
         {
-            var (importedNodes, importedConnections) = _importService.ImportDialogue(_connectionService);
+            var (importedNodeModels, importedConnections) = _importService.ImportDialogue();
 
-            if(importedNodes == null || importedConnections == null)
+            if (importedNodeModels == null || importedConnections == null)
                 return;
 
             foreach (var node in Nodes)
@@ -156,16 +155,15 @@ namespace Honours_Stage_Project.ViewModels
 
             Nodes.Clear();
 
-            foreach (var node in importedNodes)
+            foreach (var model in importedNodeModels)
             {
-                node.ConfigureLuaValidation(_luaStubValidationService);
+                var node = new NodeViewModel(model, _connectionService, _luaStubValidationService);
                 AttachNode(node);
                 Nodes.Add(node);
             }
 
             _connectionService.SetConnections(importedConnections);
 
-            // Validate imported node text as Lua against the generated stub.
             ValidateImportedLuaScripts();
 
             RequestLinesRefresh?.Invoke();
@@ -190,7 +188,7 @@ namespace Honours_Stage_Project.ViewModels
 
             foreach (var node in Nodes)
             {
-                string luaScript = node?.Model?.TextContent;
+                string luaScript = node?.TextContent;
                 if (string.IsNullOrWhiteSpace(luaScript))
                     continue;
 
@@ -202,18 +200,16 @@ namespace Honours_Stage_Project.ViewModels
                         continue;
 
                     foreach (string error in result.Errors)
-                        allErrors.Add("Node " + node.Model.ID + ": " + error);
+                        allErrors.Add("Node " + node.ID + ": " + error);
                 }
             }
 
             if (allErrors.Count == 0)
                 return;
 
-            MessageBox.Show(
+            _dialogService.ShowWarning(
                 string.Join(Environment.NewLine, allErrors),
-                "Lua validation errors",
-                MessageBoxButton.OK,
-                MessageBoxImage.Warning);
+                "Lua validation errors");
         }
 
         private void AttachNode(NodeViewModel node)

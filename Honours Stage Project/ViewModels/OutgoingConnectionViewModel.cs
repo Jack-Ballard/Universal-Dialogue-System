@@ -11,12 +11,11 @@ namespace Honours_Stage_Project.ViewModels
         private readonly INodeConnectionService _connectionService;
         private readonly int _nodeId;
         private readonly int _componentId;
+        private readonly OutgoingConnectionModel _model;
 
-        public OutgoingConnectionModel Model { get; }
+        public int ID => _model.Id;
 
-        public int ID => Model.Id;
-
-        public ObservableCollection<ConditionModel> Conditions => Model.Conditions;
+        public ObservableCollection<ConditionModel> Conditions => _model.Conditions;
 
         public ICommand AddConditionCommand { get; }
         public ICommand AddOutgoingConnectionCommand { get; }
@@ -27,16 +26,21 @@ namespace Honours_Stage_Project.ViewModels
             int componentId,
             INodeConnectionService connectionService)
         {
-            Model = model;
+            _model = model;
             _nodeId = nodeId;
             _componentId = componentId;
             _connectionService = connectionService;
 
             AddConditionCommand = new RelayCommand(_ =>
-                Model.Conditions.Add(new ConditionModel { Id = Model.Conditions.Count }));
+                _model.Conditions.Add(new ConditionModel { Id = _model.Conditions.Count }));
 
             AddOutgoingConnectionCommand = new RelayCommand(_ =>
-                _connectionService.AddOutgoing(_nodeId, _componentId, Model.Id));
+                _connectionService.AddOutgoing(_nodeId, _componentId, _model.Id));
+        }
+
+        public void DecrementId()
+        {
+            _model.Id--;
         }
     }
 }

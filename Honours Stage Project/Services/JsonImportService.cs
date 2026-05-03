@@ -4,7 +4,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using Honours_Stage_Project.Models;
-using Honours_Stage_Project.ViewModels;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -26,22 +25,22 @@ namespace Honours_Stage_Project.Services
             _fileService = fileService;
         }
 
-        public (List<NodeViewModel>, List<Connection>) ImportDialogue(INodeConnectionService connectionService)
+        public (List<NodeModel>, List<Connection>) ImportDialogue()
         {
             string path = GetFilePath("lastFileLocation.txt");
 
             if (string.IsNullOrEmpty(path))
-                return (new List<NodeViewModel>(), new List<Connection>());
+                return (new List<NodeModel>(), new List<Connection>());
 
             _fileService.ReadAllText(path, out string json);
 
             var root = JsonConvert.DeserializeObject<JObject>(json);
             if (root == null)
-                return (new List<NodeViewModel>(), new List<Connection>());
+                return (new List<NodeModel>(), new List<Connection>());
 
             LoadLuaStubFromNodeFile(root);
 
-            var nodes = new List<NodeViewModel>();
+            var nodes = new List<NodeModel>();
             var nodeTokens = root["TextBoxes"] as JArray ?? new JArray();
 
             foreach (var nodeToken in nodeTokens.OfType<JObject>())
@@ -49,12 +48,12 @@ namespace Honours_Stage_Project.Services
                 var nodeId = GetInt(nodeToken, "ID");
                 var model = new NodeModel(nodeId);
                 model.Import(nodeToken);
-
-                nodes.Add(new NodeViewModel(model, connectionService));
+                nodes.Add(model);
             }
 
             var connections = new List<Connection>();
             var connectionTokens = root["Connections"] as JArray ?? new JArray();
+
             foreach (var connectionToken in connectionTokens.OfType<JObject>())
             {
                 Connection connection = new Connection(

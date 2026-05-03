@@ -11,15 +11,14 @@ namespace Honours_Stage_Project.ViewModels
     public class ConnectionViewModel : INotifyPropertyChanged
     {
         private readonly INodeConnectionService _connectionService;
+        private readonly ConnectionModel _model;
         private bool _isDefaultOutgoingVisible = true;
         private readonly int _nodeId;
 
-        public ConnectionModel Model { get; }
+        public int ID => _model.ID;
 
-        public int ID => Model.ID;
-
-        public ObservableCollection<AttributeModel> Attributes => Model.Attributes;
-        public ObservableCollection<ConditionModel> Conditions => Model.Conditions;
+        public ObservableCollection<AttributeModel> Attributes => _model.Attributes;
+        public ObservableCollection<ConditionModel> Conditions => _model.Conditions;
         public ObservableCollection<OutgoingConnectionViewModel> OutgoingConnections { get; }
             = new ObservableCollection<OutgoingConnectionViewModel>();
 
@@ -49,17 +48,17 @@ namespace Honours_Stage_Project.ViewModels
 
         public ConnectionViewModel(ConnectionModel model, int nodeId, INodeConnectionService connectionService)
         {
-            Model = model;
+            _model = model;
             _nodeId = nodeId;
             _connectionService = connectionService;
 
             AddAttributeCommand = new RelayCommand(_ =>
-                Model.Attributes.Add(new AttributeModel { Id = Model.Attributes.Count }));
+                _model.Attributes.Add(new AttributeModel { Id = _model.Attributes.Count }));
             RemoveComponentAttributeCommand = new RelayCommand(attribute =>
                 RemoveComponentAttribute(attribute as AttributeModel));
 
             AddConditionCommand = new RelayCommand(_ =>
-                Model.Conditions.Add(new ConditionModel { Id = Model.Conditions.Count }));
+                _model.Conditions.Add(new ConditionModel { Id = _model.Conditions.Count }));
             RemoveComponentConditionCommand = new RelayCommand(condition =>
                 RemoveComponentCondition(condition as ConditionModel));
 
@@ -67,14 +66,15 @@ namespace Honours_Stage_Project.ViewModels
 
             AddDefaultOutgoingCommand = new RelayCommand(_ =>
                 _connectionService.AddOutgoing(_nodeId, ID, 0));
-            RemoveOutgoingConnectionCommand = new RelayCommand(connection => RemoveOutgoingConnection(connection as OutgoingConnectionViewModel));
+            RemoveOutgoingConnectionCommand = new RelayCommand(connection =>
+                RemoveOutgoingConnection(connection as OutgoingConnectionViewModel));
 
-            foreach (var outgoing in Model.OutgoingConnections)
+            foreach (var outgoing in _model.OutgoingConnections)
             {
                 OutgoingConnections.Add(new OutgoingConnectionViewModel(
                     outgoing,
                     _nodeId,
-                    Model.ID,
+                    _model.ID,
                     _connectionService));
             }
 
@@ -90,11 +90,11 @@ namespace Honours_Stage_Project.ViewModels
 
         private void AddOutgoingOption()
         {
-            var outgoing = Model.AddOutgoingConnection();
+            var outgoing = _model.AddOutgoingConnection();
             OutgoingConnections.Add(new OutgoingConnectionViewModel(
                 outgoing,
                 _nodeId,
-                Model.ID,
+                _model.ID,
                 _connectionService));
 
             RemoveDefaultConnection();
@@ -102,7 +102,7 @@ namespace Honours_Stage_Project.ViewModels
 
         private void RemoveDefaultConnection()
         {
-            _connectionService.RemoveOutgoing(_nodeId, Model.ID, 0);
+            _connectionService.RemoveOutgoing(_nodeId, _model.ID, 0);
             IsDefaultOutgoingVisible = false;
         }
 
@@ -111,10 +111,10 @@ namespace Honours_Stage_Project.ViewModels
             if (attribute == null)
                 return;
 
-            Model.Attributes.Remove(attribute);
+            _model.Attributes.Remove(attribute);
 
-            for (int i = 0; i < Model.Attributes.Count; i++)
-                Model.Attributes[i].Id = i;
+            for (int i = 0; i < _model.Attributes.Count; i++)
+                _model.Attributes[i].Id = i;
         }
 
         private void RemoveComponentCondition(ConditionModel condition)
@@ -122,10 +122,10 @@ namespace Honours_Stage_Project.ViewModels
             if (condition == null)
                 return;
 
-            Model.Conditions.Remove(condition);
+            _model.Conditions.Remove(condition);
 
-            for (int i = 0; i < Model.Conditions.Count; i++)
-                Model.Conditions[i].Id = i;
+            for (int i = 0; i < _model.Conditions.Count; i++)
+                _model.Conditions[i].Id = i;
         }
 
         private void RemoveOutgoingConnection(OutgoingConnectionViewModel connection)
@@ -134,20 +134,22 @@ namespace Honours_Stage_Project.ViewModels
                 return;
 
             // Remove existing graph edge(s) for this outgoing branch
-            _connectionService.RemoveOutgoing(_nodeId, Model.ID, connection.ID);
+            _connectionService.RemoveOutgoing(_nodeId, _model.ID, connection.ID);
 
             // Keep VM and Model collections in sync
             OutgoingConnections.Remove(connection);
-            Model.OutgoingConnections.Remove(connection.Model);
-            _connectionService.DecrementConnections(_nodeId, Model.ID, connection.ID);
+
+            var outgoingModel = _model.OutgoingConnections.FirstOrDefault(o => o.Id == connection.ID);
+            if (outgoingModel != null)
+                _model.OutgoingConnections.Remove(outgoingModel);
+
+            _connectionService.DecrementConnections(_nodeId, _model.ID, connection.ID);
 
             // Re-index remaining outgoing branches and update service mappings
             foreach (var outgoing in OutgoingConnections)
             {
                 if (outgoing.ID > connection.ID)
-                {
-                    outgoing.Model.Id--;
-                }
+                    outgoing.DecrementId();
             }
 
             IsDefaultOutgoingVisible = OutgoingConnections.Count == 0;
