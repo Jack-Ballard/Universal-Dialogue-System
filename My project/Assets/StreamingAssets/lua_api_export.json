@@ -7,6 +7,32 @@
   },
   "functions": [
     {
+      "name": "GetSpriteTextureName",
+      "declaringType": "AttributeSprite",
+      "returnType": "System.String",
+      "parameters": [
+        {
+          "name": "spriteName",
+          "type": "System.String"
+        }
+      ]
+    },
+    {
+      "name": "SetSpriteTexture",
+      "declaringType": "AttributeSprite",
+      "returnType": "System.Void",
+      "parameters": [
+        {
+          "name": "spriteName",
+          "type": "System.String"
+        },
+        {
+          "name": "spriteTexture",
+          "type": "System.String"
+        }
+      ]
+    },
+    {
       "name": "TakeDamage",
       "declaringType": "Health",
       "returnType": "System.Void",

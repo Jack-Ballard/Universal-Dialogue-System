@@ -21,6 +21,8 @@ public class AttributeName : MonoBehaviour
             return;
         }
 
-        context.Bridge.textMeshProUGUI.text = speakerName + ": " + context.Bridge.textMeshProUGUI.text;
+        //context.Bridge.textMeshProUGUI.text = speakerName + ": " + context.Bridge.textMeshProUGUI.text;
+        context.Bridge.currentFullText = speakerName + ": " + context.Bridge.currentFullText;
+        return;
     }
 }

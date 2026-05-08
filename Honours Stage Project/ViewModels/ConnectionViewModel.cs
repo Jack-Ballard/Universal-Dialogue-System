@@ -22,10 +22,10 @@ namespace Honours_Stage_Project.ViewModels
         public ObservableCollection<OutgoingConnectionViewModel> OutgoingConnections { get; }
             = new ObservableCollection<OutgoingConnectionViewModel>();
 
-        public ObservableCollection<ConditionModel> ConectionConditions
-            => OutgoingConnections.FirstOrDefault() != null
-                ? OutgoingConnections.First().Conditions
-                : new ObservableCollection<ConditionModel>();
+        //public ObservableCollection<ConditionModel> ConectionConditions
+        //    => OutgoingConnections.FirstOrDefault() != null
+        //        ? OutgoingConnections.First().Conditions
+        //        : new ObservableCollection<ConditionModel>();
 
         public bool IsDefaultOutgoingVisible
         {

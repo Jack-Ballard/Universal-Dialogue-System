@@ -1,0 +1,863 @@
+{
+  "TextBoxes": [
+    {
+      "ID": 1,
+      "TextContent": "Hi, I'm David Parker, and I'm here to show you dialogue.\r\n$SetSpriteTexture(\"background\",\"fenner\")",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "David Parker",
+          "Name": "Name"
+        },
+        {
+          "ID": 1,
+          "Value": "7,0,0,2",
+          "Name": "MoveSpriteBy"
+        },
+        {
+          "ID": 2,
+          "Value": "DavidParkerHappy",
+          "Name": "SpriteTexture"
+        }
+      ],
+      "Connections": [
+        {
+          "ID": 0,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "175,60.5",
+      "Size": "294,272"
+    },
+    {
+      "ID": 0,
+      "TextContent": "",
+      "Attributes": [],
+      "Connections": [
+        {
+          "ID": 0,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "50,50",
+      "Size": "80,80"
+    },
+    {
+      "ID": 2,
+      "TextContent": "Hello David Parker, it is I, Brian Tompsett, and I am here to have a normal conversation with you. \r\n$SetSpriteTexture(\"David Parker\",\"DavidParkerShocked\")",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "Brian Tompsett",
+          "Name": "Name"
+        },
+        {
+          "ID": 1,
+          "Value": "-7,0,0,2",
+          "Name": "MoveSpriteBy"
+        },
+        {
+          "ID": 2,
+          "Value": "BrianTompsett",
+          "Name": "SpriteTexture"
+        }
+      ],
+      "Connections": [
+        {
+          "ID": 0,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "531,66.5",
+      "Size": "280,272"
+    },
+    {
+      "ID": 3,
+      "TextContent": "Ah, hello fellow lecturer, I'm sure you have some questions",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "David Parker",
+          "Name": "Name"
+        },
+        {
+          "ID": 1,
+          "Value": "DavidParkerHappy",
+          "Name": "SpriteTexture"
+        }
+      ],
+      "Connections": [
+        {
+          "ID": 1,
+          "Attributes": [
+            {
+              "ID": 0,
+              "Value": "Where are we?",
+              "Name": "ChoiceName"
+            }
+          ],
+          "Conditions": [],
+          "OutgoingConnections": []
+        },
+        {
+          "ID": 2,
+          "Attributes": [
+            {
+              "ID": 0,
+              "Value": "Can we move?",
+              "Name": "ChoiceName"
+            }
+          ],
+          "Conditions": [],
+          "OutgoingConnections": []
+        },
+        {
+          "ID": 3,
+          "Attributes": [
+            {
+              "ID": 0,
+              "Value": "Health?",
+              "Name": "ChoiceName"
+            }
+          ],
+          "Conditions": [
+            {
+              "ID": 0,
+              "Value": "health < 100"
+            }
+          ],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "891,68.5",
+      "Size": "261,521"
+    },
+    {
+      "ID": 4,
+      "TextContent": "We are currently {\r\nlocation = GetSpriteTextureName(\"background\") \r\n\r\nif location == \"fenner\" then\r\n\tdamage = math.random(5, 10)\r\n\tTakeDamage(damage )\r\n\treturn \"in fenner, which means you take \" .. damage .. \" damage\"\r\n\r\nelseif location == \"larkin\" then\r\n\treturn \"in larkin, so you take no damage\"\r\n\r\nelseif location == \"middleton\" then\r\n\thealth= math.random(5, 10)\r\n\tRestoreHealth(health)\r\n\treturn \"in middleton hall, so you are now healed\"\r\nend\r\n}",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "David Parker",
+          "Name": "Name"
+        },
+        {
+          "ID": 1,
+          "Value": "DavidParkerConfused",
+          "Name": "SpriteTexture"
+        }
+      ],
+      "Connections": [
+        {
+          "ID": 0,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "1518.352,-426.692",
+      "Size": "437.2,447.42"
+    },
+    {
+      "ID": 5,
+      "TextContent": "Where are we currently? Why does the world look gausian blured?",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "Brian Tompsett",
+          "Name": "Name"
+        }
+      ],
+      "Connections": [
+        {
+          "ID": 0,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "1199.366,-191.707",
+      "Size": "280,204.03"
+    },
+    {
+      "ID": 6,
+      "TextContent": "Can we go somewhere else?",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "Brian Tompsett",
+          "Name": "Name"
+        }
+      ],
+      "Connections": [
+        {
+          "ID": 0,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "1252.634,96.9339999999999",
+      "Size": "280,224"
+    },
+    {
+      "ID": 7,
+      "TextContent": "Sure, where would you like to go",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "David Parker",
+          "Name": "Name"
+        },
+        {
+          "ID": 1,
+          "Value": "DavidParkerAgent",
+          "Name": "SpriteTexture"
+        }
+      ],
+      "Connections": [
+        {
+          "ID": 1,
+          "Attributes": [
+            {
+              "ID": 0,
+              "Value": "Fenner lab",
+              "Name": "ChoiceName"
+            }
+          ],
+          "Conditions": [
+            {
+              "ID": 0,
+              "Value": "GetSpriteTextureName(\"background\")  != \"fenner\""
+            }
+          ],
+          "OutgoingConnections": []
+        },
+        {
+          "ID": 2,
+          "Attributes": [
+            {
+              "ID": 0,
+              "Value": "Larkin building",
+              "Name": "ChoiceName"
+            }
+          ],
+          "Conditions": [
+            {
+              "ID": 0,
+              "Value": "GetSpriteTextureName(\"background\")  != \"larkin\""
+            }
+          ],
+          "OutgoingConnections": []
+        },
+        {
+          "ID": 3,
+          "Attributes": [
+            {
+              "ID": 0,
+              "Value": "Middleton Hall",
+              "Name": "ChoiceName"
+            }
+          ],
+          "Conditions": [
+            {
+              "ID": 0,
+              "Value": "GetSpriteTextureName(\"background\")  != \"middleton\""
+            }
+          ],
+          "OutgoingConnections": [
+            {
+              "_id": 1,
+              "Conditions": [
+                {
+                  "ID": 0,
+                  "Value": "health >= 80"
+                }
+              ]
+            },
+            {
+              "_id": 2,
+              "Conditions": [
+                {
+                  "ID": 0,
+                  "Value": "health < 80"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "position": "1562.676,100.82",
+      "Size": "280,656.92"
+    },
+    {
+      "ID": 8,
+      "TextContent": "Excelent, you take damage here.\r\n$SetSpriteTexture(\"background\",\"fenner\")",
+      "Attributes": [
+        {
+          "ID": 1,
+          "Value": "David Parker",
+          "Name": "Name"
+        }
+      ],
+      "Connections": [
+        {
+          "ID": 0,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "1868.074,101.222",
+      "Size": "261.37,204.64"
+    },
+    {
+      "ID": 9,
+      "TextContent": "Why though",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "Brian Tompsett",
+          "Name": "Name"
+        }
+      ],
+      "Connections": [
+        {
+          "ID": 0,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "2189.862,103.515",
+      "Size": "280,217.95"
+    },
+    {
+      "ID": 10,
+      "TextContent": "Because I can, because I'm crazy, because I'm showing off features.",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "David Parker",
+          "Name": "Name"
+        },
+        {
+          "ID": 1,
+          "Value": "DavidParkerCrazy",
+          "Name": "SpriteTexture"
+        }
+      ],
+      "Connections": [
+        {
+          "ID": 0,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "2489.216,106.419",
+      "Size": "302.99,229.85"
+    },
+    {
+      "ID": 11,
+      "TextContent": "Excelent, you take no damage while here. \r\n$SetSpriteTexture(\"background\",\"larkin\")",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "David Parker",
+          "Name": "Name"
+        }
+      ],
+      "Connections": [
+        {
+          "ID": 0,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "1882.038,340.796",
+      "Size": "264.03,204.64"
+    },
+    {
+      "ID": 12,
+      "TextContent": "Sorry, you can only go to middleton hall if your health is less than 80.",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "David Parker",
+          "Name": "Name"
+        }
+      ],
+      "Connections": [
+        {
+          "ID": 0,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "1883.49,577.835",
+      "Size": "280,204.64"
+    },
+    {
+      "ID": 13,
+      "TextContent": "Why though?",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "Brian Tompsett",
+          "Name": "Name"
+        }
+      ],
+      "Connections": [
+        {
+          "ID": 0,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "2239.23,519.029",
+      "Size": "280,224"
+    },
+    {
+      "ID": 14,
+      "TextContent": "Because you get healed in middleton, don't ask me how it works.",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "David Parker",
+          "Name": "Name"
+        },
+        {
+          "ID": 1,
+          "Value": "DavidParkerHacker",
+          "Name": "SpriteTexture"
+        }
+      ],
+      "Connections": [
+        {
+          "ID": 0,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "2549.353,512.737",
+      "Size": "280,248"
+    },
+    {
+      "ID": 15,
+      "TextContent": "Fantastic, welcome to middleton hall, you'll get healed while here.\r\n$SetSpriteTexture(\"background\",\"middleton\")",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "David Parker",
+          "Name": "Name"
+        },
+        {
+          "ID": 1,
+          "Value": "DavidParkerHacker",
+          "Name": "SpriteTexture"
+        }
+      ],
+      "Connections": [
+        {
+          "ID": 0,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "1855.176,812.212",
+      "Size": "307.71,248"
+    },
+    {
+      "ID": 16,
+      "TextContent": "So about health...",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "Brian Tompsett",
+          "Name": "Name"
+        }
+      ],
+      "Connections": [
+        {
+          "ID": 1,
+          "Attributes": [
+            {
+              "ID": 0,
+              "Value": "Why do I have health?",
+              "Name": "ChoiceName"
+            }
+          ],
+          "Conditions": [],
+          "OutgoingConnections": []
+        },
+        {
+          "ID": 2,
+          "Attributes": [
+            {
+              "ID": 0,
+              "Value": "What is my health?",
+              "Name": "ChoiceName"
+            }
+          ],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "1226.0849,1131.06999",
+      "Size": "280,390"
+    },
+    {
+      "ID": 17,
+      "TextContent": "Why do I have health?",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "Brian Tompsett",
+          "Name": "Name"
+        }
+      ],
+      "Connections": [
+        {
+          "ID": 0,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "1548.61282,1124.41499",
+      "Size": "280,224"
+    },
+    {
+      "ID": 18,
+      "TextContent": "It's a way of showing off features, so you can get healed in middleton and hurt in fenner.",
+      "Attributes": [
+        {
+          "ID": 0,
+          "Value": "David Parker",
+          "Name": "Name"
+        },
+        {
+          "ID": 1,
+          "Value": "DavidParkerHacker",
+          "Name": "SpriteTexture"
+        }
+      ],
+      "Connections": [
+        {
+          "ID": 0,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "1887.725,1126.0255",
+      "Size": "280,248"
+    },
+    {
+      "ID": 19,
+      "TextContent": "Your health is curretly $health, that means your $GetFormattedHealth",
+      "Attributes": [],
+      "Connections": [
+        {
+          "ID": 0,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "1548.89233,1420.73552",
+      "Size": "280,200"
+    }
+  ],
+  "Connections": [
+    {
+      "FromTextBoxID": 0,
+      "FromComponentID": 0,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 1
+    },
+    {
+      "FromTextBoxID": 1,
+      "FromComponentID": 0,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 2
+    },
+    {
+      "FromTextBoxID": 2,
+      "FromComponentID": 0,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 3
+    },
+    {
+      "FromTextBoxID": 3,
+      "FromComponentID": 1,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 5
+    },
+    {
+      "FromTextBoxID": 5,
+      "FromComponentID": 0,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 4
+    },
+    {
+      "FromTextBoxID": 4,
+      "FromComponentID": 0,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 3
+    },
+    {
+      "FromTextBoxID": 3,
+      "FromComponentID": 2,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 6
+    },
+    {
+      "FromTextBoxID": 6,
+      "FromComponentID": 0,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 7
+    },
+    {
+      "FromTextBoxID": 7,
+      "FromComponentID": 1,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 8
+    },
+    {
+      "FromTextBoxID": 8,
+      "FromComponentID": 0,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 9
+    },
+    {
+      "FromTextBoxID": 9,
+      "FromComponentID": 0,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 10
+    },
+    {
+      "FromTextBoxID": 10,
+      "FromComponentID": 0,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 3
+    },
+    {
+      "FromTextBoxID": 7,
+      "FromComponentID": 2,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 11
+    },
+    {
+      "FromTextBoxID": 11,
+      "FromComponentID": 0,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 9
+    },
+    {
+      "FromTextBoxID": 7,
+      "FromComponentID": 3,
+      "FromConnectionID": 1,
+      "ToTextBoxID": 12
+    },
+    {
+      "FromTextBoxID": 12,
+      "FromComponentID": 0,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 13
+    },
+    {
+      "FromTextBoxID": 13,
+      "FromComponentID": 0,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 14
+    },
+    {
+      "FromTextBoxID": 14,
+      "FromComponentID": 0,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 3
+    },
+    {
+      "FromTextBoxID": 7,
+      "FromComponentID": 3,
+      "FromConnectionID": 2,
+      "ToTextBoxID": 15
+    },
+    {
+      "FromTextBoxID": 15,
+      "FromComponentID": 0,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 13
+    },
+    {
+      "FromTextBoxID": 3,
+      "FromComponentID": 3,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 16
+    },
+    {
+      "FromTextBoxID": 16,
+      "FromComponentID": 1,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 17
+    },
+    {
+      "FromTextBoxID": 17,
+      "FromComponentID": 0,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 18
+    },
+    {
+      "FromTextBoxID": 18,
+      "FromComponentID": 0,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 9
+    },
+    {
+      "FromTextBoxID": 16,
+      "FromComponentID": 2,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 19
+    },
+    {
+      "FromTextBoxID": 19,
+      "FromComponentID": 0,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 3
+    }
+  ],
+  "LuaStubs": {
+    "Variables": {
+      "health": {
+        "Type": "System.Int32",
+        "Value": 100
+      }
+    },
+    "Functions": [
+      {
+        "Name": "GetSpriteTextureName",
+        "DeclaringType": "AttributeSprite",
+        "ReturnType": "System.String",
+        "Parameters": [
+          {
+            "Name": "spriteName",
+            "Type": "System.String"
+          }
+        ]
+      },
+      {
+        "Name": "SetSpriteTexture",
+        "DeclaringType": "AttributeSprite",
+        "ReturnType": "System.Void",
+        "Parameters": [
+          {
+            "Name": "spriteName",
+            "Type": "System.String"
+          },
+          {
+            "Name": "spriteTexture",
+            "Type": "System.String"
+          }
+        ]
+      },
+      {
+        "Name": "TakeDamage",
+        "DeclaringType": "Health",
+        "ReturnType": "System.Void",
+        "Parameters": [
+          {
+            "Name": "damage",
+            "Type": "System.Int32"
+          }
+        ]
+      },
+      {
+        "Name": "RestoreHealth",
+        "DeclaringType": "Health",
+        "ReturnType": "System.Void",
+        "Parameters": [
+          {
+            "Name": "amount",
+            "Type": "System.Int32"
+          }
+        ]
+      },
+      {
+        "Name": "GetFormattedHealth",
+        "DeclaringType": "Health",
+        "ReturnType": "System.String",
+        "Parameters": []
+      }
+    ],
+    "Attributes": [
+      {
+        "Name": "Name",
+        "DeclaringType": "AttributeName",
+        "ReturnType": "System.Void",
+        "Parameters": [
+          {
+            "Name": "context",
+            "Type": "NarrativeAttributeContext"
+          }
+        ]
+      },
+      {
+        "Name": "SpriteTexture",
+        "DeclaringType": "AttributeSprite",
+        "ReturnType": "System.Void",
+        "Parameters": [
+          {
+            "Name": "context",
+            "Type": "NarrativeAttributeContext"
+          }
+        ]
+      },
+      {
+        "Name": "MoveSprite",
+        "DeclaringType": "AttributeSprite",
+        "ReturnType": "System.Void",
+        "Parameters": [
+          {
+            "Name": "context",
+            "Type": "NarrativeAttributeContext"
+          }
+        ]
+      },
+      {
+        "Name": "MoveSpriteBy",
+        "DeclaringType": "AttributeSprite",
+        "ReturnType": "System.Void",
+        "Parameters": [
+          {
+            "Name": "context",
+            "Type": "NarrativeAttributeContext"
+          }
+        ]
+      },
+      {
+        "Name": "ChoiceName",
+        "DeclaringType": "AttributeChoiceName",
+        "ReturnType": "System.Void",
+        "Parameters": [
+          {
+            "Name": "context",
+            "Type": "NarrativeAttributeContext"
+          }
+        ]
+      }
+    ]
+  }
+}

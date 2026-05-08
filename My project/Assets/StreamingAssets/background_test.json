@@ -1,0 +1,158 @@
+{
+  "TextBoxes": [
+    {
+      "ID": 1,
+      "TextContent": "The background is winter $SetSpriteTexture(\"background\", \"winter\")",
+      "Attributes": [],
+      "Connections": [
+        {
+          "ID": 0,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "392,205.5",
+      "Size": "577,277"
+    },
+    {
+      "ID": 0,
+      "TextContent": "",
+      "Attributes": [],
+      "Connections": [
+        {
+          "ID": 0,
+          "Attributes": [],
+          "Conditions": [],
+          "OutgoingConnections": []
+        }
+      ],
+      "position": "149,246",
+      "Size": "80,80"
+    }
+  ],
+  "Connections": [
+    {
+      "FromTextBoxID": 0,
+      "FromComponentID": 0,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 1
+    },
+    {
+      "FromTextBoxID": 1,
+      "FromComponentID": 0,
+      "FromConnectionID": 0,
+      "ToTextBoxID": 1
+    }
+  ],
+  "LuaStubs": {
+    "Variables": {
+      "health": {
+        "Type": "System.Int32",
+        "Value": 100
+      }
+    },
+    "Functions": [
+      {
+        "Name": "SetSpriteTexture",
+        "DeclaringType": "AttributeSprite",
+        "ReturnType": "System.Void",
+        "Parameters": [
+          {
+            "Name": "spriteName",
+            "Type": "System.String"
+          },
+          {
+            "Name": "spriteTexture",
+            "Type": "System.String"
+          }
+        ]
+      },
+      {
+        "Name": "TakeDamage",
+        "DeclaringType": "Health",
+        "ReturnType": "System.Void",
+        "Parameters": [
+          {
+            "Name": "damage",
+            "Type": "System.Int32"
+          }
+        ]
+      },
+      {
+        "Name": "RestoreHealth",
+        "DeclaringType": "Health",
+        "ReturnType": "System.Void",
+        "Parameters": [
+          {
+            "Name": "amount",
+            "Type": "System.Int32"
+          }
+        ]
+      },
+      {
+        "Name": "GetFormattedHealth",
+        "DeclaringType": "Health",
+        "ReturnType": "System.String",
+        "Parameters": []
+      }
+    ],
+    "Attributes": [
+      {
+        "Name": "Name",
+        "DeclaringType": "AttributeName",
+        "ReturnType": "System.Void",
+        "Parameters": [
+          {
+            "Name": "context",
+            "Type": "NarrativeAttributeContext"
+          }
+        ]
+      },
+      {
+        "Name": "SpriteTexture",
+        "DeclaringType": "AttributeSprite",
+        "ReturnType": "System.Void",
+        "Parameters": [
+          {
+            "Name": "context",
+            "Type": "NarrativeAttributeContext"
+          }
+        ]
+      },
+      {
+        "Name": "MoveSprite",
+        "DeclaringType": "AttributeSprite",
+        "ReturnType": "System.Void",
+        "Parameters": [
+          {
+            "Name": "context",
+            "Type": "NarrativeAttributeContext"
+          }
+        ]
+      },
+      {
+        "Name": "MoveSpriteBy",
+        "DeclaringType": "AttributeSprite",
+        "ReturnType": "System.Void",
+        "Parameters": [
+          {
+            "Name": "context",
+            "Type": "NarrativeAttributeContext"
+          }
+        ]
+      },
+      {
+        "Name": "ChoiceName",
+        "DeclaringType": "AttributeChoiceName",
+        "ReturnType": "System.Void",
+        "Parameters": [
+          {
+            "Name": "context",
+            "Type": "NarrativeAttributeContext"
+          }
+        ]
+      }
+    ]
+  }
+}

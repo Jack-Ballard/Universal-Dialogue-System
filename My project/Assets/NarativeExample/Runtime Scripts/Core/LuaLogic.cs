@@ -36,12 +36,24 @@ public static class LuaLogic
                 string luaCode = useReturn ? "return " + result[i].segment.Trim().TrimStart('$') : result[i].segment.Trim();
                 if (useReturn && Globals.functions.ContainsKey(result[i].segment) && !result[i].segment.EndsWith("()"))
                 {
-                    luaCode += "()";
+                    if (i + 1 < result.Count && result[i + 1].segment.StartsWith('(') && result[i + 1].segment.EndsWith(')'))
+                    {
+                        luaCode += result[i + 1].segment;
+                        result[i + 1] = ("", false);
+                    }
+                    else
+                    {
+                        luaCode += "()";
+                    }
                 }
                 var luaResult = luaScript.DoString(luaCode).ToString();
                 if (luaResult.Length >= 2 && luaResult.StartsWith("\"") && luaResult.EndsWith("\""))
                 {
                     luaResult = luaResult.Substring(1, luaResult.Length - 2);
+                }
+                if(luaResult == "void")
+                {
+                    luaResult = "";
                 }
                 result[i] = (luaResult, true);
             }

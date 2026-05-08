@@ -1,1 +1,1 @@
-C:\Users\Jack\source\repos\Honours Stage Project\Honours Stage Project\bin\Debug\lua_api_export.json
+C:\Users\Jack\Documents\University\Honours Stage Project\Unity Examples\My project\Assets\StreamingAssets\lua_api_export.json
